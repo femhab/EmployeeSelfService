@@ -17,6 +17,8 @@ namespace Data.DataContext
         public DbSet<EmployeeApprovalConfig> EmployeesApprovalConfig { get; set; }
         public DbSet<EmployeeEducationDetail> EmployeesEducationDetail { get; set; }
         public DbSet<GradeLevel> GradeLevels { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

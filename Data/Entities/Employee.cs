@@ -1,6 +1,7 @@
 ﻿using Data.Entities.Common;
 using Data.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace Data.Entities
 {
@@ -17,5 +18,7 @@ namespace Data.Entities
         public Guid DepartmentId { get; set; }
         public Department Department { get; set; }
         public AccessType AccessType { get; set; }
+        public Status Status { get; set; }
+        public List<UserRole> Role { get; set; }
     }
 }
