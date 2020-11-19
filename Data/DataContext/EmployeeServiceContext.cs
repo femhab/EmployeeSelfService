@@ -11,7 +11,9 @@ namespace Data.DataContext
         public DbSet<ApprovalBoard> ApprovalBoards { get; set; }
         public DbSet<ApprovalSetting> ApprovalSettings { get; set; }
         public DbSet<ApprovalWorkItem> ApprovalWorkItems { get; set; }
-        public DbSet<Department> Departments { get; set; }
+        public DbSet<EducationalGrade> EducationalGrades { get; set; }
+        public DbSet<EducationalLevel> EducationalLevels { get; set; }
+        public DbSet<EducationalQualification> EducationalQualification { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeAddress> EmployeesAddress { get; set; }
         public DbSet<EmployeeApprovalConfig> EmployeesApprovalConfig { get; set; }

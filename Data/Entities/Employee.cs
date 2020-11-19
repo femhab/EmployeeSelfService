@@ -20,5 +20,8 @@ namespace Data.Entities
         public AccessType AccessType { get; set; }
         public Status Status { get; set; }
         public List<UserRole> Role { get; set; }
+        public DateTime? DOB { get; set; }
+        public Gender Gender { get; set; }
+        public byte[] ProfilePhoto { get; set; }
     }
 }
