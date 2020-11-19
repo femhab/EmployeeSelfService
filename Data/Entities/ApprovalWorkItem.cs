@@ -7,6 +7,5 @@ namespace Data.Entities
     {
         public string Name { get; set; } //Leave, Loan
         public string Description { get; set; } //Leave application, Loan application
-        public Status Status { get; set; } // //Active, Not Active
     }
 }
