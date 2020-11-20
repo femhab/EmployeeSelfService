@@ -12,7 +12,7 @@ namespace Business.Interfaces
     {
         Task<BaseResponse> Create(ApprovalBoard model);
         Task<BaseResponse> ApprovalAction(Guid ProcessorId, ApprovalStatus status, Level approvalLevel, Guid serviceId, Guid approvalWorkItemId);
-        Task<IPagedList<ApprovalBoard>> GetByProcessor(Guid processorId, int pageIndex = 0, int pageSize = 20);
-        Task<IPagedList<ApprovalBoard>> GetApprovalUpdate(Guid serviceId, Guid approvalWorkItemId);
+        Task<IEnumerable<ApprovalBoard>> GetByProcessor(Guid processorId, int pageIndex = 0, int pageSize = 20);
+        Task<IEnumerable<ApprovalBoard>> GetApprovalUpdate(Guid serviceId, Guid approvalWorkItemId);
     }
 }

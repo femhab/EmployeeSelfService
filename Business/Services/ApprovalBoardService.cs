@@ -34,6 +34,7 @@ namespace Business.Services
 
                 _unitOfWork.GetRepository<ApprovalBoard>().Update(data);
                 await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = true, Message = ResponseMessage.ApprovedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
@@ -45,16 +46,21 @@ namespace Business.Services
             return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
         }
 
-        public async  Task<IPagedList<ApprovalBoard>> GetApprovalUpdate(Guid serviceId, Guid approvalWorkItemId)
+        public async  Task<IEnumerable<ApprovalBoard>> GetApprovalUpdate(Guid serviceId, Guid approvalWorkItemId)
         {
-            var model = await GetPagedList(c => c.ServiceId == serviceId && c.ApprovalWorkItemId == approvalWorkItemId, include: e => e.Include(i => i.Employee).Include(x => x.ApprovalProcessor).Include(i => i.ApprovalWorkItem));
+            var model = await GetAll(x => x.ServiceId == serviceId && x.ApprovalWorkItemId == approvalWorkItemId, "Employee,ApprovalProcessor,ApprovalWorkItem");
             return model;
         }
          
-        public async Task<IPagedList<ApprovalBoard>> GetByProcessor(Guid processorId, int pageIndex = 0, int pageSize = 20)
+        public async Task<IEnumerable<ApprovalBoard>> GetByProcessor(Guid processorId, int pageIndex = 0, int pageSize = 20)
         {
-            var model = await GetPagedList(c => c.ApprovalProcessorId == processorId, include: e => e.Include(i => i.Employee).Include(x => x.ApprovalProcessor).Include(i => i.ApprovalWorkItem), pageIndex: pageIndex, pageSize: pageSize);
+            var model = await GetAll(x => x.ApprovalProcessorId == processorId, "Employee,ApprovalProcessor,ApprovalWorkItem");
+            return model;
+        }
 
+        public async Task<IEnumerable<ApprovalBoard>> GetAll(Expression<Func<ApprovalBoard, bool>> predicate, string include = null, bool includeDeleted = false)
+        {
+            var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
             return model;
         }
 
