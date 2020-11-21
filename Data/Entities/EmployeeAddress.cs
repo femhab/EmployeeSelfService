@@ -1,4 +1,5 @@
 ﻿using Data.Entities.Common;
+using Data.Enums;
 using System;
 
 namespace Data.Entities
@@ -14,5 +15,6 @@ namespace Data.Entities
         public string Country { get; set; }
         public string StateOfOrigin { get; set; }
         public string LGOfOrigin { get; set; }
+        public ApprovalStatus Status { get; set; }
     }
 }

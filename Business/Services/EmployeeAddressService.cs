@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Entities;
+using Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using ViewModel.ResponseModel;
 
@@ -13,10 +14,12 @@ namespace Business.Services
     public class EmployeeAddressService: IEmployeeAddressService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IApprovalBoardService _approvalBoardService;
 
-        public EmployeeAddressService(IUnitOfWork unitOfWork)
+        public EmployeeAddressService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService)
         {
             _unitOfWork = unitOfWork;
+            _approvalBoardService = approvalBoardService;
         }
 
         public async Task<BaseResponse> Create(EmployeeAddress model)
@@ -26,6 +29,25 @@ namespace Business.Services
             {
                 _unitOfWork.GetRepository<EmployeeAddress>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
+
+                //submit for approval
+                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("address"));
+                var approvalProcessor = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.ApprovalLevel == Level.HR);
+
+                await _approvalBoardService.Create(new ApprovalBoard()
+                {
+                    EmployeeId = model.EmployeeId,
+                    ApprovalLevel = Level.HR,
+                    Emp_No = model.Emp_No,
+                    ApprovalWorkItemId = approvalWorkItem.Id,
+                    ApprovalProcessorId = approvalProcessor.Id,
+                    ServiceId = model.Id,
+                    Status = ApprovalStatus.Pending,
+                    CreatedDate = DateTime.Now,
+                    Id = Guid.NewGuid(),
+                    CreatedBy = model.Emp_No
+                });
+
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.RecordExist };
@@ -42,10 +64,30 @@ namespace Business.Services
                 model.Country = country;
                 model.StateOfOrigin = stateOfOrigin;
                 model.LGOfOrigin = lGOfOrigin;
+                model.Status = ApprovalStatus.Pending;
                 model.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.GetRepository<EmployeeAddress>().Update(model);
                 await _unitOfWork.SaveChangesAsync();
+
+                //submit for approval
+                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("address"));
+                var approvalProcessor = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.ApprovalLevel == Level.HR);
+
+                await _approvalBoardService.Create(new ApprovalBoard()
+                {
+                    EmployeeId = model.EmployeeId,
+                    ApprovalLevel = Level.HR,
+                    Emp_No = model.Emp_No,
+                    ApprovalWorkItemId = approvalWorkItem.Id,
+                    ApprovalProcessorId = approvalProcessor.Id,
+                    ServiceId = model.Id,
+                    Status = ApprovalStatus.Pending,
+                    CreatedDate = DateTime.Now,
+                    Id = Guid.NewGuid(),
+                    CreatedBy = model.Emp_No
+                });
+
                 return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };

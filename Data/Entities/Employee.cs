@@ -23,6 +23,7 @@ namespace Data.Entities
         public Unit Unit { get; set; }
         public AccessType AccessType { get; set; }
         public Status Status { get; set; }
+        public ApprovalStatus ApprovalStatus { get; set; }
         public DateTime? DOB { get; set; }
         public Gender Gender { get; set; }
         public byte[] ProfilePhoto { get; set; }

@@ -11,6 +11,7 @@
         SeventhLevel,
         EightLevel,
         NinethLevel,
-        TenthLevel
+        TenthLevel,
+        HR
     }
 }

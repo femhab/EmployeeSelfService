@@ -21,7 +21,7 @@ namespace Business.Services
         public async  Task<BaseResponse> Create(EmployeeEducationDetail model)
         {
             var check = await GetAll(x => x.EmployeeId == model.EmployeeId && x.EducationalQualificationId == model.EducationalQualificationId);
-            if (check.Count() <= 2)
+            if (check.Count() < 3)
             {
                 _unitOfWork.GetRepository<EmployeeEducationDetail>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
