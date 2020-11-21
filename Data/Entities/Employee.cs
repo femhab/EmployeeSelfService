@@ -23,11 +23,11 @@ namespace Data.Entities
         public Unit Unit { get; set; }
         public AccessType AccessType { get; set; }
         public Status Status { get; set; }
-        public List<UserRole> Role { get; set; }
         public DateTime? DOB { get; set; }
         public Gender Gender { get; set; }
         public byte[] ProfilePhoto { get; set; }
         public DateTime? EmploymentDate { get; set; }
         public string PensionNo { get; set; }
+        public byte[] Password { get; set; }
     }
 }

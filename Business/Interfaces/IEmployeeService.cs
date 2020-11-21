@@ -10,12 +10,10 @@ namespace Business.Interfaces
     public interface IEmployeeService
     {
         Task<IEnumerable<HRUsers>> GetUnregisteredBaseEmployee();
-        Task<BaseResponse> SynDataToESS(Guid employeeId);
         Task<BaseResponse> Create(Employee model);
-        Task<BaseResponse> Edit(Employee model);
+        Task<BaseResponse> RequestBasicInfoChange(Guid id, string lastName, string firstName, string email);
         Task<Employee> GetById(Guid id);
-        Task<Employee> GetAll();
-        Task<Employee> GetByDepartment(Guid departmentId);
-        Task<Employee> GetByRole(Guid roleId);
+        Task<IEnumerable<Employee>> GetAll();
+        Task<IEnumerable<Employee>> GetByDepartment(Guid departmentId);
     }
 }

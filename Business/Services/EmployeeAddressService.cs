@@ -21,9 +21,14 @@ namespace Business.Services
 
         public async Task<BaseResponse> Create(EmployeeAddress model)
         {
-            _unitOfWork.GetRepository<EmployeeAddress>().Insert(model);
-            await _unitOfWork.SaveChangesAsync();
-            return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+            var check = await _unitOfWork.GetRepository<EmployeeAddress>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId);
+            if(check == null)
+            {
+                _unitOfWork.GetRepository<EmployeeAddress>().Insert(model);
+                await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+            }
+            return new BaseResponse() { Status = false, Message = ResponseMessage.RecordExist };
         }
 
         public async Task<BaseResponse> Edit(Guid id, string streetAddress, string state, string city, string country, string stateOfOrigin, string lGOfOrigin)

@@ -12,6 +12,7 @@ namespace ViewModel.ServiceModel
         public DbSet<HREducGrade> HREducGrade { get; set; }
         public DbSet<HREducLevel> HREducLevel { get; set; }
         public DbSet<HREducQual> HREducQual { get; set; }
+        public DbSet<HREmpMst> HREmpMst { get; set; }
         public DbSet<HRGrade> HRGrade { get; set; }
         public DbSet<hrleavedays> hrleavedays { get; set; }
         public DbSet<HRUnit> HRUnit { get; set; }
