@@ -28,6 +28,12 @@ namespace Business.Services
             return model;
         }
 
+        public async Task<IEnumerable<Department>> GetAll()
+        {
+            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()));
+            return data;
+        }
+
         public async Task<BaseResponse> Refresh()
         {
             var resource = await _dbContext.HRDept.ToListAsync();

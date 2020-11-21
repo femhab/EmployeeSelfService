@@ -41,9 +41,14 @@ namespace Business.Services
 
         public async Task<BaseResponse> Create(ApprovalBoard model)
         {
-            _unitOfWork.GetRepository<ApprovalBoard>().Insert(model);
-            await _unitOfWork.SaveChangesAsync();
-            return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+            var check = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: x => x.ServiceId == model.ServiceId && x.ApprovalWorkItemId == model.ApprovalWorkItemId && x.EmployeeId == model.EmployeeId);
+            if (check == null)
+            {
+                _unitOfWork.GetRepository<ApprovalBoard>().Insert(model);
+                await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+            }
+            return new BaseResponse() { Status = false, Message = ResponseMessage.RecordExist };
         }
 
         public async  Task<IEnumerable<ApprovalBoard>> GetApprovalUpdate(Guid serviceId, Guid approvalWorkItemId)

@@ -51,6 +51,12 @@ namespace Business.Services
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
+        public async Task<IEnumerable<EmployeeAddress>> GetAll()
+        {
+            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()));
+            return data;
+        }
+
         public async Task<IEnumerable<EmployeeAddress>> GetAll(Expression<Func<EmployeeAddress, bool>> predicate, string include = null, bool includeDeleted = false)
         {
             var model = await _unitOfWork.GetRepository<EmployeeAddress>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));

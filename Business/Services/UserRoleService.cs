@@ -10,20 +10,25 @@ using ViewModel.ResponseModel;
 
 namespace Business.Services
 {
-    public class ApprovalWorkItemService: IApprovalWorkItemService
+    public class UserRoleService: IUserRoleService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public ApprovalWorkItemService(IUnitOfWork unitOfWork)
+        public UserRoleService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<BaseResponse> Create(ApprovalWorkItem model)
+        public async Task<BaseResponse> Create(UserRole model)
         {
-            _unitOfWork.GetRepository<ApprovalWorkItem>().Insert(model);
-            await _unitOfWork.SaveChangesAsync();
-            return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+            var check = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId && x.RoleId == model.RoleId);
+            if (check == null)
+            {
+                _unitOfWork.GetRepository<UserRole>().Insert(model);
+                await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+            }
+            return new BaseResponse() { Status = false, Message = ResponseMessage.RecordExist };
         }
 
         public async Task<BaseResponse> Delete(Guid id)
@@ -31,44 +36,43 @@ namespace Business.Services
             var model = await GetById(id);
             if (model != null)
             {
-                _unitOfWork.GetRepository<ApprovalWorkItem>().Delete(model);
+                _unitOfWork.GetRepository<UserRole>().Delete(model);
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<BaseResponse> Edit(Guid id, string name, string description)
+        public async Task<BaseResponse> Edit(Guid id, int roleId)
         {
             var model = await GetById(id);
             if (model != null)
             {
-                model.Name = name;
-                model.Description = description;
+                model.RoleId = roleId;
                 model.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.GetRepository<ApprovalWorkItem>().Update(model);
+                _unitOfWork.GetRepository<UserRole>().Update(model);
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<IEnumerable<ApprovalWorkItem>> GetAll()
+        public async Task<IEnumerable<UserRole>> GetAll()
         {
             var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()));
             return data;
         }
 
-        public async Task<IEnumerable<ApprovalWorkItem>> GetAll(Expression<Func<ApprovalWorkItem, bool>> predicate, string include = null, bool includeDeleted = false)
+        public async Task<IEnumerable<UserRole>> GetAll(Expression<Func<UserRole, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var model = await _unitOfWork.GetRepository<UserRole>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
             return model;
         }
 
-        public async Task<ApprovalWorkItem> GetById(Guid id)
+        public async Task<UserRole> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            var model = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
             return model;
         }
     }

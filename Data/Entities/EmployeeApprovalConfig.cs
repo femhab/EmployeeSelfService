@@ -1,7 +1,6 @@
 ﻿using Data.Entities.Common;
 using Data.Enums;
 using System;
-using System.Collections.Generic;
 
 namespace Data.Entities
 {

@@ -7,7 +7,6 @@ namespace Data.Entities
     {
         public string Code { get; set; } //BSc, MSc
         public string Description { get; set; } //Bachelor, Masters
-        public Guid EducationalLevelId { get; set; } //foriegn key
-        public EducationalLevel EducationalLevel { get; set; }
+        public string EducationalLevelCode { get; set; }
     }
 }

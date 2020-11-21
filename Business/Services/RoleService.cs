@@ -33,7 +33,7 @@ namespace Business.Services
             {
                 _unitOfWork.GetRepository<Role>().Delete(model);
                 await _unitOfWork.SaveChangesAsync();
-                return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
+                return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }

@@ -28,6 +28,6 @@ namespace Data.Entities
         public byte[] ProfilePhoto { get; set; }
         public DateTime? EmploymentDate { get; set; }
         public string PensionNo { get; set; }
-        public byte[] Password { get; set; }
+        public int? MaximumApprovalCount { get; set; }
     }
 }
