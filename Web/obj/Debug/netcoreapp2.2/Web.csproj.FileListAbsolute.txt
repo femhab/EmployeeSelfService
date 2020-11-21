@@ -36,3 +36,9 @@ C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfServi
 C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\obj\Debug\netcoreapp2.2\Razor\Views\Shared\_MainPageLayout.cshtml.g.cs
 C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\obj\Debug\netcoreapp2.2\Razor\Views\Dashboard\Employee.cshtml.g.cs
 C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\obj\Debug\netcoreapp2.2\Razor\Views\Dashboard\Approval.cshtml.g.cs
+C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\bin\Debug\netcoreapp2.2\Business.dll
+C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\bin\Debug\netcoreapp2.2\Data.dll
+C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\bin\Debug\netcoreapp2.2\ViewModel.dll
+C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\bin\Debug\netcoreapp2.2\Business.pdb
+C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\bin\Debug\netcoreapp2.2\Data.pdb
+C:\Users\Habeebullah\Documents\Client Projects\PeersConsulting\EmployeeSelfService\Web\bin\Debug\netcoreapp2.2\ViewModel.pdb

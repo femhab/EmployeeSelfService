@@ -10,18 +10,18 @@ using ViewModel.ResponseModel;
 
 namespace Business.Services
 {
-    public class ApprovalWorkItemService: IApprovalWorkItemService
+    public class RoleService: IRoleService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public ApprovalWorkItemService(IUnitOfWork unitOfWork)
+        public RoleService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<BaseResponse> Create(ApprovalWorkItem model)
+        public async Task<BaseResponse> Create(Role model)
         {
-            _unitOfWork.GetRepository<ApprovalWorkItem>().Insert(model);
+            _unitOfWork.GetRepository<Role>().Insert(model);
             await _unitOfWork.SaveChangesAsync();
             return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
         }
@@ -31,38 +31,43 @@ namespace Business.Services
             var model = await GetById(id);
             if (model != null)
             {
-                _unitOfWork.GetRepository<ApprovalWorkItem>().Delete(model);
+                _unitOfWork.GetRepository<Role>().Delete(model);
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<BaseResponse> Edit(Guid id, string name, string description)
+        public async Task<BaseResponse> Edit(Guid id, string description)
         {
             var model = await GetById(id);
             if (model != null)
             {
-                model.Name = name;
                 model.Description = description;
                 model.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.GetRepository<ApprovalWorkItem>().Update(model);
+                _unitOfWork.GetRepository<Role>().Update(model);
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<IEnumerable<ApprovalWorkItem>> GetAll(Expression<Func<ApprovalWorkItem, bool>> predicate, string include = null, bool includeDeleted = false)
+        public async Task<IEnumerable<Role>> GetAll()
         {
-            var model = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()));
+            return data;
+        }
+
+        public async Task<IEnumerable<Role>> GetAll(Expression<Func<Role, bool>> predicate, string include = null, bool includeDeleted = false)
+        {
+            var model = await _unitOfWork.GetRepository<Role>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
             return model;
         }
 
-        public async Task<ApprovalWorkItem> GetById(Guid id)
+        public async Task<Role> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            var model = await _unitOfWork.GetRepository<Role>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
             return model;
         }
     }

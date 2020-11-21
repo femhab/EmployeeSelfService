@@ -27,7 +27,7 @@ namespace Data.DataContext
         public DbSet<LeaveType> LeaveTypes { get; set; }
         public DbSet<Relationship> Relationships { get; set; }
         public DbSet<Role> RoleType { get; set; }
-        public DbSet<Training>  Trainings { get; set; }
+       // public DbSet<Training>  Trainings { get; set; }
         public DbSet<Transfer>  Transfers { get; set; }
         public DbSet<Unit>  Units { get; set; }
         public DbSet<UserRole> EmployeeRoles { get; set; }
