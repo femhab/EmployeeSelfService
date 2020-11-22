@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Business\\Business.csproj": {}
+    "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Business\\Business.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Business\\Business.csproj": {
+    "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Business\\Business.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Business\\Business.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Business\\Business.csproj",
         "projectName": "Business",
-        "projectPath": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Business\\Business.csproj",
-        "packagesPath": "C:\\Users\\Habeebullah\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Business\\obj\\",
+        "projectPath": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Business\\Business.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Business\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Habeebullah\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -25,17 +25,16 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\Habeebullah\\Documents\\Practices\\LocalNugetPackages": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp2.2": {
             "projectReferences": {
-              "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Data\\Data.csproj": {
-                "projectPath": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Data\\Data.csproj"
+              "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Data\\Data.csproj": {
+                "projectPath": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Data\\Data.csproj"
               },
-              "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\ViewModel\\ViewModel.csproj": {
-                "projectPath": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\ViewModel\\ViewModel.csproj"
+              "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\ViewModel\\ViewModel.csproj": {
+                "projectPath": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\ViewModel\\ViewModel.csproj"
               }
             }
           }
@@ -49,6 +48,14 @@
       "frameworks": {
         "netcoreapp2.2": {
           "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.UnitOfWork": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
             "Microsoft.NETCore.App": {
               "suppressParent": "All",
               "target": "Package",
@@ -57,33 +64,27 @@
             }
           },
           "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
+            "net461"
           ],
           "assetTargetFallback": true,
-          "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+          "warn": true
         }
       }
     },
-    "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Data\\Data.csproj": {
+    "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Data\\Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Data\\Data.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Data\\Data.csproj",
         "projectName": "Data",
-        "projectPath": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Data\\Data.csproj",
-        "packagesPath": "C:\\Users\\Habeebullah\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\Data\\obj\\",
+        "projectPath": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Data\\Data.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Habeebullah\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -91,7 +92,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\Habeebullah\\Documents\\Practices\\LocalNugetPackages": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -124,33 +124,27 @@
             }
           },
           "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
+            "net461"
           ],
           "assetTargetFallback": true,
-          "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+          "warn": true
         }
       }
     },
-    "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\ViewModel\\ViewModel.csproj": {
+    "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\ViewModel\\ViewModel.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\ViewModel\\ViewModel.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\ViewModel\\ViewModel.csproj",
         "projectName": "ViewModel",
-        "projectPath": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\ViewModel\\ViewModel.csproj",
-        "packagesPath": "C:\\Users\\Habeebullah\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Habeebullah\\Documents\\Client Projects\\PeersConsulting\\EmployeeSelfService\\ViewModel\\obj\\",
+        "projectPath": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\ViewModel\\ViewModel.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\PROGRAM PRACTICE\\New folder\\EmployeeSelfService\\ViewModel\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Habeebullah\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -158,7 +152,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\Habeebullah\\Documents\\Practices\\LocalNugetPackages": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -183,16 +176,10 @@
             }
           },
           "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
+            "net461"
           ],
           "assetTargetFallback": true,
-          "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+          "warn": true
         }
       }
     }
