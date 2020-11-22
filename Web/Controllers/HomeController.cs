@@ -6,7 +6,14 @@ namespace Web.Controllers
 {
     public class HomeController : Controller
     {
+        
         public IActionResult Login()
+        {
+            return View();
+        }
+
+        [Route("ForgotPassword")]
+        public IActionResult ForgotPassword()
         {
             return View();
         }

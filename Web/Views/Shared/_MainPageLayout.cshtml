@@ -22,10 +22,22 @@
     <!-- Lineawesome CSS -->
     <link rel="stylesheet" href="~/css/line-awesome.min.css">
 
+    <!-- Datatable CSS -->
+    <link rel="stylesheet" href="~/css/dataTables.bootstrap4.min.css">
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="~/css/select2.min.css">
+
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap-datetimepicker.min.css">
+
+    <!-- Tagsinput CSS -->
+    <link rel="stylesheet" href="~/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css">
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="~/css/style.css">
     <meta name="viewport" content="width=device-width" />
-    
+
 </head>
 <body>
     <div class="main-wrapper">
@@ -87,11 +99,11 @@
                 <!-- Flag -->
                 <li class="nav-item dropdown has-arrow flag-nav">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">
-                        <img src="~/img/flags/us.png" alt="" height="20"> <span>English</span>
+                        <img src="" alt="" height="20"> <span>English</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <a href="javascript:void(0);" class="dropdown-item">
-                            <img src="~/img/flags/us.png" alt="" height="16"> English
+                            <img src="" alt="" height="16"> English
                         </a>
                     </div>
                 </li>
@@ -181,111 +193,6 @@
                     </div>
                 </li>
                 <!-- /Notifications -->
-                <!-- Message Notifications -->
-                <li class="nav-item dropdown">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-                        <i class="fa fa-comment-o"></i> <span class="badge badge-pill">8</span>
-                    </a>
-                    <div class="dropdown-menu notifications">
-                        <div class="topnav-dropdown-header">
-                            <span class="notification-title">Messages</span>
-                            <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
-                        </div>
-                        <div class="noti-content">
-                            <ul class="notification-list">
-                                <li class="notification-message">
-                                    <a href="chat.html">
-                                        <div class="list-item">
-                                            <div class="list-left">
-                                                <span class="avatar">
-                                                    <img alt="" src="~/img/profiles/avatar-09.jpg">
-                                                </span>
-                                            </div>
-                                            <div class="list-body">
-                                                <span class="message-author">Richard Miles </span>
-                                                <span class="message-time">12:28 AM</span>
-                                                <div class="clearfix"></div>
-                                                <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="chat.html">
-                                        <div class="list-item">
-                                            <div class="list-left">
-                                                <span class="avatar">
-                                                    <img alt="" src="~/img/profiles/avatar-02.jpg">
-                                                </span>
-                                            </div>
-                                            <div class="list-body">
-                                                <span class="message-author">John Doe</span>
-                                                <span class="message-time">6 Mar</span>
-                                                <div class="clearfix"></div>
-                                                <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="chat.html">
-                                        <div class="list-item">
-                                            <div class="list-left">
-                                                <span class="avatar">
-                                                    <img alt="" src="~/img/profiles/avatar-03.jpg">
-                                                </span>
-                                            </div>
-                                            <div class="list-body">
-                                                <span class="message-author"> Tarah Shropshire </span>
-                                                <span class="message-time">5 Mar</span>
-                                                <div class="clearfix"></div>
-                                                <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="chat.html">
-                                        <div class="list-item">
-                                            <div class="list-left">
-                                                <span class="avatar">
-                                                    <img alt="" src="~/img/profiles/avatar-05.jpg">
-                                                </span>
-                                            </div>
-                                            <div class="list-body">
-                                                <span class="message-author">Mike Litorus</span>
-                                                <span class="message-time">3 Mar</span>
-                                                <div class="clearfix"></div>
-                                                <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="chat.html">
-                                        <div class="list-item">
-                                            <div class="list-left">
-                                                <span class="avatar">
-                                                    <img alt="" src="~/img/profiles/avatar-08.jpg">
-                                                </span>
-                                            </div>
-                                            <div class="list-body">
-                                                <span class="message-author"> Catherine Manseau </span>
-                                                <span class="message-time">27 Feb</span>
-                                                <div class="clearfix"></div>
-                                                <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="topnav-dropdown-footer">
-                            <a href="chat.html">View all Messages</a>
-                        </div>
-                    </div>
-                </li>
-                <!-- /Message Notifications -->
 
                 <li class="nav-item dropdown has-arrow main-drop">
                     <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
@@ -296,7 +203,7 @@
                         @*<span>Admin</span>*@
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="profile.html">My Profile</a>
+                        <a class="dropdown-item" asp-controller="Employee" asp-action="Profile">My Profile</a>
                         <a class="dropdown-item" href="settings.html">Settings</a>
                         <a class="dropdown-item" href="login.html">Logout</a>
                     </div>
@@ -307,7 +214,7 @@
             <div class="dropdown mobile-user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="profile.html">My Profile</a>
+                    <a class="dropdown-item" asp-controller="Employee" asp-action="Profile">My Profile</a>
                     <a class="dropdown-item" href="settings.html">Settings</a>
                     <a class="dropdown-item" href="login.html">Logout</a>
                 </div>
@@ -324,22 +231,22 @@
                         <li class="menu-title">
                             <span>Main</span>
                         </li>
-                        <li class="submenu">
-                            <a href="#"><i class="la la-dashboard"></i> <span> Dashboard</span></a>
+                        <li>
+                            <a asp-controller="Dashboard" asp-action="Employee"><i class="la la-dashboard"></i> <span> Dashboard</span></a>
 
                         </li>
-                        <li class="submenu">
-                            <a href="#"><i class="la la-dashboard"></i> <span> Approval Board</span></a>
+                        <li>
+                            <a asp-controller="Dashboard" asp-action="Approval"><i class="la la-dashboard"></i> <span> Approval Board</span></a>
 
                         </li>
 
                         <li class="menu-title">
                             <span>Services</span>
                         </li>
-                        <li class="submenu">
+                        <li>
                             <a href="#" class="noti-dot"><i class="la la-user"></i> <span> Leave</span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
-                                <li><a href="leaves-employee.html">Leaves (Employee)</a></li>
+                                <li><a asp-controller="Leave" asp-action="Index">Leaves</a></li>
                                 <li><a href="leave-settings.html">Leave Recall</a></li>
                                 <li><a href="leave-settings.html">Leave Settings</a></li>
                             </ul>
@@ -361,6 +268,9 @@
                         </li>
                         <li>
                             <a href="tickets.html"><i class="la la-ticket"></i> <span>Transfer</span></a>
+                        </li>
+                        <li>
+                            <a href="tickets.html"><i class="la la-ticket"></i> <span>Disciplinary Action</span></a>
                         </li>
 
                         <li>
@@ -403,8 +313,8 @@
                             <span>Administration</span>
                         </li>
 
-                        <li class="submenu">
-                            <a href="#"><i class="la la-briefcase"></i> <span> Enroll Employee </span> </a>
+                        <li>
+                            <a asp-controller="Employee" asp-action="Enroll"><i class="la la-briefcase"></i> <span> Employee </span> </a>
                         </li>
                         <li class="submenu">
                             <a href="#"><i class="la la-mail-forward"></i> <span> Set Employee Approval </span></a>
@@ -431,12 +341,27 @@
     <!-- Slimscroll JS -->
     <script src="~/js/jquery.slimscroll.min.js"></script>
 
+    <!-- Slimscroll JS -->
+    <script src="~/js/select2.min.js"></script>
+
+    <!-- Datatable JS -->
+    <script src="~/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Datetimepicker JS -->
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/bootstrap-datetimepicker.min.js"></script>
+
     <!-- Chart JS -->
     <script src="~/plugins/morris/morris.min.js"></script>
     <script src="~/plugins/raphael/raphael.min.js"></script>
     <script src="~/js/chart.js"></script>
 
+    <!-- Tagsinput JS -->
+    <script src="~/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+
     <!-- Custom JS -->
     <script src="~/js/app.js"></script>
+
 </body>
 </html>

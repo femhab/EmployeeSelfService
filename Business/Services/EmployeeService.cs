@@ -44,7 +44,6 @@ namespace Business.Services
                     model.UnitId = unit.Id;
                     model.GradeLevelId = gradeLevel.Id;
                     model.Status = Status.Active;
-                    model.ApprovalStatus = ApprovalStatus.Pending;
                     model.AccessType = AccessType.Employee;
                     model.DOB = hrData.date_birth;
                     model.EmploymentDate = hrData.date_Emp;
@@ -64,13 +63,17 @@ namespace Business.Services
             var model = await GetById(id);
             if (model != null)
             {
-                model.LastName = lastName;
-                model.FirstName = firstName;
-                model.EmailAddress = email;
-                model.ApprovalStatus = ApprovalStatus.Pending;
-                model.UpdatedDate = DateTime.Now;
+                var appliedUpdate = new AppliedNameUpdate()
+                {
+                    EmployeeId = id,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    EmailAddress = email,
+                    Emp_No = model.Emp_No
 
-                _unitOfWork.GetRepository<Employee>().Update(model);
+                };
+                
+                _unitOfWork.GetRepository<AppliedNameUpdate>().Update(appliedUpdate);
                 await _unitOfWork.SaveChangesAsync();
 
                 //submit for approval
@@ -91,7 +94,59 @@ namespace Business.Services
                     CreatedBy = model.Emp_No
                 });
 
-                return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
+                return new BaseResponse() { Status = true, Message = ResponseMessage.AwaitingApproval }; ;
+            }
+            return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
+        }
+
+        public async Task<BaseResponse> RequestTransfer(Guid id, Guid divisionId, Guid departmentId, Guid unitId)
+        {
+            var model = await GetById(id);
+            if (model != null)
+            {
+                if(model.DepartmentId != departmentId)
+                {
+                    var appliedTransfer = new AppliedTransfer()
+                    {
+                        EmployeeId = id,
+                        DivisionId = divisionId,
+                        DepartmentId = departmentId,
+                        UnitId = unitId,
+                        Emp_No = model.Emp_No
+
+                    };
+                    _unitOfWork.GetRepository<AppliedTransfer>().Update(appliedTransfer);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    //submit for approval
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("information"));
+                    var approvalProcessor = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.ApprovalLevel == Level.HR);
+
+                    await _approvalBoardService.Create(new ApprovalBoard()
+                    {
+                        EmployeeId = model.Id,
+                        ApprovalLevel = Level.HR,
+                        Emp_No = model.Emp_No,
+                        ApprovalWorkItemId = approvalWorkItem.Id,
+                        ApprovalProcessorId = approvalProcessor.Id,
+                        ServiceId = model.Id,
+                        Status = ApprovalStatus.Pending,
+                        CreatedDate = DateTime.Now,
+                        Id = Guid.NewGuid(),
+                        CreatedBy = model.Emp_No
+                    });
+
+                    return new BaseResponse() { Status = true, Message = ResponseMessage.AwaitingApproval };
+                }
+                else
+                {
+                    model.DivisionId = divisionId;
+                    model.DepartmentId = departmentId;
+                    model.UnitId = unitId;
+                    _unitOfWork.GetRepository<Employee>().Update(model);
+                    await _unitOfWork.SaveChangesAsync();
+                    return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
+                }    
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }

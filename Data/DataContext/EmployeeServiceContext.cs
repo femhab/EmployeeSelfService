@@ -8,6 +8,8 @@ namespace Data.DataContext
     {
         public EmployeeServiceContext(DbContextOptions<EmployeeServiceContext> options) : base(options) { }
 
+        public DbSet<AppliedNameUpdate> AppliedNameUpdates { get; set; }
+        public DbSet<AppliedTransfer> AppliedTransfers { get; set; }
         public DbSet<Appraisal> Appraisals { get; set; }
         public DbSet<ApprovalBoard> ApprovalBoards { get; set; }
         public DbSet<ApprovalWorkItem> ApprovalWorkItems { get; set; }
