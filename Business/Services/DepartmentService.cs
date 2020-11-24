@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -15,11 +16,13 @@ namespace Business.Services
     {
         private readonly ServiceContext _dbContext;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly SqlConnection _sqlConnection;
 
         public DepartmentService(ServiceContext dbContext, IUnitOfWork unitOfWork)
         {
             _dbContext = dbContext;
             _unitOfWork = unitOfWork;
+            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<IEnumerable<Department>> GetAll(Expression<Func<Department, bool>> predicate, string include = null, bool includeDeleted = false)
@@ -36,8 +39,27 @@ namespace Business.Services
 
         public async Task<BaseResponse> Refresh()
         {
-            var resource = await _dbContext.HRDept.ToListAsync();
-            if(resource != null)
+            var sql = "select * from HRDept";
+            SqlCommand query = new SqlCommand(sql, _sqlConnection);
+            List<HRDept> resource = new List<HRDept>();
+            _sqlConnection.Open();
+            using (SqlDataReader reader = query.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    HRDept requester = new HRDept()
+                    {
+                        DeptCode = reader["DeptCode"].ToString(),
+                        CompanyCode = reader["CompanyCode"].ToString(),
+                        DivisionCode = reader["DivisionCode"].ToString(),
+                        descc = reader["descc"].ToString(),
+                        slot = reader.GetInt32(reader.GetOrdinal("slot"))
+                    };
+                    resource.Add(requester);
+                }
+                _sqlConnection.Close();
+            }
+            if (resource != null)
             {
                 foreach(var item in resource)
                 {

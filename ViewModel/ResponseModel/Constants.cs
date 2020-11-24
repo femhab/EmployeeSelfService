@@ -15,4 +15,9 @@
         public const string MaximumReached = "Maximum record allowed reached! update/delete from the existing record";
         public const string AlreadyApproved = "This request is already approved with this action";
     }
+
+    public class HRDbConfig
+    {
+        public const string ConnectionStringUrl = "Server=localhost\\SQLEXPRESS;Database=PEERSHR;Integrated Security=true;";
+    }
 }

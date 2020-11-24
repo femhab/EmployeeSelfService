@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -7,16 +8,19 @@ using Business.Interfaces;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using ViewModel.ResponseModel;
+using ViewModel.ServiceModel;
 
 namespace Business.Services
 {
     public class RoleService: IRoleService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly SqlConnection _sqlConnection;
 
         public RoleService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<BaseResponse> Create(Role model)
@@ -49,6 +53,45 @@ namespace Business.Services
                 _unitOfWork.GetRepository<Role>().Update(model);
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
+            }
+            return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
+        }
+
+        public async Task<BaseResponse> Refresh()
+        {
+            var sql = "select * from HRRoles";
+            SqlCommand query = new SqlCommand(sql, _sqlConnection);
+            List<HRRoles> roleList = new List<HRRoles>();
+            _sqlConnection.Open();
+            using (SqlDataReader reader = query.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    HRRoles requester = new HRRoles()
+                    {
+                        RoleID = reader.GetInt32(reader.GetOrdinal("RoleID")),
+                        Description = reader["Description"].ToString(),
+                    };
+                    roleList.Add(requester);
+                }
+                _sqlConnection.Close();
+            }
+            if (roleList != null)
+            {
+                foreach (var item in roleList)
+                {
+                    var check = await _unitOfWork.GetRepository<Role>().GetFirstOrDefaultAsync(predicate: x => x.RoleId == item.RoleID);
+
+                    if (check == null)
+                    {
+                        var role = new Role() { Description = item.Description, RoleId = item.RoleID, CreatedDate = DateTime.Now, Id = Guid.NewGuid()};
+
+                        _unitOfWork.GetRepository<Role>().Insert(role);
+                    }
+
+                }
+                await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }

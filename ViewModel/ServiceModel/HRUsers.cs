@@ -1,4 +1,7 @@
-﻿namespace ViewModel.ServiceModel
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ViewModel.ServiceModel
 {
     public class HRUsers: BaseServiceModel
     {

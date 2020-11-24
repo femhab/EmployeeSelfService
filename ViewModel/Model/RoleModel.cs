@@ -1,8 +1,6 @@
-﻿using Data.Entities.Common;
-
-namespace Data.Entities
+﻿namespace ViewModel.Model
 {
-    public class Role: BaseObject
+    public class RoleModel: BaseModel
     {
         public string Description { get; set; } //Leave manager
         public int RoleId { get; set; }

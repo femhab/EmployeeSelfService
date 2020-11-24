@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Data.Entities;
+using ViewModel.Model;
+using ViewModel.ServiceModel;
 
 namespace Business.Mapping
 {
@@ -10,7 +13,11 @@ namespace Business.Mapping
         }
         public void Config()
         {
-            //CreateMap<Department, DepartmentFormModel>().ReverseMap();
+            CreateMap<HRUsers, HRUserModel>().ReverseMap();
+            CreateMap<HRUserModel, HRUsers>().ReverseMap();
+            CreateMap<RoleModel, Role>().ReverseMap();
+            CreateMap<DepartmentModel, Department>().ReverseMap();
+            CreateMap<Employee, HRUsers>().ReverseMap();
         }
     }
 }

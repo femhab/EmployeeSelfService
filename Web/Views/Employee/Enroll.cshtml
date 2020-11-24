@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.EmployeeViewModel
+
 @{
     ViewData["Title"] = "Enroll";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -45,9 +46,11 @@
         <div class="col-sm-6 col-md-3">
             <div class="form-group form-focus select-focus">
                 <select class="select floating">
-                    <option>Select Department</option>
-                    <option>Finance</option>
-                    <option>Engineering</option>
+                    <option>Select DeptCode - Department</option>
+                    @foreach (var item in Model.Departments)
+                    {
+                        <option value="@item.Id">@item.DeptCode - @item.Descc </option>
+                    }
                 </select>
                 <label class="focus-label">Department</label>
             </div>
@@ -190,41 +193,44 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Select Employee <span class="text-danger">*</span></label>
-                                <select class="select">
-                                    <option value="">Select</option>
-                                    <option value="">Lasisi Ola</option>
-                                    <option value="1">Okanlawon Fortune</option>
+                                <select class="select" id="pendinguser" onchange="OnSelect()">
+                                    <option>Select Employee </option>
+                                    @foreach (var item in Model.Employeee)
+                                    {
+
+                                        <option value="@item.Emp_No">@item.Emp_No - @item.FirstName  @item.LastName </option>
+                                    }
                                 </select>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" readonly id="empno" value="">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text">
+                                <input class="form-control" type="text" readonly id="firstname">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Last Name</label>
-                                <input class="form-control" type="text">
+                                <input class="form-control" type="text" readonly id="lastname">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Username <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text">
+                                <input class="form-control" type="text" readonly id="username">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Email <span class="text-danger">*</span></label>
-                                <input class="form-control" type="email">
+                                <input class="form-control" type="email" readonly id="email">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -244,8 +250,10 @@
                                 <label class="col-form-label">Role <span class="text-danger">*</span></label>
                                 <select class="select">
                                     <option value="">Select</option>
-                                    <option value="">General Administrator</option>
-                                    <option value="1">Log Operator</option>
+                                    @foreach (var item in Model.Roles)
+                                    {
+                                        <option value="@item.Id">@item.Description </option>
+                                    }
                                 </select>
                             </div>
                         </div>
@@ -260,7 +268,6 @@
     </div>
 </div>
 <!-- /Add Employee Modal -->
-
 <!-- Edit Employee Modal -->
 <div id="edit_employee" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -362,3 +369,23 @@
     </div>
 </div>
 <!-- /Delete Employee Modal -->
+
+
+<script type="text/javascript">
+
+    var unregisteredList = JSON.parse('@Json.Serialize(@Model.Employeee)');
+
+    function OnSelect() {
+        let pendingUser = $("#pendinguser option:selected").val();
+        unregisteredList.forEach(function (entry) {                    
+           if (entry.emp_No == pendingUser) {
+                $("#empno").val(entry.emp_No);
+                $("#firstname").val(entry.firstName);
+                $("#lastname").val(entry.lastName);
+                $("#username").val(entry.userName);
+                $("#email").val(entry.emailAddress);
+            }           
+        });
+    }
+
+</script>

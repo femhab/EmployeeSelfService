@@ -20,6 +20,17 @@ namespace ViewModel.ServiceModel
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<HRUsers>(f => { f.HasKey(e => e.UserID); });
+            modelBuilder.Entity<HRDepCode>(f => { f.HasKey(e => e.DepCode); });
+            modelBuilder.Entity<HRDept>(f => { f.HasKey(e => e.DeptCode); });
+            modelBuilder.Entity<HRDivision>(f => { f.HasKey(e => e.DivisionCode); });
+            modelBuilder.Entity<HREducGrade>(f => { f.HasKey(e => e.Gradecode); });
+            modelBuilder.Entity<HREducLevel>(f => { f.HasKey(e => e.EducLevelCode); });
+            modelBuilder.Entity<HREducQual>(f => { f.HasKey(e => e.qualcode); });
+            modelBuilder.Entity<HREmpMst>(f => { f.HasKey(e => e.Emp_No); });
+            modelBuilder.Entity<HRGrade>(f => { f.HasKey(e => e.GradeCode); });
+            modelBuilder.Entity<HRUnit>(f => { f.HasKey(e => e.UnitCode); });
+            modelBuilder.Entity<hrleavedays>(f => { f.HasKey(e => e.gradeCode); });
 
             base.OnModelCreating(modelBuilder);
         }
