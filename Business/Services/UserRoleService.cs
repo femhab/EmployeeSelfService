@@ -21,14 +21,21 @@ namespace Business.Services
 
         public async Task<BaseResponse> Create(UserRole model)
         {
-            var check = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId && x.RoleId == model.RoleId);
-            if (check == null)
+            try
             {
-                _unitOfWork.GetRepository<UserRole>().Insert(model);
-                await _unitOfWork.SaveChangesAsync();
-                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+                var check = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId && x.RoleId == model.RoleId);
+                if (check == null)
+                {
+                    _unitOfWork.GetRepository<UserRole>().Insert(model);
+                    await _unitOfWork.SaveChangesAsync();
+                    return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+                }
+                return new BaseResponse() { Status = false, Message = ResponseMessage.RecordExist };
             }
-            return new BaseResponse() { Status = false, Message = ResponseMessage.RecordExist };
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<BaseResponse> Delete(Guid id)

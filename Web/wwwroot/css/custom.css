@@ -1,0 +1,13 @@
+﻿.alerty {
+    position: fixed;
+    top: 1%;
+    left: 50%;
+    width: 50%;
+    transform: translate(-50%, -50%);
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    right: 0px;
+    z-index: 100;
+}

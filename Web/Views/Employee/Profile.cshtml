@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.EmployeeProfileViewModel
+
 @{
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -35,27 +36,66 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="profile-info-left">
-                                        <h3 class="user-name m-t-0 mb-0">John Doe</h3>
-                                        <h6 class="text-muted">UI/UX Design Team</h6>
-                                        <small class="text-muted">Web Designer</small>
-                                        <div class="staff-id">Employee ID : FT-0001</div>
-                                        <div class="small doj text-muted">Date of Join : 1st Jan 2013</div>
-                                        <div class="staff-msg"><a class="btn btn-custom" href="chat.html">Send Message</a></div>
+                                        <h3 class="user-name m-t-0 mb-0">@Model.Employee.FirstName.ToLower() @Model.Employee.LastName</h3>
+                                        @if (Model.Employee.Unit != null)
+                                        {
+                                            <h6 class="text-muted">UI/UX Design Team</h6>
+                                        }
+                                        else
+                                        {
+                                            <h6 class="text-muted">Unit: Unverified</h6>
+                                        }
+                                        @if (Model.Employee.Department != null)
+                                        {
+                                            <div class="staff-id">Department: Web Designer</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="staff-id">Department: Unverified</div>
+                                        }
+
+                                        @if (Model.Employee.Division != null)
+                                        {
+                                            <div class="staff-id">Division: Web Designer</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="staff-id">Division: Unverified</div>
+                                        }
+
+                                        <div class="staff-id">Employee ID : @Model.Employee.Emp_No</div>
+                                        @if (Model.Employee.EmploymentDate != null)
+                                        {
+                                            <div class="small doj text-muted">Date of Join : @Model.Employee.EmploymentDate</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="small doj text-muted">Date of Join : Unverified</div>
+                                        }
+
                                     </div>
                                 </div>
                                 <div class="col-md-7">
                                     <ul class="personal-info">
                                         <li>
-                                            <div class="title">Phone:</div>
-                                            <div class="text"><a href="">9876543210</a></div>
+                                            <div class="title">GradeLevel</div>
+                                            @if (Model.Employee.GradeLevel != null)
+                                            {
+                                                <div class="text"><a href="">Model.Employee.GradeLevel</a></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="text"><a href="">Unverified</a></div>
+                                            }
+                                            
                                         </li>
                                         <li>
                                             <div class="title">Email:</div>
-                                            <div class="text"><a href="">johndoe@example.com</a></div>
+                                            <div class="text"><a href="">@Model.Employee.EmailAddress</a></div>
                                         </li>
                                         <li>
                                             <div class="title">Birthday:</div>
-                                            <div class="text">24th July</div>
+                                            <div class="text">@Model.Employee.DOB</div>
                                         </li>
                                         <li>
                                             <div class="title">Address:</div>
@@ -518,7 +558,6 @@
             </form>
         </div>
         <!-- /Employee Update Tab -->
-
         <!-- Transfer Tab -->
         <div class="tab-pane fade" id="emp_transfer">
             <form>
@@ -594,7 +633,6 @@
     </div>
 </div>
 <!-- /Page Content -->
-
 <!-- Manage Employee Modal -->
 <div id="manage_employee" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg">

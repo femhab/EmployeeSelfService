@@ -36,6 +36,13 @@
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="~/css/style.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/custom.css">
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="~/css/toastr.css">
+
     <meta name="viewport" content="width=device-width" />
 
 </head>
@@ -205,7 +212,7 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item" asp-controller="Employee" asp-action="Profile">My Profile</a>
                         <a class="dropdown-item" href="settings.html">Settings</a>
-                        <a class="dropdown-item" href="login.html">Logout</a>
+                        <a class="dropdown-item" asp-controller="Employee" asp-action="Signout">Logout</a>
                     </div>
                 </li>
             </ul>
@@ -362,6 +369,9 @@
 
     <!-- Custom JS -->
     <script src="~/js/app.js"></script>
+
+    <!-- Toaster JS -->
+    <script src="~/js/toastr.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

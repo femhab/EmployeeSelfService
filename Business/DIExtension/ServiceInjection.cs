@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Business.Mapping;
 using Business.Interfaces;
 using Business.Services;
+using Business.Providers.JWT;
 
 namespace Business.DIExtension
 {
@@ -14,9 +15,12 @@ namespace Business.DIExtension
             services.AddAutoMapper(typeof(AutoMapperProfile));
 
             //services to interfaces
+            services.AddTransient<IAuthTokenProvider, AuthTokenProvider>();
+            services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IApprovalBoardService, ApprovalBoardService>();
             services.AddTransient<IRoleService, RoleService>();
+            services.AddTransient<IUserRoleService, UserRoleService>();
             services.AddTransient<IDepartmentService, DepartmentService>();
 
 

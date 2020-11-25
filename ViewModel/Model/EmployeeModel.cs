@@ -40,8 +40,14 @@ namespace ViewModel.Model
 
     public class EmployeeViewModel
     {
+        public IEnumerable<EmployeeModel> EmployeeList { get; set; }
         public IEnumerable<HRUserModel> Employeee { get; set; }
         public IEnumerable<RoleModel> Roles { get; set; }
         public IEnumerable<DepartmentModel> Departments { get; set; }
+    }
+
+    public class EmployeeProfileViewModel
+    {
+        public EmployeeModel Employee { get; set; }
     }
 }

@@ -16,21 +16,23 @@ namespace Business.Services
         private readonly SignInManager<AppIdentityUser> _signInManager;
         private readonly UserManager<AppIdentityUser> _userManager;
         private readonly IEmployeeService _employeeService;
+        private readonly IUserRoleService _userRoleService;
         private readonly IAuthTokenProvider _tokenProvider;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public AuthService(SignInManager<AppIdentityUser> signInManager, UserManager<AppIdentityUser> userManager, IEmployeeService employeeService, IAuthTokenProvider tokenProvider, IConfiguration configuration, IMapper mapper)
+        public AuthService(SignInManager<AppIdentityUser> signInManager, UserManager<AppIdentityUser> userManager, IEmployeeService employeeService, IUserRoleService userRoleService, IAuthTokenProvider tokenProvider, IConfiguration configuration, IMapper mapper)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _employeeService = employeeService;
+            _userRoleService = userRoleService;
             _tokenProvider = tokenProvider;
             _configuration = configuration;
             _mapper = mapper;
         }
 
-        public async Task<(bool status, string message, string token, string refreshToken)> Register(string email, string password, string lastName, string firstName, string userName, string empNo, string createdBy = null)
+        public async Task<(bool status, string message, string token, string refreshToken)> Register(string email, string password, string lastName, string firstName, string userName, string empNo, int roleId, string createdBy = null)
         {
             //check for existing user
             var checkuser = await _userManager.FindByEmailAsync(email) ?? await _userManager.FindByNameAsync(empNo);
@@ -48,34 +50,16 @@ namespace Business.Services
                 //save the domain user into the user table                  
                 var employeeModel = new Employee { FirstName = firstName, LastName = lastName, UserName = userName, EmailAddress = email, Emp_No = empNo, Id = Guid.NewGuid(), CreatedDate = DateTime.Now, CreatedBy = createdBy };
 
+                var employeeRole = new UserRole() { EmployeeId = employeeModel.Id, Emp_No = empNo, RoleId = roleId, Id = Guid.NewGuid(), CreatedDate = DateTime.Now, CreatedBy = createdBy };
+
                 var userdata = await _employeeService.Create(employeeModel);
                 if (userdata.Status)
                 {
                     //use my queue package to send email
+                    //create userrole
+                    await _userRoleService.Create(employeeRole);
 
-                    //sign user in immediately after signup and generate token
-                    var signin = await _signInManager.PasswordSignInAsync(email, password, false, false);
-                    if (signin.Succeeded)
-                    {
-                        try
-                        {
-                            var refreshToken = _tokenProvider.GenerateRefreshToken();
-                            var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:RefreshExpireDays"]));
-
-                            var tokenModel = _mapper.Map<AuthTokenModel>(userdata.Data);
-
-                            //add claims 
-                            var token = _tokenProvider.GenerateJwtToken(tokenModel, out List<Claim> claims);
-
-                            await _userManager.AddClaimsAsync(user, claims);
-
-                            return (true, "Your registration was successful!", token, refreshToken);
-                        }
-                        catch(Exception ex)
-                        {
-                            throw ex;
-                        }
-                    }
+                    return (true, "Your registration was successful!", null, null);
                 }
                 return (false, "Unable to complete the registration. Please try again", null, null);
             }

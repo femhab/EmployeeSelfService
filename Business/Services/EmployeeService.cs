@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
@@ -38,8 +39,29 @@ namespace Business.Services
             if (check == null)
             {
                 //update some data from hr db
-                var hrData = await _dbContext.HREmpMst.FirstOrDefaultAsync(x => x.Emp_No == model.Emp_No);
-                if(hrData != null)
+                //var hrData = await _dbContext.HREmpMst.FirstOrDefaultAsync(x => x.Emp_No == model.Emp_No);
+                var sql = $"select * from HREmpMst where Emp_No='{model.Emp_No}'";
+                SqlCommand query = new SqlCommand(sql, _sqlConnection);
+                HREmpMst hrData = new HREmpMst() { };
+                _sqlConnection.Open();
+                using (SqlDataReader reader = query.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        HREmpMst requester = new HREmpMst()
+                        {
+                            DepCode = reader["DepCode"].ToString(),
+                            DivisionCode = reader["DivisionCode"].ToString(),
+                            UnitCode = reader["UnitCode"].ToString(),
+                            GradeCode = reader["GradeCode"].ToString(),
+                            Emp_No = reader["Emp_No"].ToString(),
+                        };
+                        hrData = requester;
+                    }
+                    _sqlConnection.Close();
+                }
+
+                if (hrData.Emp_No != null)
                 {
                     var department = await _unitOfWork.GetRepository<Department>().GetFirstOrDefaultAsync(predicate: x => x.DeptCode.ToLower() == hrData.DeptCode.ToLower());
                     var division = await _unitOfWork.GetRepository<Division>().GetFirstOrDefaultAsync(predicate: x => x.DivisonCode.ToLower() == hrData.DivisionCode.ToLower());
@@ -49,11 +71,11 @@ namespace Business.Services
                     model.DepartmentId = department.Id;
                     model.DivisionId = division.Id;
                     model.UnitId = unit.Id;
-                    model.GradeLevelId = gradeLevel.Id;
-                    model.Status = Status.Active;  
+                    model.GradeLevelId = gradeLevel.Id; 
                     model.DOB = hrData.date_birth;
                     model.EmploymentDate = hrData.date_Emp;
                 }
+                model.Status = Status.Active;
                 model.AccessType = AccessType.Employee;
                 _unitOfWork.GetRepository<Employee>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
@@ -211,8 +233,11 @@ namespace Business.Services
 
             foreach (var item in userList)
             {
-                if (registeredEmployee.Select(x => x.Emp_No == item.Emp_No).Count() == 0)
-                    unRegisteredUser.Add(item);
+                foreach(var emp in registeredEmployee)
+                {
+                    if (item.Emp_No.ToLower() != emp.Emp_No.ToLower())
+                        unRegisteredUser.Add(item);
+                }
             }
             return unRegisteredUser;
         }

@@ -17,7 +17,8 @@ namespace Business.Mapping
             CreateMap<HRUserModel, HRUsers>().ReverseMap();
             CreateMap<RoleModel, Role>().ReverseMap();
             CreateMap<DepartmentModel, Department>().ReverseMap();
-            CreateMap<Employee, HRUsers>().ReverseMap();
+            CreateMap<Employee, HRUsers>().ReverseMap(); 
+            CreateMap<Employee, EmployeeModel>().ReverseMap(); 
         }
     }
 }
