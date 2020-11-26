@@ -18,6 +18,7 @@ namespace Business.DIExtension
             services.AddTransient<IAuthTokenProvider, AuthTokenProvider>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IApprovalWorkItemService, ApprovalWorkItemService>();
             services.AddTransient<IApprovalBoardService, ApprovalBoardService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserRoleService, UserRoleService>();

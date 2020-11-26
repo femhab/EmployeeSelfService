@@ -14,7 +14,7 @@
             <div class="col-sm-12">
                 <h3 class="page-title">Profile</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Employee</a></li>
+                    <li class="breadcrumb-item"><a>Employee</a></li>
                     <li class="breadcrumb-item active">Profile</li>
                 </ul>
             </div>
@@ -29,7 +29,7 @@
                     <div class="profile-view">
                         <div class="profile-img-wrap">
                             <div class="profile-img">
-                                <a href="#"><img alt="" src="~/img/profiles/avatar-02.jpg"></a>
+                                <a href="#"><img alt="" src="~/img/user.jpg"></a>
                             </div>
                         </div>
                         <div class="profile-basic">
@@ -87,7 +87,7 @@
                                             {
                                                 <div class="text"><a href="">Unverified</a></div>
                                             }
-                                            
+
                                         </li>
                                         <li>
                                             <div class="title">Email:</div>
@@ -97,19 +97,10 @@
                                             <div class="title">Birthday:</div>
                                             <div class="text">@Model.Employee.DOB</div>
                                         </li>
-                                        <li>
-                                            <div class="title">Address:</div>
-                                            <div class="text">1861 Bayonne Ave, Manchester Township, NJ, 08759</div>
-                                        </li>
-                                        <li>
-                                            <div class="title">Gender:</div>
-                                            <div class="text">Male</div>
-                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="pro-edit"><a data-target="#profile_info" data-toggle="modal" class="edit-icon" href="#"><i class="fa fa-pencil"></i></a></div>
                     </div>
                 </div>
             </div>
@@ -649,13 +640,13 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Employee Name <span class="text-danger">*</span></label>
-                                <input type="text" readonly value="Babatunde Tahir-Ahmad" class="form-control">
+                                <input type="text" readonly value="@Model.Employee.FirstName @Model.Employee.LastName" class="form-control">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
-                                <input class="form-control" type="number">
+                                <a onclick="SubmitCount()"><input class="form-control" type="number" id="maxcount"><i class="fa fa-search-plus"></i></a>
                             </div>
                         </div>
                     </div>
@@ -668,7 +659,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr class="hideElement">
                                     <td>First Level</td>
                                     <td class="text-center">
                                         <select class="select">
@@ -678,7 +669,7 @@
                                         </select>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="hideElement" id="table2" hidden>
                                     <td>Second Level</td>
                                     <td class="text-center">
                                         <select class="select">
@@ -688,7 +679,7 @@
                                         </select>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="hideElement" id="table3" hidden>
                                     <td>Third Level</td>
                                     <td class="text-center">
                                         <select class="select">
@@ -698,8 +689,68 @@
                                         </select>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>Forth Level</td>
+                                <tr class="hideElement" id="table4" hidden>
+                                    <td>Fourth Level</td>
+                                    <td class="text-center">
+                                        <select class="select">
+                                            <option value="">Select</option>
+                                            <option value="">Lasisi Ola</option>
+                                            <option value="1">Ade Fortune</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="table5" hidden>
+                                    <td>Fifth Level</td>
+                                    <td class="text-center">
+                                        <select class="select">
+                                            <option value="">Select</option>
+                                            <option value="">Lasisi Ola</option>
+                                            <option value="1">Ade Fortune</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="table6" hidden>
+                                    <td>Sixth Level</td>
+                                    <td class="text-center">
+                                        <select class="select">
+                                            <option value="">Select</option>
+                                            <option value="">Lasisi Ola</option>
+                                            <option value="1">Ade Fortune</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="table7" hidden>
+                                    <td>Seventh Level</td>
+                                    <td class="text-center">
+                                        <select class="select">
+                                            <option value="">Select</option>
+                                            <option value="">Lasisi Ola</option>
+                                            <option value="1">Ade Fortune</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="table8" hidden>
+                                    <td>Eight Level</td>
+                                    <td class="text-center">
+                                        <select class="select">
+                                            <option value="">Select</option>
+                                            <option value="">Lasisi Ola</option>
+                                            <option value="1">Ade Fortune</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="table9" hidden>
+                                    <td>Nineth Level</td>
+                                    <td class="text-center">
+                                        <select class="select">
+                                            <option value="">Select</option>
+                                            <option value="">Lasisi Ola</option>
+                                            <option value="1">Ade Fortune</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="table10" hidden>
+                                    <td>Seventh Level</td>
                                     <td class="text-center">
                                         <select class="select">
                                             <option value="">Select</option>
@@ -720,134 +771,6 @@
     </div>
 </div>
 <!-- /Manage Employee Modal -->
-<!-- Profile Modal -->
-<div id="profile_info" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Profile Information</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="profile-img-wrap edit-img">
-                                <img class="inline-block" src="assets/img/profiles/avatar-02.jpg" alt="user">
-                                <div class="fileupload btn">
-                                    <span class="btn-text">edit</span>
-                                    <input class="upload" type="file">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>First Name</label>
-                                        <input type="text" class="form-control" value="John">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Last Name</label>
-                                        <input type="text" class="form-control" value="Doe">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Birth Date</label>
-                                        <div class="cal-icon">
-                                            <input class="form-control datetimepicker" type="text" value="05/06/1985">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Gender</label>
-                                        <select class="select form-control">
-                                            <option value="male selected">Male</option>
-                                            <option value="female">Female</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label>Address</label>
-                                <input type="text" class="form-control" value="4487 Snowbird Lane">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>State</label>
-                                <input type="text" class="form-control" value="New York">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Country</label>
-                                <input type="text" class="form-control" value="United States">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Pin Code</label>
-                                <input type="text" class="form-control" value="10523">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Phone Number</label>
-                                <input type="text" class="form-control" value="631-889-3206">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Department <span class="text-danger">*</span></label>
-                                <select class="select">
-                                    <option>Select Department</option>
-                                    <option>Web Development</option>
-                                    <option>IT Management</option>
-                                    <option>Marketing</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Designation <span class="text-danger">*</span></label>
-                                <select class="select">
-                                    <option>Select Designation</option>
-                                    <option>Web Designer</option>
-                                    <option>Web Developer</option>
-                                    <option>Android Developer</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Reports To <span class="text-danger">*</span></label>
-                                <select class="select">
-                                    <option>-</option>
-                                    <option>Wilmer Deluna</option>
-                                    <option>Lesley Grauer</option>
-                                    <option>Jeffery Lalor</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Profile Modal -->
 <!-- Personal Info Modal -->
 <div id="personal_info_modal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -1245,3 +1168,38 @@
     </div>
 </div>
 <!-- /Experience Modal -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var countApproval = 0;
+
+        function SubmitCount()
+        {
+            var count = $("#maxcount").val();
+
+            sendApprovalCount(count);
+        }
+
+        function sendApprovalCount(count) {
+            $.ajax({
+                url: '@Url.Action("CountProcessor", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: { approvalCount: count},
+                success: function (response) {
+                    if (response.status) {
+                        ProcessField(response?.data)
+                    }
+                    else {
+                        countApproval = 0;
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+    </script>
+}

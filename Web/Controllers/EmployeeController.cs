@@ -13,14 +13,16 @@ namespace Web.Controllers
     public class EmployeeController : BaseController
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IApprovalWorkItemService _approvalWorkItemService;
         private readonly IAuthService _authService;
         private readonly IDepartmentService _departmentService;
         private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService)
+        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService)
         {
             _employeeService = employeeService;
+            _approvalWorkItemService = approvalWorkItemService;
             _authService = authService;
             _departmentService = departmentService;
             _roleService = roleService;
@@ -39,10 +41,10 @@ namespace Web.Controllers
             try
             {
                 var authData = JwtHelper.GetAuthData(Request);
-                //if (authData == null)
-                //{
-                //    return Forbid();
-                //}
+                if (authData == null)
+                {
+                    return RedirectToAction("Signout", "Employee");
+                }
 
                 EmployeeViewModel employeeViewModel = new EmployeeViewModel();
                 var deptList = await _departmentService.GetAll();
@@ -65,17 +67,29 @@ namespace Web.Controllers
         //[Route("Profile")]
         public async Task<ActionResult> Profile(string id)
         {
-            var authData = JwtHelper.GetAuthData(Request);
-            if (authData == null)
+            try
             {
-                //return LocalRedirect("/");
-                return Forbid();
-            }
+                var authData = JwtHelper.GetAuthData(Request);
+                if (authData == null)
+                {
+                    return RedirectToAction("Signout", "Employee");
+                }
+                if(id.ToLower() == "default")
+                {
+                    id = authData.Id.ToString();
+                }
 
-            EmployeeProfileViewModel profileViewModel = new EmployeeProfileViewModel();
-            var employee = await _employeeService.GetById(Guid.Parse(id));
-            profileViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
-            return View(profileViewModel);
+                EmployeeProfileViewModel profileViewModel = new EmployeeProfileViewModel();
+                var employee = await _employeeService.GetById(Guid.Parse(id));
+                var approvalWorkItem = await _approvalWorkItemService.GetAll();
+                profileViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
+                profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(approvalWorkItem);
+                return View(profileViewModel);
+            }
+            catch(Exception ex)
+            {
+                return ErrorPage(ex);
+            }
         }
 
         [Route("Transfer")]
@@ -95,10 +109,10 @@ namespace Web.Controllers
                 if (ModelState.IsValid)
                 {
                     var authData = JwtHelper.GetAuthData(Request);
-                    //if (authData == null)
-                    //{
-                    //    return Forbid();
-                    //}
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
 
                     if (password.ToLower() == confirmPassword.ToLower())
                     {
@@ -143,6 +157,23 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public async Task<ActionResult> CountProcessor(int approvalCount)
+        {
+            try
+            {
+                return Json(new
+                {
+                    status = true,
+                    message = "Processing",
+                    data = approvalCount
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
             }
         }
     }

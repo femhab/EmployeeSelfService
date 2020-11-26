@@ -49,5 +49,7 @@ namespace ViewModel.Model
     public class EmployeeProfileViewModel
     {
         public EmployeeModel Employee { get; set; }
+        public int ApprovalCount { get; set; }
+        public IEnumerable<ApprovalWorkItemModel> ApprovalWorkItem { get; set; }
     }
 }
