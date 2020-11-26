@@ -6,6 +6,11 @@ namespace ViewModel.ServiceModel
     {
         public ServiceContext(DbContextOptions<ServiceContext> options): base(options) { }
 
+        public DbSet<Appraisal_EmpRating> Appraisal_EmpRating { get; set; }
+        public DbSet<AppraisalCategorries> AppraisalCategory { get; set; }
+        public DbSet<AppraisalCategoryItems> AppraisalCategoryItem { get; set; }
+        public DbSet<AppraisalPeriod> AppraisalPeriod { get; set; }
+        public DbSet<AppraisalRatings> AppraisalRating { get; set; }
         public DbSet<HRDepCode> HRDepCode { get; set; }
         public DbSet<HRDept> HRDept { get; set; }
         public DbSet<HRDivision> HRDivision { get; set; }
@@ -17,6 +22,7 @@ namespace ViewModel.ServiceModel
         public DbSet<hrleavedays> hrleavedays { get; set; }
         public DbSet<HRUnit> HRUnit { get; set; }
         public DbSet<HRUsers> HRUsers { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

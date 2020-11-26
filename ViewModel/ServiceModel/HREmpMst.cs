@@ -10,6 +10,7 @@ namespace ViewModel.ServiceModel
         public string DivisionCode { get; set; }
         public string UnitCode { get; set; }
         public string DeptCode { get; set; }
+        public string TypeCode { get; set; }
         public string MaritalCode { get; set; }
         public string BloodCode { get; set; }
         public string GenoTypeCode { get; set; }

@@ -9,8 +9,11 @@ namespace Data.DataContext
         public EmployeeServiceContext(DbContextOptions<EmployeeServiceContext> options) : base(options) { }
 
         public DbSet<AppliedNameUpdate> AppliedNameUpdates { get; set; }
+        public DbSet<AppraisalCategory> AppraisalCategories { get; set; }
+        public DbSet<AppraisalCategoryItem> AppraisalCategoryItems { get; set; }
+        public DbSet<AppraisalPeriod> AppraisalPeriods { get; set; }
+        public DbSet<AppraisalRating> AppraisalRatings { get; set; }
         public DbSet<AppliedTransfer> AppliedTransfers { get; set; }
-        public DbSet<Appraisal> Appraisals { get; set; }
         public DbSet<ApprovalBoard> ApprovalBoards { get; set; }
         public DbSet<ApprovalWorkItem> ApprovalWorkItems { get; set; }
         public DbSet<Department> Departments { get; set; }

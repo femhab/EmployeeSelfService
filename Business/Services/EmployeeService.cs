@@ -55,6 +55,7 @@ namespace Business.Services
                             UnitCode = reader["UnitCode"].ToString(),
                             GradeCode = reader["GradeCode"].ToString(),
                             Emp_No = reader["Emp_No"].ToString(),
+                            TypeCode = reader["TypeCode"].ToString(),
                         };
                         hrData = requester;
                     }
@@ -74,6 +75,7 @@ namespace Business.Services
                     model.GradeLevelId = gradeLevel.Id; 
                     model.DOB = hrData.date_birth;
                     model.EmploymentDate = hrData.date_Emp;
+                    model.StaffType = hrData.TypeCode;
                 }
                 model.Status = Status.Active;
                 model.AccessType = AccessType.Employee;
