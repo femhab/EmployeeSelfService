@@ -4,7 +4,7 @@
     {
         public int AppraisalCategoryItemID { get; set; }
         public string AppraisalCategoryCode { get; set; }
-        public string Description { get; set; }
+        public string Desccription { get; set; }
         public string TypeCode { get; set; }
         public int Weight { get; set; }
     }

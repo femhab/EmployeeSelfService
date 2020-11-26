@@ -19,6 +19,9 @@ namespace Business.Mapping
             CreateMap<DepartmentModel, Department>().ReverseMap();
             CreateMap<Employee, HRUsers>().ReverseMap(); 
             CreateMap<Employee, EmployeeModel>().ReverseMap(); 
+            CreateMap<AppraisalRating, AppraisalRatingModel>().ReverseMap(); 
+            CreateMap<AppraisalCategory, AppraisalCategoryModel>().ReverseMap(); 
+            CreateMap<AppraisalCategoryItem, AppraisalCategoryItemModel>().ReverseMap();
         }
     }
 }

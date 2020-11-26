@@ -49,7 +49,7 @@ namespace Business.Services
                     {
                         AppraisalCategory = reader["AppraisalCategory"].ToString(),
                         AppraisalCategoryCode = reader["AppraisalCategoryCode"].ToString(),
-                        OrderNo = reader.GetInt32(reader.GetOrdinal("OrderNo"))
+                        OrderNo = reader["OrderNo"].ToString()
                     };
                     resource.Add(requester);
                 }
@@ -63,7 +63,7 @@ namespace Business.Services
 
                     if (check == null)
                     {
-                        var appraisalCategory = new AppraisalCategory() { AppraisalCategoryCode = item.AppraisalCategoryCode, Description = item.AppraisalCategory, OrderNo = item.OrderNo, CreatedDate = DateTime.Now, Id = Guid.NewGuid() };
+                        var appraisalCategory = new AppraisalCategory() { AppraisalCategoryCode = item.AppraisalCategoryCode, Description = item.AppraisalCategory, OrderNo = int.Parse(item.OrderNo), CreatedDate = DateTime.Now, Id = Guid.NewGuid() };
 
                         _unitOfWork.GetRepository<AppraisalCategory>().Insert(appraisalCategory);
                     }

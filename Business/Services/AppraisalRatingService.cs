@@ -63,7 +63,7 @@ namespace Business.Services
 
                     if (check == null)
                     {
-                        var appraisal = new AppraisalRating() { AppraisalRatingCode = item.CoreValues, Weight = item.Weight, CreatedDate = DateTime.Now, Id = Guid.NewGuid()};
+                        var appraisal = new AppraisalRating() { Description = item.ConceptDefinition, AppraisalRatingCode = item.CoreValues, Weight = item.Weight, CreatedDate = DateTime.Now, Id = Guid.NewGuid()};
                         _unitOfWork.GetRepository<AppraisalRating>().Insert(appraisal);
                     }
 

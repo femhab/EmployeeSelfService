@@ -53,7 +53,7 @@ namespace Business.Services
                 {
                     AppraisalCategoryItems requester = new AppraisalCategoryItems()
                     {
-                        Description = reader["Description"].ToString(),
+                        Desccription = reader["Desccription"].ToString(),
                         AppraisalCategoryCode = reader["AppraisalCategoryCode"].ToString(),
                         TypeCode = reader["TypeCode"].ToString(),
                         Weight = reader.GetInt32(reader.GetOrdinal("Weight")),
@@ -71,7 +71,7 @@ namespace Business.Services
 
                     if (check == null)
                     {
-                        var appraisalCategoryItem = new AppraisalCategoryItem() { AppraisalCategoryCode = item.AppraisalCategoryCode, Description = item.Description, Weight = item.Weight, AppraisalCategoryItemID = item.AppraisalCategoryItemID, StaffType = item.TypeCode, CreatedDate = DateTime.Now, Id = Guid.NewGuid() };
+                        var appraisalCategoryItem = new AppraisalCategoryItem() { AppraisalCategoryCode = item.AppraisalCategoryCode, Description = item.Desccription, Weight = item.Weight, AppraisalCategoryItemID = item.AppraisalCategoryItemID, StaffType = item.TypeCode, CreatedDate = DateTime.Now, Id = Guid.NewGuid() };
 
                         _unitOfWork.GetRepository<AppraisalCategoryItem>().Insert(appraisalCategoryItem);
                     }

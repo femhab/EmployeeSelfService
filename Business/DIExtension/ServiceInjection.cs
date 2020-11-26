@@ -17,6 +17,9 @@ namespace Business.DIExtension
             //services to interfaces
             services.AddTransient<IAuthTokenProvider, AuthTokenProvider>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IAppraisalRatingService, AppraisalRatingService>();
+            services.AddTransient<IAppraisalCategoryService, AppraisalCategoryService>();
+            services.AddTransient<IAppraisalCategoryItemService, AppraisalCategoryItemService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IApprovalWorkItemService, ApprovalWorkItemService>();
             services.AddTransient<IApprovalBoardService, ApprovalBoardService>();
