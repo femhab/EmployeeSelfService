@@ -235,10 +235,9 @@ namespace Business.Services
 
             foreach (var item in userList)
             {
-                foreach(var emp in registeredEmployee)
+                if (registeredEmployee.Where(x => x.Emp_No.ToLower() == item.Emp_No.ToLower()).Count() == 0)
                 {
-                    if (item.Emp_No.ToLower() != emp.Emp_No.ToLower())
-                        unRegisteredUser.Add(item);
+                    unRegisteredUser.Add(item);
                 }
             }
             return unRegisteredUser;

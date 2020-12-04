@@ -6,7 +6,7 @@ namespace ViewModel.ServiceModel
     {
         public string GradeCode { get; set; }
         public string descc { get; set; }
-        public int slot { get; set; }
+        public decimal slot { get; set; }
         public string UserName { get; set; }
         public DateTime TransacDate { get; set; }
     }

@@ -25,7 +25,7 @@ namespace Business.Services
         public async Task<BaseResponse> Create(Leave model)
         {
             //check if there is an existing leave
-            var check = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.CreatedDate.Year == DateTime.Now.Year && x.LeaveStatus != LeaveStatus.UnApproved);
+            var check = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.CreatedDate.Year == DateTime.Now.Year && x.LeaveStatus != LeaveStatus.Rejected);
             if(check == null)
             {
                 _unitOfWork.GetRepository<Leave>().Insert(model);

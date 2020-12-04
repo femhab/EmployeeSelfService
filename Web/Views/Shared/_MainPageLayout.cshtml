@@ -43,6 +43,9 @@
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="~/css/toastr.css">
 
+    <!-- Summernote CSS -->
+    <link rel="stylesheet" href="~/plugins/summernote/dist/summernote-bs4.css">
+
     <meta name="viewport" content="width=device-width" />
 
 </head>
@@ -251,37 +254,42 @@
                             <span>Services</span>
                         </li>
                         <li>
-                            <a href="#" class="noti-dot"><i class="la la-user"></i> <span> Leave</span> <span class="menu-arrow"></span></a>
+                            <a href="#"><i class="la la-rocket"></i> <span> Leave</span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
                                 <li><a asp-controller="Leave" asp-action="Index">Leaves</a></li>
-                                <li><a href="leave-settings.html">Leave Recall</a></li>
-                                <li><a href="leave-settings.html">Leave Settings</a></li>
                             </ul>
                         </li>
 
-                        <li class="submenu">
-                            <a href="#"><i class="la la-rocket"></i> <span> Loan</span> <span class="menu-arrow"></span></a>
+                        <li>
+                            <a href="#"><i class="la la-money"></i> <span> Loan</span><span class="menu-arrow"></span></a>
                             <ul style="display: none;">
-                                <li><a href="projects.html">Loan Application</a></li>
-                                <li><a href="tasks.html">Loan History</a></li>
+                                <li><a asp-controller="Loan" asp-action="Index">Loan Summary</a></li>
                             </ul>
                         </li>
                         <li>
                             <a href="#"><i class="la la-money"></i> <span> Payroll </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
-                                <li><a href="salary.html"> My Payroll </a></li>
+                                <li><a href="salary.html">Payroll History </a></li>
                                 <li><a href="salary-view.html"> Payslip </a></li>
                             </ul>
                         </li>
+                        @*<li>
+                                <a href="@Url.Action("Profile", "Employee", new { id="default" })"><i class="la la-ticket"></i> <span>Transfer</span></a>
+                            </li>*@
                         <li>
-                            <a href="tickets.html"><i class="la la-ticket"></i> <span>Transfer</span></a>
-                        </li>
-                        <li>
-                            <a href="tickets.html"><i class="la la-ticket"></i> <span>Disciplinary Action</span></a>
+                            <a href="#"><i class="la la-briefcase"></i> <span>Disciplinary Action</span><span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a asp-controller="DisciplinaryAction" asp-action="IssueQuery">Issue Query </a></li>
+                                <li><a asp-controller="DisciplinaryAction" asp-action="ViewQuery">View Query </a></li>
+                            </ul>
                         </li>
 
                         <li>
-                            <a href="tickets.html"><i class="la la-ticket"></i> <span>Exit Process</span></a>
+                            <a href="#"><i class="la la-ticket"></i> <span>Exit Process</span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a asp-controller="ExitProcess" asp-action="Index">Request Exit </a></li>
+                                <li><a asp-controller="ExitProcess" asp-action="ApproveRequest">Exit Request Approval </a></li>
+                            </ul>
                         </li>
 
                         <li class="menu-title">
@@ -290,8 +298,7 @@
                         <li class="submenu">
                             <a href="#"><i class="la la-graduation-cap"></i> <span> Appraisal </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
-                                <li><a href="performance.html"> Self Appraisal </a></li>
-                                <li><a asp-controller="Appraisal" asp-action="Index"> Performance Appraisal </a></li>
+                                <li><a asp-controller="Appraisal" asp-action="Index"> Self Appraisal </a></li>
                                 <li><a href="performance.html"> Performance Review </a></li>
                             </ul>
                         </li>
@@ -306,27 +313,18 @@
                         </li>
 
                         <li class="menu-title">
-                            <span>Setttings</span>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="la la-files-o"></i> <span> Accounts Setting</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="estimates.html">Edit Profile</a></li>
-                                <li><a href="invoices.html">Next of Kin</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="menu-title">
                             <span>Administration</span>
                         </li>
 
                         <li>
-                            <a asp-controller="Employee" asp-action="Enroll"><i class="la la-briefcase"></i> <span> Employee </span> </a>
+                            <a asp-controller="Employee" asp-action="Enroll"><i class="la la-briefcase"></i> <span>Manage Employee </span> </a>
                         </li>
                         <li class="submenu">
-                            <a href="#"><i class="la la-mail-forward"></i> <span> Set Employee Approval </span></a>
+                            <a href="#"><i class="la la-mail-forward"></i> <span> Add Role </span></a>
                         </li>
-
+                        <li class="submenu">
+                            <a href="#"><i class="la la-mail-forward"></i> <span> Leave Settings </span></a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -373,6 +371,9 @@
 
     <!-- Toaster JS -->
     <script src="~/js/toastr.js"></script>
+
+    <!-- Summernote JS -->
+    <script src="~/plugins/summernote/dist/summernote-bs4.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

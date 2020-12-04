@@ -41,10 +41,12 @@ namespace Web.Controllers
                 var categoryList = await _appraisalCategoryService.GetAll();
                 var categoryItemList = await _appraisalCategoryItemService.GetAll();
                 var employeeList = await _employeeService.GetAll();
+                var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
                 appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
                 appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(categoryList);
                 appraisalViewModel.AppraisalCategoryItems = _mapper.Map<IEnumerable<AppraisalCategoryItemModel>>(categoryItemList);
                 appraisalViewModel.EmployeeList = _mapper.Map<IEnumerable<EmployeeModel>>(employeeList);
+                appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
 
                 return View(appraisalViewModel);
             }

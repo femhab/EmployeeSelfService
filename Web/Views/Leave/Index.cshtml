@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.LeaveViewModel
+
 @{
     ViewData["Title"] = "Leave";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -19,6 +20,7 @@
             </div>
             <div class="col-auto float-right ml-auto">
                 <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_leave"><i class="fa fa-plus"></i> Add Leave</a>
+                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_leave"><i class="fa fa-plus"></i> Recall Leave</a>
             </div>
         </div>
     </div>
@@ -322,37 +324,40 @@
                 <form>
                     <div class="form-group">
                         <label>Leave Type <span class="text-danger">*</span></label>
-                        <select class="select">
-                            <option>Annual Leave</option>
-                            <option>Study Leave</option>
-                            <option>Medical Leave</option>
+                        <select class="select" id="leavetypeid">
+                            <option>Select Leave Type</option>
+                            @foreach (var item in Model.LeaveType.Where(x => x.GradeLevelId == Model.Employee.GradeLevelId))
+                            {
+                                <option value="@item.Id">@item.Class Leave  - @item.AvailableDays days</option>
+                            }
+
                         </select>
                     </div>
                     <div class="form-group">
                         <label>From <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" type="text">
+                            <input class="form-control datetimepicker" type="text" id="datefrom">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Number of days <span class="text-danger">*</span></label>
-                        <input class="form-control" type="text">
+                        <input class="form-control" type="text" id="noofdays" onkeyup="OnDaysEntered()">
                     </div>
                     <div class="form-group">
                         <label>To <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" readonly type="text">
+                            <input class="form-control datetimepicker" readonly type="text" id="dateto">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Resumption Date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" readonly type="text">
+                            <input class="form-control datetimepicker" readonly type="text" id="resumptiondate">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Remaining Leave Days <span class="text-danger">*</span></label>
-                        <input class="form-control" readonly value="12" type="text">
+                        <input class="form-control" readonly type="text" id="remainingdays">
                     </div>
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn">Submit</button>
@@ -391,7 +396,7 @@
                     </div>
                     <div class="form-group">
                         <label>Number of days <span class="text-danger">*</span></label>
-                        <input class="form-control" type="text" value="2">
+                        <input class="form-control" type="number" value="2">
                     </div>
                     <div class="form-group">
                         <label>To <span class="text-danger">*</span></label>
@@ -407,7 +412,7 @@
                     </div>
                     <div class="form-group">
                         <label>Remaining Leaves <span class="text-danger">*</span></label>
-                        <input class="form-control" readonly value="12" type="text">
+                        <input class="form-control" readonly type="text">
                     </div>
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn">Save</button>
@@ -442,3 +447,88 @@
     </div>
 </div>
 <!-- /Delete Leave Modal -->
+
+@section Scripts{
+    <script type="text/javascript">
+        var leavetypeid;
+        var datefrom;
+        var dateto;
+        var noofdays;
+        var remainingdays;
+        var resumptiondate;
+        var query = JSON.parse('@Json.Serialize(@Model.LeaveType)');
+
+        var redirectUrl = '@Url.Action("Index","Leave")';
+
+        function OnDaysEntered() {
+            datefrom = $("#datefrom").val();
+            noofdays = $("#noofdays").val();
+            leavetypeid = $("#leavetypeid").val();
+            var leavetype = query.find(x => x.id == leavetypeid);
+
+            if (leavetype.availableDays > 0) {
+                var count = 0;
+                datefrom = stringToDate(datefrom);
+
+                while (count < noofdays) {
+                    dateto = new Date(datefrom.setDate(datefrom.getDate() + 1));
+                    if (datefrom.getDay() != 0 && datefrom.getDay() != 6) {
+                        //Date.getDay() gives weekday starting from 0(Sunday) to 6(Saturday)
+                        count++;
+                    }
+                }
+
+                remainingdays = leavetype.availableDays - parseInt(noofdays);
+                $("#dateto").val(dateToString(dateto));
+                $("#resumptiondate").val("Next working day after:  " + dateToString(dateto));
+                $("#remainingdays").val(remainingdays);
+            }           
+            else {
+                toastr.warning("You have 0 days remaining");
+            }      
+        }
+
+        function SubmitLoginDetail()
+        {
+            sendForm();
+        }
+
+        function sendForm() {
+            $.ajax({
+                url: '@Url.Action("ApplyLeave", "Leave")',
+                type: 'POST',
+                dataType: 'json',
+                data: {  },
+                success: function (response) {
+                    if (response.status) {
+                        //toastr.success(response?.message);
+                        window.location.href = redirectUrl;
+                    }
+                    else {
+                        toastr.error(response ?.message);
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function stringToDate(str){
+            var date = str.split("/"),
+                m = date[1],
+                d = date[0],
+                y = date[2];
+            return (new Date(y + "/" + m + "/" + d));
+        }
+
+        function dateToString(date) {
+          //var date = new Date(str),
+            mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+            day = ("0" + date.getDate()).slice(-2);
+            return [day, mnth, date.getFullYear()].join("/");
+        }
+
+    </script>
+}

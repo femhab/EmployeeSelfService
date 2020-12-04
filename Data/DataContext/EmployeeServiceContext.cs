@@ -17,19 +17,24 @@ namespace Data.DataContext
         public DbSet<ApprovalBoard> ApprovalBoards { get; set; }
         public DbSet<ApprovalWorkItem> ApprovalWorkItems { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<DisciplinaryAction> DisciplinaryActions { get; set; }
         public DbSet<Division> Divisions { get; set; }
         public DbSet<EducationalGrade> EducationalGrades { get; set; }
         public DbSet<EducationalLevel> EducationalLevels { get; set; }
-        public DbSet<EducationalQualification> EducationalQualification { get; set; }
+        public DbSet<EducationalQualification> EducationalQualifications { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeAddress> EmployeesAddress { get; set; }
         public DbSet<EmployeeApprovalConfig> EmployeesApprovalConfig { get; set; }
         public DbSet<EmployeeEducationDetail> EmployeesEducationDetail { get; set; }
         public DbSet<EmployeeNOKDetail> EmployeeNOKDetails { get; set; }
+        public DbSet<ExitProcess> ExitProcess { get; set; }
+        public DbSet<ExitProcessPriorityItem> ExitProcessPriorityItem { get; set; }
         public DbSet<GradeLevel> GradeLevels { get; set; }
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<LeaveRecall> LeaveRecalls { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; }
+        public DbSet<Loan> Loans { get; set; }
+        public DbSet<LoanType> LoanTypes { get; set; }
         public DbSet<Relationship> Relationships { get; set; }
         public DbSet<Role> RoleType { get; set; }
        // public DbSet<Training>  Trainings { get; set; }

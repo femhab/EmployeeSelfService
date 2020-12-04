@@ -8,5 +8,6 @@ namespace ViewModel.Model
         public IEnumerable<AppraisalCategoryModel> AppraisalCategories { get; set; }
         public IEnumerable<AppraisalCategoryItemModel> AppraisalCategoryItems { get; set; }
         public IEnumerable<EmployeeModel> EmployeeList { get; set; }
+        public EmployeeModel Employee { get; set; }
     }
 }

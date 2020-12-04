@@ -11,7 +11,7 @@ namespace Business.Interfaces
         Task<BaseResponse> Create(EmployeeNOKDetail model);
         Task<BaseResponse> Delete(Guid id);
         Task<BaseResponse> Edit(Guid id, string firstName, string lastName, string email, string phoneNumber, DateTime? dob, string address, Guid relationshipId);
-        Task<EmployeeNOKDetail> GetByEmployee(Guid employeeId);
+        Task<IEnumerable<EmployeeNOKDetail>> GetByEmployee(Guid employeeId);
         Task<IEnumerable<EmployeeNOKDetail>> GetAll();
     }
 }

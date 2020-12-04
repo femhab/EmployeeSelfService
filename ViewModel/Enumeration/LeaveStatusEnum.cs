@@ -1,9 +1,9 @@
-﻿namespace Data.Enums
+﻿namespace ViewModel.Enumeration
 {
-    public enum LeaveStatus
+    public enum LeaveStatusEnum
     {
         Approved = 1,
-        Rejected,
+        UnApproved,
         Pending,
         OnLeave,
         Recall,

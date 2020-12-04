@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -13,18 +14,37 @@ namespace Business.Services
 {
     public class GradeLevelService: IGradeLevelService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ServiceContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly SqlConnection _sqlConnection;
 
-        public GradeLevelService(IUnitOfWork unitOfWork, ServiceContext dbContext)
+        public GradeLevelService(ServiceContext dbContext, IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
             _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
+            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<BaseResponse> Refresh()
         {
-            var resource = await _dbContext.HRGrade.ToListAsync();
+            var sql = "select * from HRGrade";
+            SqlCommand query = new SqlCommand(sql, _sqlConnection);
+            List<HRGrade> resource = new List<HRGrade>();
+            _sqlConnection.Open();
+            using (SqlDataReader reader = query.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    HRGrade requester = new HRGrade()
+                    {
+                        GradeCode = reader["GradeCode"].ToString(),
+                        descc = reader["descc"].ToString(),
+                        slot = reader.GetDecimal(reader.GetOrdinal("slot"))
+                    };
+                    resource.Add(requester);
+                }
+                _sqlConnection.Close();
+            }
             if (resource != null)
             {
                 foreach (var item in resource)
@@ -33,7 +53,7 @@ namespace Business.Services
 
                     if (check == null)
                     {
-                        var gradeLevel = new GradeLevel() { GradeCode = item.GradeCode, Descc = item.descc, CreatedDate = DateTime.Now, Id = Guid.NewGuid(), Slot = item.slot };
+                        var gradeLevel = new GradeLevel() { GradeCode = item.GradeCode, Descc = item.descc, CreatedDate = DateTime.Now, Id = Guid.NewGuid(), Slot = (int)item.slot };
 
                         _unitOfWork.GetRepository<GradeLevel>().Insert(gradeLevel);
                     }

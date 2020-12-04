@@ -12,6 +12,7 @@ namespace ViewModel.Model
         public string FirstName { get; set; }
         public string EmailAddress { get; set; }
         public string Emp_No { get; set; }
+        public string StaffType { get; set; }
         public Guid GradeLevelId { get; set; }
         public GradeLevelModel GradeLevel { get; set; }
         public Guid DivisionId { get; set; }

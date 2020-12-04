@@ -81,7 +81,7 @@ namespace Business.Services
 
                 _unitOfWork.GetRepository<EmployeeNOKDetail>().Update(model);
                 await _unitOfWork.SaveChangesAsync();
-                return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
+                return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful } ;
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
@@ -92,9 +92,9 @@ namespace Business.Services
             return data;
         }
 
-        public async Task<EmployeeNOKDetail> GetByEmployee(Guid employeeId)
+        public async Task<IEnumerable<EmployeeNOKDetail>> GetByEmployee(Guid employeeId)
         {
-            var data = await _unitOfWork.GetRepository<EmployeeNOKDetail>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == employeeId);
+            var data = await GetAll(x => x.EmployeeId == employeeId);
             return data;
         }
 

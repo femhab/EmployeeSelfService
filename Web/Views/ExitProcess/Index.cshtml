@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Exit Process</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Services</a></li>
+                    <li class="breadcrumb-item active">Request Exit</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12 d-flex">
+            <div class="card profile-box flex-fill">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Exit/Resigning Employee <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>Exit/Resignation Date <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input type="text" class="form-control datetimepicker">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Employment<span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input type="text" class="form-control datetimepicker">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Department<span class="text-danger">*</span></label>
+                            <select class="select">
+                                <option>Select Department</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Designation/Unit<span class="text-danger">*</span></label>
+                            <select class="select" id="leavetypeid">
+                                <option>Select Designation/ Unit</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Reason <span class="text-danger">*</span></label>
+                            <textarea class="form-control" rows="4"></textarea>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+

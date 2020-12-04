@@ -1,12 +1,11 @@
 ﻿namespace Data.Enums
 {
-    public enum LeaveStatus
+    public enum LoanStatus
     {
         Approved = 1,
         Rejected,
         Pending,
-        OnLeave,
-        Recall,
+        Ongoing,
         Completed
     }
 }

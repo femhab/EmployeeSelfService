@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewData["Title"] = "IssueQuery";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Diciplinary Action</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Services</a></li>
+                    <li class="breadcrumb-item active">Issue Query</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <select class="select">
+                                        <option value="">Select Employee</option>
+                                        <option value="">Lasisi Ola</option>
+                                        <option value="1">Ade Fortune</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="email" placeholder="EmployeeId" readonly class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Subject" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <textarea rows="4" class="form-control summernote" placeholder="Enter your message here"></textarea>
+                        </div>
+                        <div class="form-group mb-0">
+                            <div class="text-center">
+                                <button class="btn btn-primary"><span>Send Query</span> <i class="fa fa-send m-l-5"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->

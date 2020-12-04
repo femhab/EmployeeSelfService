@@ -1,16 +1,16 @@
-﻿using Data.Entities.Common;
-using Data.Enums;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using ViewModel.Enumeration;
 
-namespace Data.Entities
+namespace ViewModel.Model
 {
-    public class Leave: BaseObject
+    public class LeaveModel: BaseModel
     {
         public Guid EmployeeId { get; set; } //employeeId 
-        public Employee Employee { get; set; }
+        public EmployeeModel Employee { get; set; }
         public string Emp_No { get; set; }
         public Guid LeaveTypeId { get; set; } //annual leave, paternity leave
-        public LeaveType LeaveType { get; set; } //leavetype per gradelevel
+        public LeaveTypeModel LeaveType { get; set; } //leavetype per gradelevel
         public DateTime DateFrom { get; set; } //to be specified
         public DateTime DateTo { get; set; } //to be specified
         public DateTime? ActualEndDate { get; set; } //to be specified
@@ -18,8 +18,13 @@ namespace Data.Entities
         public bool IsTenYearsAnniversary { get; set; }
         public DateTime? ResumptionDate { get; set; }
         public int? DaysUsed { get; set; }
-        public ApprovalStatus Status { get; set; } //new, pending
-        public LeaveStatus LeaveStatus { get; set; }
-        public bool IsAllowanceRequested { get; set; }
+        public ApprovalStatusEnum Status { get; set; } //new, pending
+        public LeaveStatusEnum LeaveStatus { get; set; }
+    }
+
+    public class LeaveViewModel
+    {
+        public EmployeeModel Employee { get; set; }
+        public IEnumerable<LeaveTypeModel> LeaveType { get; set; }
     }
 }

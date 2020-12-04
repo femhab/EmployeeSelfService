@@ -12,8 +12,11 @@
         public const string MaximumLeaveReached = "Maximum allowed leave days reached";
         public const string LeaveExecuted = "No record found/ leave process already executed";
         public const string RecordExist = "Record already exist";
+        public const string NoRecordExist = "No record exist";
         public const string MaximumReached = "Maximum record allowed reached! update/delete from the existing record";
         public const string AlreadyApproved = "This request is already approved with this action";
+        public const string ApprovedSuccessfully = "This request is approved successfully";
+        public const string QueryCreatedSuccessfully = "You successfully submitted a query";
     }
 
     public class HRDbConfig

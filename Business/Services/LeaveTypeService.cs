@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -14,13 +15,15 @@ namespace Business.Services
 {
     public class LeaveTypeService: ILeaveTypeService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ServiceContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly SqlConnection _sqlConnection;
 
-        public LeaveTypeService(IUnitOfWork unitOfWork, ServiceContext dbContext)
+        public LeaveTypeService(ServiceContext dbContext, IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
             _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
+            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<BaseResponse> Edit(Guid id, int availableDays)
@@ -46,36 +49,54 @@ namespace Business.Services
 
         public async Task<BaseResponse> Refresh()
         {
-            var hrData = await _dbContext.hrleavedays.ToListAsync();
-            if(hrData != null)
+            //var hrData = await _dbContext.hrleavedays.ToListAsync();
+            var sql = "select * from hrleavedays";
+            SqlCommand query = new SqlCommand(sql, _sqlConnection);
+            List<hrleavedays> resource = new List<hrleavedays>();
+            _sqlConnection.Open();
+            using (SqlDataReader reader = query.ExecuteReader())
             {
-                foreach (var item in hrData)
+                while (reader.Read())
+                {
+                    hrleavedays requester = new hrleavedays()
+                    {
+                        gradeCode = reader["gradeCode"].ToString(),
+                        leaveDays = reader.GetInt32(reader.GetOrdinal("leaveDays"))
+                    };
+                    resource.Add(requester);
+                }
+                _sqlConnection.Close();
+            }
+            if (resource != null)
+            {
+                foreach (var item in resource)
                 {
                     var gradeLevel = await _unitOfWork.GetRepository<GradeLevel>().GetFirstOrDefaultAsync(predicate: x => x.GradeCode.ToLower() == item.gradeCode.ToLower());
                     //for annual
-                    var model = new LeaveType() { GradeLevelId = gradeLevel.Id, AvailableDays = item.leaveDays, Class = LeaveClass.Annual, CreatedDate = DateTime.Now };
-                    _unitOfWork.GetRepository<LeaveType>().Insert(model);
-                    //for others
-                    //
-                    model.AvailableDays = 0;
-                    model.Class = LeaveClass.Casual;
-                    _unitOfWork.GetRepository<LeaveType>().Insert(model);
-                    //
-                    model.AvailableDays = 0;
-                    model.Class = LeaveClass.Exam;
-                    _unitOfWork.GetRepository<LeaveType>().Insert(model);
-                    //
-                    model.AvailableDays = 0;
-                    model.Class = LeaveClass.Maternity;
-                    _unitOfWork.GetRepository<LeaveType>().Insert(model);
-                    //
-                    model.AvailableDays = 0;
-                    model.Class = LeaveClass.Sick;
-                    _unitOfWork.GetRepository<LeaveType>().Insert(model);
-                    //
-                    model.AvailableDays = 0;
-                    model.Class = LeaveClass.Study;
-                    _unitOfWork.GetRepository<LeaveType>().Insert(model);
+                    if(gradeLevel != null)
+                    {
+                        List<LeaveType> leaveTypeList = new List<LeaveType>(); 
+                        var model = new LeaveType() { GradeLevelId = gradeLevel.Id, AvailableDays = item.leaveDays, Class = LeaveClass.Annual, Id = Guid.NewGuid(), CreatedDate = DateTime.Now };
+                        //_unitOfWork.GetRepository<LeaveType>().Insert(model);
+                        leaveTypeList.Add(model);
+                        //for others
+
+                        leaveTypeList.Add(new LeaveType() { GradeLevelId = gradeLevel.Id, AvailableDays = 0, Class = LeaveClass.Casual, Id = Guid.NewGuid(), CreatedDate = DateTime.Now});
+
+                        leaveTypeList.Add(new LeaveType() { GradeLevelId = gradeLevel.Id, AvailableDays = 0, Class = LeaveClass.Exam, Id = Guid.NewGuid(), CreatedDate = DateTime.Now });
+                        //
+                        leaveTypeList.Add(new LeaveType() { GradeLevelId = gradeLevel.Id, AvailableDays = 0, Class = LeaveClass.Maternity, Id = Guid.NewGuid(), CreatedDate = DateTime.Now});
+                        //
+                        leaveTypeList.Add(new LeaveType() { GradeLevelId = gradeLevel.Id, AvailableDays = 0, Class = LeaveClass.Sick, Id = Guid.NewGuid(), CreatedDate = DateTime.Now });
+                        //
+                        leaveTypeList.Add(new LeaveType() { GradeLevelId = gradeLevel.Id, AvailableDays = 0, Class = LeaveClass.Study, Id = Guid.NewGuid(), CreatedDate = DateTime.Now });
+
+                        foreach(var leaveTypes in leaveTypeList)
+                        {
+                            _unitOfWork.GetRepository<LeaveType>().Insert(leaveTypes);
+                        }
+                    }
+                    
                 }
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
@@ -85,7 +106,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<LeaveType>> GetAll(Expression<Func<LeaveType, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<LeaveType>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), "Employee");
+            var model = await _unitOfWork.GetRepository<LeaveType>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), "GradeLevel");
             return model;
         }
 

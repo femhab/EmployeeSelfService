@@ -256,14 +256,15 @@
                                                 <ul class="nav nav-tabs nav-tabs-solid">
                                                     @foreach (var item in Model.AppraisalCategories)
                                                     {
-                                                        <li class="nav-item"><a href="#appr_technical" data-toggle="tab" class="nav-link">@item.Description</a></li>
+                                                        <li class="nav-item"><a href="#appr_technical" data-toggle="tab" class="nav-link" onclick="onSelectCategory(this.id);" id="@item.OrderNo">@item.Description</a></li>
+                   
                                                     }
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="tab-content">
-                                        
+
                                         <div id="appr_technical" class="pro-overview tab-pane fade show active">
                                             <div class="row">
                                                 <div class="col-sm-12">
@@ -271,27 +272,162 @@
                                                         <table class="table">
                                                             <thead>
                                                                 <tr>
-                                                                    <th colspan="5">Technical Competencies</th>
+                                                                    <th colspan="5" id="description"></th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody>
+                                                            <tbody id="tsbody" hidden>
                                                                 <tr>
                                                                     <th colspan="2">Indicator</th>
                                                                     <th colspan="2">Expected Value</th>
                                                                     <th>Set Value</th>
                                                                 </tr>
-                                                                <tr id="categoryitem">
-                                                                    <td scope="row" colspan="2" id="categoryitemdescription">Customer Experience</td>
-                                                                    <td colspan="2">Meets Expectation</td>
-                                                                    <td>
-                                                                        <select name="customer_experience" class="form-control">
-                                                                            @foreach (var item in Model.AppraisalRatings)
-                                                                            {
-                                                                                <option value="@item.Weight">@item.Description</option>
-                                                                            }
-                                                                        </select>
-                                                                    </td>
+                                                                @foreach (var categoryItem in Model.AppraisalCategoryItems.Where(x => x.AppraisalCategoryCode.ToLower() == "ts" && x.StaffType.ToLower() == Model.Employee.StaffType.ToLower()))
+                                                                {
+                                                                    <tr id="categoryitem">
+                                                                        <td scope="row" colspan="2" id="categoryitemdescription">@categoryItem.Description</td>
+                                                                        <td colspan="2">Meets Expectation</td>
+                                                                        <td>
+                                                                            <select name="customer_experience" class="form-control">
+                                                                                @foreach (var item in Model.AppraisalRatings)
+                                                                                {
+                                                                                    <option value="@item.Weight">@item.Description</option>
+                                                                                }
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                            <tbody id="qwbody" hidden>
+                                                                <tr>
+                                                                    <th colspan="2">Indicator</th>
+                                                                    <th colspan="2">Expected Value</th>
+                                                                    <th>Set Value</th>
                                                                 </tr>
+                                                                @foreach (var categoryItem in Model.AppraisalCategoryItems.Where(x => x.AppraisalCategoryCode.ToLower() == "qw" && x.StaffType.ToLower() == Model.Employee.StaffType.ToLower()))
+                                                                {
+                                                                    <tr id="categoryitem">
+                                                                        <td scope="row" colspan="2" id="categoryitemdescription">@categoryItem.Description</td>
+                                                                        <td colspan="2">Meets Expectation</td>
+                                                                        <td>
+                                                                            <select name="customer_experience" class="form-control">
+                                                                                @foreach (var item in Model.AppraisalRatings)
+                                                                                {
+                                                                                    <option value="@item.Weight">@item.Description</option>
+                                                                                }
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                            <tbody id="qtbody" hidden>
+                                                                <tr>
+                                                                    <th colspan="2">Indicator</th>
+                                                                    <th colspan="2">Expected Value</th>
+                                                                    <th>Set Value</th>
+                                                                </tr>
+                                                                @foreach (var categoryItem in Model.AppraisalCategoryItems.Where(x => x.AppraisalCategoryCode.ToLower() == "qt" && x.StaffType.ToLower() == Model.Employee.StaffType.ToLower()))
+                                                                {
+                                                                    <tr id="categoryitem">
+                                                                        <td scope="row" colspan="2" id="categoryitemdescription">@categoryItem.Description</td>
+                                                                        <td colspan="2">Meets Expectation</td>
+                                                                        <td>
+                                                                            <select name="customer_experience" class="form-control">
+                                                                                @foreach (var item in Model.AppraisalRatings)
+                                                                                {
+                                                                                    <option value="@item.Weight">@item.Description</option>
+                                                                                }
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                            <tbody id="isbody" hidden>
+                                                                <tr>
+                                                                    <th colspan="2">Indicator</th>
+                                                                    <th colspan="2">Expected Value</th>
+                                                                    <th>Set Value</th>
+                                                                </tr>
+                                                                @foreach (var categoryItem in Model.AppraisalCategoryItems.Where(x => x.AppraisalCategoryCode.ToLower() == "is" && x.StaffType.ToLower() == Model.Employee.StaffType.ToLower()))
+                                                                {
+                                                                    <tr id="categoryitem">
+                                                                        <td scope="row" colspan="2" id="categoryitemdescription">@categoryItem.Description</td>
+                                                                        <td colspan="2">Meets Expectation</td>
+                                                                        <td>
+                                                                            <select name="customer_experience" class="form-control">
+                                                                                @foreach (var item in Model.AppraisalRatings)
+                                                                                {
+                                                                                    <option value="@item.Weight">@item.Description</option>
+                                                                                }
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                            <tbody id="csbody" hidden>
+                                                                <tr>
+                                                                    <th colspan="2">Indicator</th>
+                                                                    <th colspan="2">Expected Value</th>
+                                                                    <th>Set Value</th>
+                                                                </tr>
+                                                                @foreach (var categoryItem in Model.AppraisalCategoryItems.Where(x => x.AppraisalCategoryCode.ToLower() == "cs" && x.StaffType.ToLower() == Model.Employee.StaffType.ToLower()))
+                                                                {
+                                                                    <tr id="categoryitem">
+                                                                        <td scope="row" colspan="2" id="categoryitemdescription">@categoryItem.Description</td>
+                                                                        <td colspan="2">Meets Expectation</td>
+                                                                        <td>
+                                                                            <select name="customer_experience" class="form-control">
+                                                                                @foreach (var item in Model.AppraisalRatings)
+                                                                                {
+                                                                                    <option value="@item.Weight">@item.Description</option>
+                                                                                }
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                            <tbody id="awbody" hidden>
+                                                                <tr>
+                                                                    <th colspan="2">Indicator</th>
+                                                                    <th colspan="2">Expected Value</th>
+                                                                    <th>Set Value</th>
+                                                                </tr>
+                                                                @foreach (var categoryItem in Model.AppraisalCategoryItems.Where(x => x.AppraisalCategoryCode.ToLower() == "aw" && x.StaffType.ToLower() == Model.Employee.StaffType.ToLower()))
+                                                                {
+                                                                    <tr id="categoryitem">
+                                                                        <td scope="row" colspan="2" id="categoryitemdescription">@categoryItem.Description</td>
+                                                                        <td colspan="2">Meets Expectation</td>
+                                                                        <td>
+                                                                            <select name="customer_experience" class="form-control">
+                                                                                @foreach (var item in Model.AppraisalRatings)
+                                                                                {
+                                                                                    <option value="@item.Weight">@item.Description</option>
+                                                                                }
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                            <tbody id="lsbody" hidden>
+                                                                <tr>
+                                                                    <th colspan="2">Indicator</th>
+                                                                    <th colspan="2">Expected Value</th>
+                                                                    <th>Set Value</th>
+                                                                </tr>
+                                                                @foreach (var categoryItem in Model.AppraisalCategoryItems.Where(x => x.AppraisalCategoryCode.ToLower() == "ls" && x.StaffType.ToLower() == Model.Employee.StaffType.ToLower()))
+                                                                {
+                                                                    <tr id="categoryitem">
+                                                                        <td scope="row" colspan="2" id="categoryitemdescription">@categoryItem.Description</td>
+                                                                        <td colspan="2">Meets Expectation</td>
+                                                                        <td>
+                                                                            <select name="customer_experience" class="form-control">
+                                                                                @foreach (var item in Model.AppraisalRatings)
+                                                                                {
+                                                                                    <option value="@item.Weight">@item.Description</option>
+                                                                                }
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -300,15 +436,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label class="col-form-label">Status</label>
-                                <select class="select">
-                                    <option>Active</option>
-                                    <option>Inactive</option>
-                                </select>
                             </div>
                         </div>
                     </div>
@@ -630,3 +757,81 @@
     </div>
 </div>
 <!-- /Delete Performance Appraisal Modal -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function onSelectCategory(item) {
+            let description = document.getElementById(item).textContent;
+            $("#description").text(description);
+            var query = JSON.parse('@Json.Serialize(@Model.AppraisalCategories)');
+            var activeCategory = query.find(x => x.orderNo == item);
+            var categoryItems = JSON.parse('@Json.Serialize(@Model.AppraisalCategoryItems)');
+            var listedItems = categoryItems.filter(x => x.appraisalCategoryCode == activeCategory.appraisalCategoryCode);
+            if (activeCategory.appraisalCategoryCode == "TS") {
+                document.getElementById('tsbody').removeAttribute("hidden");
+                document.getElementById('lsbody').setAttribute("hidden", true);
+                document.getElementById('qwbody').setAttribute("hidden", true);
+                document.getElementById('qtbody').setAttribute("hidden", true);
+                document.getElementById('isbody').setAttribute("hidden", true);
+                document.getElementById('csbody').setAttribute("hidden", true);
+                document.getElementById('awbody').setAttribute("hidden", true);
+            }
+            else if (activeCategory.appraisalCategoryCode == "LS") {
+                document.getElementById('lsbody').removeAttribute("hidden");
+                document.getElementById('tsbody').setAttribute("hidden", true);
+                document.getElementById('qwbody').setAttribute("hidden", true);
+                document.getElementById('qtbody').setAttribute("hidden", true);
+                document.getElementById('isbody').setAttribute("hidden", true);
+                document.getElementById('csbody').setAttribute("hidden", true);
+                document.getElementById('awbody').setAttribute("hidden", true);
+            }
+            else if (activeCategory.appraisalCategoryCode == "QW") {
+                document.getElementById('qwbody').removeAttribute("hidden");
+                document.getElementById('tsbody').setAttribute("hidden", true);
+                document.getElementById('lsbody').setAttribute("hidden", true);
+                document.getElementById('qtbody').setAttribute("hidden", true);
+                document.getElementById('isbody').setAttribute("hidden", true);
+                document.getElementById('csbody').setAttribute("hidden", true);
+                document.getElementById('awbody').setAttribute("hidden", true);
+            }
+            else if (activeCategory.appraisalCategoryCode == "QT") {
+                document.getElementById('qtbody').removeAttribute("hidden");
+                document.getElementById('tsbody').setAttribute("hidden", true);
+                document.getElementById('lsbody').setAttribute("hidden", true);
+                document.getElementById('qwbody').setAttribute("hidden", true);
+                document.getElementById('isbody').setAttribute("hidden", true);
+                document.getElementById('csbody').setAttribute("hidden", true);
+                document.getElementById('awbody').setAttribute("hidden", true);
+            }
+            else if (activeCategory.appraisalCategoryCode == "IS") {
+                document.getElementById('isbody').removeAttribute("hidden");
+                document.getElementById('tsbody').setAttribute("hidden", true);
+                document.getElementById('lsbody').setAttribute("hidden", true);
+                document.getElementById('qtbody').setAttribute("hidden", true);
+                document.getElementById('qwbody').setAttribute("hidden", true);
+                document.getElementById('csbody').setAttribute("hidden", true);
+                document.getElementById('awbody').setAttribute("hidden", true);
+            }
+            else if (activeCategory.appraisalCategoryCode == "CS") {
+                document.getElementById('csbody').removeAttribute("hidden");
+                document.getElementById('tsbody').setAttribute("hidden", true);
+                document.getElementById('lsbody').setAttribute("hidden", true);
+                document.getElementById('qtbody').setAttribute("hidden", true);
+                document.getElementById('isbody').setAttribute("hidden", true);
+                document.getElementById('qwbody').setAttribute("hidden", true);
+                document.getElementById('awbody').setAttribute("hidden", true);
+            }
+            else if (activeCategory.appraisalCategoryCode == "AW") {
+                document.getElementById('awbody').removeAttribute("hidden");
+                document.getElementById('tsbody').setAttribute("hidden", true);
+                document.getElementById('lsbody').setAttribute("hidden", true);
+                document.getElementById('qtbody').setAttribute("hidden", true);
+                document.getElementById('isbody').setAttribute("hidden", true);
+                document.getElementById('csbody').setAttribute("hidden", true);
+                document.getElementById('qwbody').setAttribute("hidden", true);
+            }
+            //categoryitem
+        }
+    </script>
+}

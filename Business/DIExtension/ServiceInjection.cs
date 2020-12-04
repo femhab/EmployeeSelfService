@@ -21,11 +21,18 @@ namespace Business.DIExtension
             services.AddTransient<IAppraisalCategoryService, AppraisalCategoryService>();
             services.AddTransient<IAppraisalCategoryItemService, AppraisalCategoryItemService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IEmployeeNOKDetailService, EmployeeNOKDetailService>();
+            services.AddTransient<IEmployeeAddressService, EmployeeAddressService>();
+            services.AddTransient<IEmployeeEducationalDetailService, EmployeeEducationalDetailService>();
+            services.AddTransient<IEmployeeApprovalConfigService, EmployeeApprovalConfigService>();
             services.AddTransient<IApprovalWorkItemService, ApprovalWorkItemService>();
             services.AddTransient<IApprovalBoardService, ApprovalBoardService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserRoleService, UserRoleService>();
             services.AddTransient<IDepartmentService, DepartmentService>();
+            services.AddTransient<ILeaveService, LeaveService>();
+            services.AddTransient<ILeaveTypeService, LeaveTypeService>();
+            services.AddTransient<IGradeLevelService, GradeLevelService>();
 
 
             return services;
