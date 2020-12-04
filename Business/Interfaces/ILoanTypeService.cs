@@ -10,7 +10,7 @@ namespace Business.Interfaces
     {
         Task<BaseResponse> Create(LoanType model);
         Task<IEnumerable<LoanType>> GetAll();
-        Task<BaseResponse> Update(LoanType model);
+        Task<BaseResponse> Edit(Guid id, string name);
         Task<BaseResponse> Delete(Guid id);
     }
 }

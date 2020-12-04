@@ -60,7 +60,7 @@ namespace Business.Services
 
                 _unitOfWork.GetRepository<UserRole>().Update(model);
                 await _unitOfWork.SaveChangesAsync();
-                return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
+                return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful }; ;
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }

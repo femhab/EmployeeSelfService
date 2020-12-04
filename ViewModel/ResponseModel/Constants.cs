@@ -17,9 +17,17 @@
         public const string AlreadyApproved = "This request is already approved with this action";
         public const string ApprovedSuccessfully = "This request is approved successfully";
         public const string QueryCreatedSuccessfully = "You successfully submitted a query";
+        public const string LoanCreatedSuccessfully = "You loan request was submitted successfully";
+        public const string LoanTypeExist = "You already have an ongoing/approved/pending loan of this type";
+        public const string LoanProcessStarted = "You can not update a loan when process already started";
     }
 
     public class HRDbConfig
+    {
+        public const string ConnectionStringUrl = "Server=localhost\\SQLEXPRESS;Database=PEERSHR;Integrated Security=true;";
+    }
+
+    public class PayrollDbConfig
     {
         public const string ConnectionStringUrl = "Server=localhost\\SQLEXPRESS;Database=PEERSHR;Integrated Security=true;";
     }

@@ -9,8 +9,8 @@ namespace Business.Interfaces
     public interface ILoanService
     {
         Task<BaseResponse> Create(Loan model);
-        Task<BaseResponse> Update(Loan model);
+        Task<BaseResponse> Edit(Loan request);
         Task<IEnumerable<Loan>> GetByEmployee(Guid employeeId);
-        Task<BaseResponse> CheckEligibility(string Emp_No);
+        Task<LoanEligibilityResponseModel> CheckEligibility(string Emp_No);
     }
 }
