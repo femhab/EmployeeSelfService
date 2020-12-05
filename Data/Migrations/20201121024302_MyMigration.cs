@@ -528,37 +528,37 @@ namespace Data.Migrations
                         onDelete: ReferentialAction.NoAction);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "EmployeeRoles",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
-                    UpdatedDate = table.Column<DateTime>(nullable: true),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    EmployeeId = table.Column<Guid>(nullable: false),
-                    Emp_No = table.Column<string>(nullable: true),
-                    RoleId = table.Column<int>(nullable: false),
-                    RoleId1 = table.Column<Guid>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeRoles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EmployeeRoles_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EmployeeRoles_RoleType_RoleId1",
-                        column: x => x.RoleId1,
-                        principalTable: "RoleType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+            //migrationBuilder.CreateTable(
+            //    name: "EmployeeRoles",
+            //    columns: table => new
+            //    {
+            //        Id = table.Column<Guid>(nullable: false),
+            //        CreatedBy = table.Column<string>(nullable: true),
+            //        CreatedDate = table.Column<DateTime>(nullable: false),
+            //        ModifiedBy = table.Column<string>(nullable: true),
+            //        UpdatedDate = table.Column<DateTime>(nullable: true),
+            //        IsDeleted = table.Column<bool>(nullable: false),
+            //        EmployeeId = table.Column<Guid>(nullable: false),
+            //        Emp_No = table.Column<string>(nullable: true),
+            //        RoleId = table.Column<int>(nullable: false),
+            //        RoleId1 = table.Column<Guid>(nullable: true)
+            //    },
+            //    constraints: table =>
+            //    {
+            //        table.PrimaryKey("PK_EmployeeRoles", x => x.Id);
+            //        table.ForeignKey(
+            //            name: "FK_EmployeeRoles_Employees_EmployeeId",
+            //            column: x => x.EmployeeId,
+            //            principalTable: "Employees",
+            //            principalColumn: "Id",
+            //            onDelete: ReferentialAction.Cascade);
+            //        table.ForeignKey(
+            //            name: "FK_EmployeeRoles_RoleType_RoleId1",
+            //            column: x => x.RoleId1,
+            //            principalTable: "RoleType",
+            //            principalColumn: "Id",
+            //            onDelete: ReferentialAction.Restrict);
+            //    });
 
             migrationBuilder.CreateTable(
                 name: "EmployeesAddress",
@@ -860,15 +860,15 @@ namespace Data.Migrations
                 table: "EmployeeNOKDetails",
                 column: "RelationshipId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_EmployeeRoles_EmployeeId",
-                table: "EmployeeRoles",
-                column: "EmployeeId");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_EmployeeRoles_EmployeeId",
+            //    table: "EmployeeRoles",
+            //    column: "EmployeeId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_EmployeeRoles_RoleId1",
-                table: "EmployeeRoles",
-                column: "RoleId1");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_EmployeeRoles_RoleId1",
+            //    table: "EmployeeRoles",
+            //    column: "RoleId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_DepartmentId",

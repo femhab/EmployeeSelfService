@@ -25,7 +25,9 @@ namespace Data.DataContext
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeAddress> EmployeesAddress { get; set; }
         public DbSet<EmployeeApprovalConfig> EmployeesApprovalConfig { get; set; }
+        public DbSet<EmployeeApprovalCount> EmployeeApprovalCounts { get; set; }
         public DbSet<EmployeeEducationDetail> EmployeesEducationDetail { get; set; }
+        public DbSet<EmployeeFamilyDependent> EmployeeFamilyDependents { get; set; }
         public DbSet<EmployeeNOKDetail> EmployeeNOKDetails { get; set; }
         public DbSet<ExitProcess> ExitProcess { get; set; }
         public DbSet<ExitProcessPriorityItem> ExitProcessPriorityItem { get; set; }

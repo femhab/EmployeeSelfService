@@ -161,7 +161,18 @@
                                 <input class="form-control" type="password" id="confirmpassword">
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        @foreach (var item in Model.Roles)
+                        {
+                            <div class="col-sm-6">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="checkbox" value="@item.Id" id="@item.Id"> @item.Description
+                                    </label>
+                                </div>
+                            </div>
+                        }
+
+                        @*<div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Role <span class="text-danger">*</span></label>
                                 <select class="select" id="roleid">
@@ -172,7 +183,7 @@
                                     }
                                 </select>
                             </div>
-                        </div>
+                        </div>*@
 
                     </div>
                     <div class="submit-section" onclick="SubmitRegisterDetail()">
@@ -317,12 +328,22 @@
         var username = $("#username").val();
         var password = $("#password").val();
         var confirmpassword = $("#confirmpassword").val();
-        var roleid = $("#roleid").val();
+        //var roleid = $("#roleid").val();
+        var roleidlist = [];
+        $('input[type=checkbox]').each(function () {
+            if (this.checked) {
+                roleidlist.push(this.value);
 
-        sendRegisterForm(email, password, confirmpassword, firstname, lastname, username, empno, roleid);
+            }
+        });
+
+
+        sendRegisterForm(email, password, confirmpassword, firstname, lastname, username, empno, roleidlist);
     }
 
-    function sendRegisterForm(email, password, confirmPassword, firstName, lastName, userName, empNo, roleId) {
+        function sendRegisterForm(email, password, confirmPassword, firstName, lastName, userName, empNo, roleId) {
+
+
         $.ajax({
             url: '@Url.Action("Register", "Employee")',
             type: 'POST',

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using ViewModel.Model;
 using Web.Helper.JWT;
@@ -19,19 +20,25 @@ namespace Web.Controllers
         private readonly IAuthService _authService;
         private readonly IDepartmentService _departmentService;
         private readonly IEmployeeNOKDetailService _employeeNOKDetailService;
+        private readonly IEmployeeFamilyDependentService _employeeFamilyDependentService;
+        private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IEmployeeAddressService _employeeAddressService;
         private readonly IRoleService _roleService;
+        private readonly IRelationshipService _relationshipService;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService)
+        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService)
         {
             _employeeService = employeeService;
             _approvalWorkItemService = approvalWorkItemService;
             _authService = authService;
             _departmentService = departmentService;
             _employeeNOKDetailService = employeeNOKDetailService;
+            _employeeFamilyDependentService = employeeFamilyDependentService;
             _employeeAddressService = employeeAddressService;
+            _employeeApprovalConfigService = employeeApprovalConfigService;
             _roleService = roleService;
+            _relationshipService = relationshipService;
             _mapper = mapper;
         }
 
@@ -88,8 +95,15 @@ namespace Web.Controllers
                 EmployeeProfileViewModel profileViewModel = new EmployeeProfileViewModel();
                 var employee = await _employeeService.GetById(Guid.Parse(id));
                 var approvalWorkItem = await _approvalWorkItemService.GetAll();
+                var relationshipList = await _relationshipService.GetAll();
+                var nokList = await _employeeNOKDetailService.GetByEmployee(authData.Id);
+                var dependentList = await _employeeFamilyDependentService.GetByEmployee(authData.Id);
+
                 profileViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
                 profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(approvalWorkItem);
+                profileViewModel.Relationshiop = _mapper.Map<IEnumerable<RelationshipModel>>(relationshipList);
+                profileViewModel.NOKDetails = _mapper.Map<IEnumerable<EmployeeNOKDetailModel>>(nokList);
+                profileViewModel.Dependents = _mapper.Map<IEnumerable<EmployeeFamilyDependentModel>>(dependentList);
                 return View(profileViewModel);
             }
             catch(Exception ex)
@@ -108,7 +122,7 @@ namespace Web.Controllers
         [Route("Register")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> Register(string email, string password, string confirmPassword, string firstName, string lastName, string userName, string empNo, int roleId)
+        public async Task<ActionResult> Register(string email, string password, string confirmPassword, string firstName, string lastName, string userName, string empNo, List<Guid> roleId)
         {
             try
             {
@@ -155,7 +169,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> AddNextOfKin(string noKFirstName, string nokLastName, string nokPhonenumber, Guid nokRelationShipId, string nokEmail, string nokAddress, DateTime? nokDOB)
+        public async Task<ActionResult> AddNextOfKin(string noKFirstName, string nokLastName, string nokPhonenumber, Guid nokRelationShipId, string nokEmail, string nokAddress, string nokDOB)
         {
             try
             {
@@ -167,6 +181,8 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
+                    var dob = DateTime.ParseExact(nokDOB, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
                     var nokDetail = new EmployeeNOKDetail()
                     {
                         Emp_No = authData.Emp_No,
@@ -176,7 +192,7 @@ namespace Web.Controllers
                         PhoneNumber = nokPhonenumber,
                         RelationshipId = nokRelationShipId,
                         Email = nokEmail,
-                        DOB = nokDOB,
+                        DOB = dob,
                         Status = ApprovalStatus.Pending,
                         Address = nokAddress,
                         Id = Guid.NewGuid(),
@@ -206,7 +222,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> AddDependents(string depFirstName, string depLastName, string depPhonenumber, Guid depRelationShipId)
+        public async Task<ActionResult> AddDependent(string depFirstName, string depLastName, string depPhonenumber, Guid depRelationShipId, string depAddress, string depDOB)
         {
             try
             {
@@ -218,15 +234,91 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
+                    var dob = DateTime.ParseExact(depDOB, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
+                    var depDetail = new EmployeeFamilyDependent()
+                    {
+                        Emp_No = authData.Emp_No,
+                        EmployeeId = authData.Id,
+                        FirstName = depFirstName,
+                        LastName = depLastName,
+                        PhoneNumber = depPhonenumber,
+                        RelationshipId = depRelationShipId,
+                        DOB = dob,
+                        Status = ApprovalStatus.Pending,
+                        Address = depAddress,
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now
+                    };
 
-                    var nokDetail = await _employeeNOKDetailService.Create(null); //dependent service
+                    var response = await _employeeFamilyDependentService.Create(depDetail);
 
                     return Json(new
                     {
-                        status = nokDetail.Status,
-                        message = nokDetail.Message ?? "Failed to create Next of Kin Detail."
+                        status = response.Status,
+                        message = response.Message ?? "Failed to create Next of Kin Detail."
                     });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        //action section
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> AddApprovalConfig(Guid workItem, Guid employeeId, string empNo, List<Level> levels, int maxcount)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var approvalCount = new EmployeeApprovalCount()
+                    {
+                        Emp_No = empNo,
+                        EmployeeId = employeeId,
+                        MaximumCount = maxcount,
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now
+                    };
+
+                    List<EmployeeApprovalConfig> approvalConfigList = new List<EmployeeApprovalConfig>();
+
+                    foreach (var item in levels)
+                    {
+                        var approvalConfig = new EmployeeApprovalConfig()
+                        {
+                            Emp_No = empNo,
+                            EmployeeId = employeeId,
+                            ApprovalWorkItemId = workItem,
+                            ApprovalLevel = item,
+                            Id = Guid.NewGuid(),
+                            CreatedDate = DateTime.Now
+                        };
+                        approvalConfigList.Add(approvalConfig);
+                    }
+                    
+                    var approvalConfigResponse = await _employeeApprovalConfigService.CreateUpdate(approvalConfigList);
+                    var approvalCountResponse = await _employeeApprovalConfigService.SetApprovalCount(approvalCount);
+
+                    return Json(new
+                    {
+                        status = (approvalConfigResponse.Status && approvalCountResponse.Status) ? true : false,
+                        message = (approvalConfigResponse.Status && approvalCountResponse.Status) ? approvalConfigResponse.Message : "Oops! Failed to create configuration. Please try again"
+                    }) ;
                 }
                 return Json(new
                 {

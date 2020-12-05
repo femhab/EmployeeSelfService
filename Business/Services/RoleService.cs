@@ -57,45 +57,6 @@ namespace Business.Services
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<BaseResponse> Refresh()
-        {
-            var sql = "select * from HRRoles";
-            SqlCommand query = new SqlCommand(sql, _sqlConnection);
-            List<HRRoles> roleList = new List<HRRoles>();
-            _sqlConnection.Open();
-            using (SqlDataReader reader = query.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    HRRoles requester = new HRRoles()
-                    {
-                        RoleID = reader.GetInt32(reader.GetOrdinal("RoleID")),
-                        Description = reader["Description"].ToString(),
-                    };
-                    roleList.Add(requester);
-                }
-                _sqlConnection.Close();
-            }
-            if (roleList != null)
-            {
-                foreach (var item in roleList)
-                {
-                    var check = await _unitOfWork.GetRepository<Role>().GetFirstOrDefaultAsync(predicate: x => x.RoleId == item.RoleID);
-
-                    if (check == null)
-                    {
-                        var role = new Role() { Description = item.Description, RoleId = item.RoleID, CreatedDate = DateTime.Now, Id = Guid.NewGuid()};
-
-                        _unitOfWork.GetRepository<Role>().Insert(role);
-                    }
-
-                }
-                await _unitOfWork.SaveChangesAsync();
-                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
-            }
-            return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
-        }
-
         public async Task<IEnumerable<Role>> GetAll()
         {
             var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()));

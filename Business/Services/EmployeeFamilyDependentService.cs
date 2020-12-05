@@ -1,33 +1,33 @@
-﻿using System;
+﻿using Business.Interfaces;
+using Data.Entities;
+using Data.Enums;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Business.Interfaces;
-using Data.Entities;
-using Data.Enums;
-using Microsoft.EntityFrameworkCore;
 using ViewModel.ResponseModel;
 
 namespace Business.Services
 {
-    public class EmployeeNOKDetailService: IEmployeeNOKDetailService
+    public class EmployeeFamilyDependentService: IEmployeeFamilyDependentService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IApprovalBoardService _approvalBoardService;
 
-        public EmployeeNOKDetailService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService)
+        public EmployeeFamilyDependentService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService)
         {
             _unitOfWork = unitOfWork;
             _approvalBoardService = approvalBoardService;
         }
 
-        public async Task<BaseResponse> Create(EmployeeNOKDetail model)
+        public async Task<BaseResponse> Create(EmployeeFamilyDependent model)
         {
-            var check = await GetAll(x => x.EmployeeId == model.EmployeeId );
+            var check = await GetAll(x => x.EmployeeId == model.EmployeeId);
             if (check.Count() < 3)
             {
-                _unitOfWork.GetRepository<EmployeeNOKDetail>().Insert(model);
+                _unitOfWork.GetRepository<EmployeeFamilyDependent>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
 
                 //submit for approval
@@ -58,55 +58,54 @@ namespace Business.Services
             var model = await GetById(id);
             if (model != null)
             {
-                _unitOfWork.GetRepository<EmployeeNOKDetail>().Delete(model);
+                _unitOfWork.GetRepository<EmployeeFamilyDependent>().Delete(model);
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful }; ;
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<BaseResponse> Edit(Guid id, string firstName, string lastName, string email, string phoneNumber, DateTime? dob, string address, Guid relationshipId)
+        public async Task<BaseResponse> Edit(Guid id, string firstName, string lastName, string phoneNumber, DateTime? dob, string address, Guid relationshipId)
         {
             var model = await GetById(id);
             if (model != null)
             {
                 model.FirstName = firstName;
                 model.LastName = lastName;
-                model.Email = email;
                 model.PhoneNumber = phoneNumber;
                 model.DOB = dob;
                 model.Address = address;
                 model.RelationshipId = relationshipId;
                 model.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.GetRepository<EmployeeNOKDetail>().Update(model);
+                _unitOfWork.GetRepository<EmployeeFamilyDependent>().Update(model);
                 await _unitOfWork.SaveChangesAsync();
-                return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful } ;
+                return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<IEnumerable<EmployeeNOKDetail>> GetAll()
+        public async Task<IEnumerable<EmployeeFamilyDependent>> GetAll()
         {
-            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()), "Relationship,Employee");
+            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()));
             return data;
         }
 
-        public async Task<IEnumerable<EmployeeNOKDetail>> GetByEmployee(Guid employeeId)
+        public async Task<IEnumerable<EmployeeFamilyDependent>> GetByEmployee(Guid employeeId)
         {
             var data = await GetAll(x => x.EmployeeId == employeeId, "Relationship");
             return data;
         }
 
-        public async Task<IEnumerable<EmployeeNOKDetail>> GetAll(Expression<Func<EmployeeNOKDetail, bool>> predicate, string include = null, bool includeDeleted = false)
+        public async Task<IEnumerable<EmployeeFamilyDependent>> GetAll(Expression<Func<EmployeeFamilyDependent, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<EmployeeNOKDetail>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
+            var model = await _unitOfWork.GetRepository<EmployeeFamilyDependent>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
             return model;
         }
 
-        public async Task<EmployeeNOKDetail> GetById(Guid id)
+        public async Task<EmployeeFamilyDependent> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<EmployeeNOKDetail>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            var model = await _unitOfWork.GetRepository<EmployeeFamilyDependent>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
             return model;
         }
     }

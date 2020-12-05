@@ -52,5 +52,8 @@ namespace ViewModel.Model
         public EmployeeModel Employee { get; set; }
         public int ApprovalCount { get; set; }
         public IEnumerable<ApprovalWorkItemModel> ApprovalWorkItem { get; set; }
+        public IEnumerable<RelationshipModel> Relationshiop { get; set; }
+        public IEnumerable<EmployeeFamilyDependentModel> Dependents { get; set; }
+        public IEnumerable<EmployeeNOKDetailModel> NOKDetails { get; set; }
     }
 }

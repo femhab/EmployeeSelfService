@@ -23,8 +23,8 @@ namespace Business.Services
         {
             try
             {
-                var check = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId && x.RoleId == model.RoleId);
-                if (check == null)
+                var check = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId );
+                if (check == null) //&& x.RoleId == model.RoleId
                 {
                     _unitOfWork.GetRepository<UserRole>().Insert(model);
                     await _unitOfWork.SaveChangesAsync();
@@ -50,7 +50,7 @@ namespace Business.Services
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<BaseResponse> Edit(Guid id, int roleId)
+        public async Task<BaseResponse> Edit(Guid id, Guid roleId)
         {
             var model = await GetById(id);
             if (model != null)

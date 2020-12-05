@@ -8,7 +8,7 @@ namespace Data.Entities
         public Guid EmployeeId { get; set; } //employee Id
         public Employee Employee { get; set; }
         public string Emp_No { get; set; } //employee No
-        public int RoleId { get; set; } //leave manager
+        public Guid RoleId { get; set; } //leave manager
         public Role Role { get; set; }
     }
 }

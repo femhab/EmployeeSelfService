@@ -32,7 +32,7 @@ namespace Business.Services
             _mapper = mapper;
         }
 
-        public async Task<(bool status, string message, string token, string refreshToken)> Register(string email, string password, string lastName, string firstName, string userName, string empNo, int roleId, string createdBy = null)
+        public async Task<(bool status, string message, string token, string refreshToken)> Register(string email, string password, string lastName, string firstName, string userName, string empNo, List<Guid> roleId, string createdBy = null)
         {
             //check for existing user
             var checkuser = await _userManager.FindByEmailAsync(email) ?? await _userManager.FindByNameAsync(empNo);
@@ -48,16 +48,19 @@ namespace Business.Services
             if (result.Succeeded)
             {
                 //save the domain user into the user table                  
-                var employeeModel = new Employee { FirstName = firstName, LastName = lastName, UserName = userName, EmailAddress = email, Emp_No = empNo, Id = Guid.NewGuid(), CreatedDate = DateTime.Now, CreatedBy = createdBy };
-
-                var employeeRole = new UserRole() { EmployeeId = employeeModel.Id, Emp_No = empNo, RoleId = roleId, Id = Guid.NewGuid(), CreatedDate = DateTime.Now, CreatedBy = createdBy };
-
+                var employeeModel = new Employee { FirstName = firstName, LastName = lastName, UserName = userName, EmailAddress = email, Emp_No = empNo, Id = Guid.NewGuid(), CreatedDate = DateTime.Now, CreatedBy = createdBy };             
+               
                 var userdata = await _employeeService.Create(employeeModel);
                 if (userdata.Status)
                 {
                     //use my queue package to send email
                     //create userrole
-                    await _userRoleService.Create(employeeRole);
+                    foreach (var item in roleId)
+                    {
+                        var employeeRole = new UserRole() { EmployeeId = employeeModel.Id, Emp_No = empNo, RoleId = item, Id = Guid.NewGuid(), CreatedDate = DateTime.Now, CreatedBy = createdBy };
+                        await _userRoleService.Create(employeeRole);
+                    }
+                    
 
                     return (true, "Your registration was successful!", null, null);
                 }

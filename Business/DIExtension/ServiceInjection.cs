@@ -22,6 +22,7 @@ namespace Business.DIExtension
             services.AddTransient<IAppraisalCategoryItemService, AppraisalCategoryItemService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IEmployeeNOKDetailService, EmployeeNOKDetailService>();
+            services.AddTransient<IEmployeeFamilyDependentService, EmployeeFamilyDependentService>();
             services.AddTransient<IEmployeeAddressService, EmployeeAddressService>();
             services.AddTransient<IEmployeeEducationalDetailService, EmployeeEducationalDetailService>();
             services.AddTransient<IEmployeeApprovalConfigService, EmployeeApprovalConfigService>();
@@ -33,6 +34,7 @@ namespace Business.DIExtension
             services.AddTransient<ILeaveService, LeaveService>();
             services.AddTransient<ILeaveTypeService, LeaveTypeService>();
             services.AddTransient<IGradeLevelService, GradeLevelService>();
+            services.AddTransient<IRelationshipService, RelationshipService>();
 
 
             return services;
