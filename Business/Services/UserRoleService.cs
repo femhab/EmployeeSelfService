@@ -23,8 +23,8 @@ namespace Business.Services
         {
             try
             {
-                var check = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId );
-                if (check == null) //&& x.RoleId == model.RoleId
+                var check = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId && x.RoleId == model.RoleId);
+                if (check == null) //
                 {
                     _unitOfWork.GetRepository<UserRole>().Insert(model);
                     await _unitOfWork.SaveChangesAsync();
@@ -67,13 +67,13 @@ namespace Business.Services
 
         public async Task<IEnumerable<UserRole>> GetAll()
         {
-            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()));
+            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()), "Employee,Role");
             return data;
         }
 
         public async Task<IEnumerable<UserRole>> GetAll(Expression<Func<UserRole, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<UserRole>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var model = await _unitOfWork.GetRepository<UserRole>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
             return model;
         }
 

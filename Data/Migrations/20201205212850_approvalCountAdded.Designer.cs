@@ -4,14 +4,16 @@ using Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(EmployeeServiceContext))]
-    partial class EmployeeServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20201205212850_approvalCountAdded")]
+    partial class approvalCountAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -326,53 +328,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApprovalWorkItems");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("a589d2b2-4126-4d7c-9844-f990c436b50f"),
-                            CreatedBy = "Data Seed",
-                            CreatedDate = new DateTime(2020, 12, 5, 22, 56, 54, 859, DateTimeKind.Local).AddTicks(8654),
-                            Description = "Leave Service",
-                            IsDeleted = false,
-                            Name = "Leave"
-                        },
-                        new
-                        {
-                            Id = new Guid("8e087cb4-479d-41fa-bb63-520c19afd4ce"),
-                            CreatedBy = "Data Seed",
-                            CreatedDate = new DateTime(2020, 12, 5, 22, 56, 54, 860, DateTimeKind.Local).AddTicks(4805),
-                            Description = "Loan Service",
-                            IsDeleted = false,
-                            Name = "Loan"
-                        },
-                        new
-                        {
-                            Id = new Guid("5de656a6-e9fb-4636-a45b-b54532f455c5"),
-                            CreatedBy = "Data Seed",
-                            CreatedDate = new DateTime(2020, 12, 5, 22, 56, 54, 860, DateTimeKind.Local).AddTicks(4819),
-                            Description = "Appraisal Service",
-                            IsDeleted = false,
-                            Name = "Appraisal"
-                        },
-                        new
-                        {
-                            Id = new Guid("162252a9-b394-4b2e-b632-617e87c749e9"),
-                            CreatedBy = "Data Seed",
-                            CreatedDate = new DateTime(2020, 12, 5, 22, 56, 54, 860, DateTimeKind.Local).AddTicks(4832),
-                            Description = "Transfer Service",
-                            IsDeleted = false,
-                            Name = "Transfer"
-                        },
-                        new
-                        {
-                            Id = new Guid("206f9e17-a09e-4381-bbb3-278003e0c95d"),
-                            CreatedBy = "Data Seed",
-                            CreatedDate = new DateTime(2020, 12, 5, 22, 56, 54, 860, DateTimeKind.Local).AddTicks(4833),
-                            Description = "Diciplinary Service",
-                            IsDeleted = false,
-                            Name = "Diciplinary"
-                        });
                 });
 
             modelBuilder.Entity("Data.Entities.Department", b =>

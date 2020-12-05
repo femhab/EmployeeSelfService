@@ -62,7 +62,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<ApprovalWorkItem>> GetAll(Expression<Func<ApprovalWorkItem, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var model = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
             return model;
         }
 

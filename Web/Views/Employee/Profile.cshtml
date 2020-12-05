@@ -244,7 +244,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6 d-flex">
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "leave").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
                             <h3 class="card-title">Leave Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
@@ -648,6 +648,8 @@
                             <div class="form-group">
                                 <label class="col-form-label">Employee Name <span class="text-danger">*</span></label>
                                 <input type="text" readonly value="@Model.Employee.FirstName @Model.Employee.LastName" class="form-control">
+                                <input type="text" readonly hidden id="empno" value="@Model.Employee.Emp_No" class="form-control">
+                                <input type="text" readonly hidden id="empid" value="@Model.Employee.Id" class="form-control">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -669,108 +671,128 @@
                                 <tr class="hideElement">
                                     <td>First Level</td>
                                     <td class="text-center">
-                                        <select class="select" id="table1">
+                                        <select class="select" id="table1select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table2" hidden>
                                     <td>Second Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table2select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table3" hidden>
                                     <td>Third Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table3select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table4" hidden>
                                     <td>Fourth Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table4select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table5" hidden>
                                     <td>Fifth Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table5select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table6" hidden>
                                     <td>Sixth Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table6select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table7" hidden>
                                     <td>Seventh Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table7select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table8" hidden>
                                     <td>Eight Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table8select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table9" hidden>
                                     <td>Nineth Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table9select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                                 <tr class="hideElement" id="table10" hidden>
                                     <td>Seventh Level</td>
                                     <td class="text-center">
-                                        <select class="select">
+                                        <select class="select" id="table10select">
                                             <option value="">Select</option>
-                                            <option value="">Lasisi Ola</option>
-                                            <option value="1">Ade Fortune</option>
+                                            @foreach (var item in Model.UserRoles)
+                                            {
+                                                <option value="@item.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
                                         </select>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
+                    <div class="submit-section" onclick="SubmitApprovalConfig()">
+                        <div class="btn btn-primary submit-btn">Submit</div>
                     </div>
                 </form>
             </div>
@@ -1243,6 +1265,12 @@
     <script type="text/javascript">
 
         var countApproval = 0;
+        var workItem;
+
+        function GetWorkItem(item) {
+            workItem = item;
+            console.log(workItem);
+        }
 
         function SubmitCount()
         {
@@ -1276,6 +1304,43 @@
             AddDependents(depfirstname, deplastname, depphoneno, depaddress, deprelationshipid, depdob);
         }
 
+        function SubmitApprovalConfig() {
+            var dict = new Object();
+            var maxcount = $("#maxcount").val();
+            var empno = $("#empno").val();
+            var empid = $("#empid").val();
+            dict[1] = $("#table1select").val();
+            if (maxcount >= 2) {
+                dict[2] = $("#table2select").val();
+            }
+            if (maxcount >= 3) {
+                dict[3] = $("#table3select").val();
+            }
+            if (maxcount >= 4 ) {
+                dict[4] = $("#table4select").val();
+            }
+            if (maxcount >= 5 ) {
+                dict[5] = $("#table5select").val();
+            }
+            if (maxcount >= 6 ) {
+                dict[6] = $("#table6select").val();
+            }
+            if (maxcount >= 7 ) {
+                dict[7] = $("#table7select").val();
+            }
+            if (maxcount >= 8 ) {
+                dict[8] = $("#table8select").val();
+            }
+            if (maxcount >= 9 ) {
+                dict[9] = $("#table9select").val();
+            }
+            if (maxcount >= 10 ) {
+                dict[10] = $("#table10select").val();
+            }
+
+            AddApprovalConfigs(workItem, empid, empno, dict, maxcount);
+        }
+
         function sendApprovalCount(count) {
             $.ajax({
                 url: '@Url.Action("CountProcessor", "Employee")',
@@ -1295,7 +1360,9 @@
                 }
             });
         }
-        var redirectUrl = '@Url.Action("Profile", "Employee", new { id="default" })';
+
+        //var redirectUrl = '@Url.Action("Profile", "Employee", new { id="default" })';
+        var redirectUrl = '@Url.Action("Employee", "Dashboard")';
         function AddNextOfKin(nokFirstName, nokLastName, nokEmail, nokPhoneNumber, nokAddress, nokrelationshipId, nokDob ) {
             $.ajax({
                 url: '@Url.Action("AddNextOfKin", "Employee")',
@@ -1336,12 +1403,12 @@
             });
         }
 
-        function AddApprovalConfigs(workItem, employeeId, empNo, levels  ,maxcount ) {
+        function AddApprovalConfigs(workItem, employeeId, empNo, levelApproval  ,maxcount ) {
             $.ajax({
                 url: '@Url.Action("AddApprovalConfig", "Employee")',
                 type: 'POST',
                 dataType: 'json',
-                data: { depFirstName: depFirstName},
+                data: { workItem: workItem, employeeId: employeeId, empNo: empNo, levelApproval: levelApproval, maxcount: maxcount},
                 success: function (response) {
                     if (response.status) {
                     }

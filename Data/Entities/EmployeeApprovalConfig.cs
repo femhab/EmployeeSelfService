@@ -10,7 +10,7 @@ namespace Data.Entities
         public Employee Employee { get; set; }
         public string Emp_No { get; set; }
         public Level ApprovalLevel { get; set; } //first level
-        public Guid ProcessorIId { get; set; }
+        public Guid? ProcessorIId { get; set; }
         public Guid ApprovalWorkItemId { get; set; }
         public ApprovalWorkItem ApprovalWorkItem { get; set; } //leave service
     }

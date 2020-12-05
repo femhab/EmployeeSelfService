@@ -24,10 +24,11 @@ namespace Web.Controllers
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IEmployeeAddressService _employeeAddressService;
         private readonly IRoleService _roleService;
+        private readonly IUserRoleService _userRoleService;
         private readonly IRelationshipService _relationshipService;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService)
+        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService)
         {
             _employeeService = employeeService;
             _approvalWorkItemService = approvalWorkItemService;
@@ -38,6 +39,7 @@ namespace Web.Controllers
             _employeeAddressService = employeeAddressService;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _roleService = roleService;
+            _userRoleService = userRoleService;
             _relationshipService = relationshipService;
             _mapper = mapper;
         }
@@ -98,12 +100,17 @@ namespace Web.Controllers
                 var relationshipList = await _relationshipService.GetAll();
                 var nokList = await _employeeNOKDetailService.GetByEmployee(authData.Id);
                 var dependentList = await _employeeFamilyDependentService.GetByEmployee(authData.Id);
+                var userRoles = await _userRoleService.GetAll();
+                var workItems = await _approvalWorkItemService.GetAll();
+
 
                 profileViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
                 profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(approvalWorkItem);
                 profileViewModel.Relationshiop = _mapper.Map<IEnumerable<RelationshipModel>>(relationshipList);
                 profileViewModel.NOKDetails = _mapper.Map<IEnumerable<EmployeeNOKDetailModel>>(nokList);
                 profileViewModel.Dependents = _mapper.Map<IEnumerable<EmployeeFamilyDependentModel>>(dependentList);
+                profileViewModel.UserRoles = _mapper.Map<IEnumerable<UserRoleModel>>(userRoles);
+                profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(workItems);
                 return View(profileViewModel);
             }
             catch(Exception ex)
@@ -274,7 +281,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> AddApprovalConfig(Guid workItem, Guid employeeId, string empNo, List<Level> levels, int maxcount)
+        public async Task<ActionResult> AddApprovalConfig(Guid workItem, Guid employeeId, string empNo, Dictionary<int, Guid> levelApproval, int maxcount)
         {
             try
             {
@@ -288,6 +295,7 @@ namespace Web.Controllers
 
                     var approvalCount = new EmployeeApprovalCount()
                     {
+                        ApprovalWorkItemId = workItem,
                         Emp_No = empNo,
                         EmployeeId = employeeId,
                         MaximumCount = maxcount,
@@ -297,22 +305,23 @@ namespace Web.Controllers
 
                     List<EmployeeApprovalConfig> approvalConfigList = new List<EmployeeApprovalConfig>();
 
-                    foreach (var item in levels)
+                    foreach (var item in levelApproval)
                     {
                         var approvalConfig = new EmployeeApprovalConfig()
                         {
                             Emp_No = empNo,
                             EmployeeId = employeeId,
                             ApprovalWorkItemId = workItem,
-                            ApprovalLevel = item,
+                            ProcessorIId = item.Value,
+                            ApprovalLevel = (Level)item.Key,
                             Id = Guid.NewGuid(),
                             CreatedDate = DateTime.Now
                         };
                         approvalConfigList.Add(approvalConfig);
                     }
-                    
-                    var approvalConfigResponse = await _employeeApprovalConfigService.CreateUpdate(approvalConfigList);
+
                     var approvalCountResponse = await _employeeApprovalConfigService.SetApprovalCount(approvalCount);
+                    var approvalConfigResponse = await _employeeApprovalConfigService.CreateUpdate(approvalConfigList);
 
                     return Json(new
                     {
@@ -334,7 +343,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> AddEddress(string state, string city, string streetAddress, string country, string stateOfOrigin, string lgOfOrigin)
+        public async Task<ActionResult> AddEmployeeAddress(string state, string city, string streetAddress, string country, string stateOfOrigin, string lgOfOrigin)
         {
             try
             {

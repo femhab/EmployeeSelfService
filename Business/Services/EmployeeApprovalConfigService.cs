@@ -31,13 +31,13 @@ namespace Business.Services
                     else
                     {
                         check.ProcessorIId = item.ProcessorIId;
-                        item.UpdatedDate = DateTime.Now;
+                        check.UpdatedDate = DateTime.Now;
 
                         _unitOfWork.GetRepository<EmployeeApprovalConfig>().Update(check);
                     }
-                    await _unitOfWork.SaveChangesAsync();
-                    return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
                 }
+                await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
@@ -60,9 +60,9 @@ namespace Business.Services
             else
             {
                 check.MaximumCount = model.MaximumCount;
-                model.UpdatedDate = DateTime.Now;
+                check.UpdatedDate = DateTime.Now;
 
-                _unitOfWork.GetRepository<EmployeeApprovalCount>().Update(model);
+                _unitOfWork.GetRepository<EmployeeApprovalCount>().Update(check);
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
             }
