@@ -29,25 +29,25 @@
         <div class="col-md-3">
             <div class="stats-info">
                 <h6>Emergency Loan</h6>
-                <h4>#2000/#200000</h4>
+                <h4>₦@String.Format("{0:#,###0.00}", 2000)/₦@String.Format("{0:#,###0.00}", 200000)</h4>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stats-info">
                 <h6>Housing Loan</h6>
-                <h4>#0/#278888</h4>
+                <h4>₦@String.Format("{0:#,###0.00}", 0)/₦@String.Format("{0:#,###0.00}", 278888)</h4>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stats-info">
                 <h6>Medical Loan</h6>
-                <h4>#0/#989389</h4>
+                <h4>₦@String.Format("{0:#,###0.00}", 0)/₦@String.Format("{0:#,###0.00}", 989389)</h4>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stats-info">
                 <h6>Other Loan</h6>
-                <h4>#0/#3000</h4>
+                <h4>₦@String.Format("{0:#,###0.00}", 0)/₦@String.Format("{0:#,###0.00}", 30000)</h4>
             </div>
         </div>
     </div>
@@ -62,8 +62,8 @@
                             <th>Loan Type</th>
                             <th>Start Date</th>
                             <th>End Date</th>
-                            <th>Amount Requested</th>
-                            <th>Amount Approved</th>
+                            <th>Amount Requested/Rate</th>
+                            <th>Amount Approved/Rate</th>
                             <th>Monthly Deduction</th>
                             <th>Installment(s)</th>
                             <th class="text-center">Loan Status</th>
@@ -75,44 +75,44 @@
                     <tbody>
                         @foreach (var item in Model.LoanTaken)
                         {
-                        <tr>
-                            <td>@item.LoanType.Name</td>
-                            <td>@item.StartDate.ToString("dd MMMM yyyy")</td>
-                            <td>@item.EndDate.ToString("dd MMMM yyyy")</td>
-                            <td>₦@String.Format("{0:#,###.00}", item.AmountRequested)</td>
-                            <td>₦@String.Format("{0:#,###.00}", item.AmountApproved)</td>
-                            <td>₦@String.Format("{0:#,###.00}", item.InstallmentAmount)</td>
-                            <td>@item.NoOfInstallment</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-purple"></i> @item.LoanStatus
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-purple"></i> @item.Status
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">@item.LastApprover</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            <tr>
+                                <td>@item.LoanType.Name</td>
+                                <td>@item.StartDate.ToString("dd MMMM yyyy")</td>
+                                <td>@item.EndDate.ToString("dd MMMM yyyy")</td>
+                                <td>₦@String.Format("{0:#,###0.00}", item.AmountRequested)/@item.InterestRate</td>
+                                <td>₦@String.Format("{0:#,###0.00}", item.AmountApproved)//@item.InterestRate</td>
+                                <td>₦@String.Format("{0:#,###0.00}", item.InstallmentAmount)</td>
+                                <td>@item.NoOfInstallment</td>
+                                <td class="text-center">
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i class="fa fa-dot-circle-o text-purple"></i> @item.LoanStatus
+                                        </a>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                                <td class="text-center">
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i class="fa fa-dot-circle-o text-purple"></i> @item.Status
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
+                                        <a href="#">@item.LastApprover</a>
+                                    </h2>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>

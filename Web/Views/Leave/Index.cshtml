@@ -20,7 +20,7 @@
             </div>
             <div class="col-auto float-right ml-auto">
                 <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_leave"><i class="fa fa-plus"></i> Add Leave</a>
-                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_leave"><i class="fa fa-plus"></i> Recall Leave</a>
+                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#recall_leave"><i class="fa fa-plus"></i> Recall Leave</a>
             </div>
         </div>
     </div>
@@ -167,6 +167,11 @@
                         <label>Remaining Leave Days <span class="text-danger">*</span></label>
                         <input class="form-control" readonly type="text" id="remainingdays">
                     </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="checkbox"> Request Leave Allowance
+                        </label>
+                    </div>
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn">Submit</button>
                     </div>
@@ -176,6 +181,66 @@
     </div>
 </div>
 <!-- /Add Leave Modal -->
+
+<!-- Recall Leave Modal -->
+<div id="recall_leave" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Recall Leave</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Leave To Recall <span class="text-danger">*</span></label>
+                        <select class="select" id="leaveid">
+                            <option>Select Leave To Recall</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Leave Type <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" type="text" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>From <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of days <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>To <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Resumption Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Remaining Leave Days <span class="text-danger">*</span></label>
+                        <input class="form-control" readonly type="text">
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Recall Leave Modal -->
 <!-- Edit Leave Modal -->
 <div id="edit_leave" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -290,10 +355,10 @@
                 $("#dateto").val(dateToString(dateto));
                 $("#resumptiondate").val("Next working day after:  " + dateToString(dateto));
                 $("#remainingdays").val(remainingdays);
-            }           
+            }
             else {
                 toastr.warning("You have 0 days remaining");
-            }      
+            }
         }
 
         function SubmitLoginDetail()

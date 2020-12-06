@@ -18,6 +18,9 @@
                     <li class="breadcrumb-item active">Issue Query</li>
                 </ul>
             </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#reply_query"><i class="fa fa-plus"></i> Reply Query</a>
+            </div>
         </div>
     </div>
     <!-- /Page Header -->
@@ -66,43 +69,6 @@
             </div>
         </div>
     </div>
-
-    @*<div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body">
-                        <form>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Issued Date" readonly class="form-control datetimepicker">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Query By" readonly class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" placeholder="Subject" readonly class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <textarea rows="5" class="form-control" placeholder="Enter your message here" readonly disabled></textarea>
-                            </div>
-                            <div class="form-group">
-                                <textarea rows="5" class="form-control summernote" placeholder="Enter your message here"></textarea>
-                            </div>
-                            <div class="form-group mb-0">
-                                <div class="text-center">
-                                    <button class="btn btn-primary"><span>Respond To Query</span> <i class="fa fa-send m-l-5"></i></button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>*@
 </div>
 <!-- /Page Content -->
 
@@ -133,10 +99,10 @@
                         <input type="text" placeholder="Subject" readonly class="form-control">
                     </div>
                     <div class="form-group">
-                        <textarea rows="5" class="form-control" placeholder="Enter your message here" readonly disabled></textarea>
+                        <textarea rows="5" class="form-control" placeholder="Query message" readonly disabled></textarea>
                     </div>
                     <div class="form-group">
-                        <textarea rows="5" class="form-control summernote" placeholder="Enter your message here"></textarea>
+                        <textarea rows="5" class="form-control summernote" placeholder="Reply to query here"></textarea>
                     </div>
                     <div class="form-group mb-0">
                         <div class="text-center">
