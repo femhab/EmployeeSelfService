@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.LoanViewModel
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -11,7 +12,7 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Leave</h3>
+                <h3 class="page-title">Loan</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Services</a></li>
                     <li class="breadcrumb-item active">Loan</li>
@@ -61,33 +62,45 @@
                             <th>Loan Type</th>
                             <th>Start Date</th>
                             <th>End Date</th>
-                            <th>Amount</th>
+                            <th>Amount Requested</th>
+                            <th>Amount Approved</th>
                             <th>Monthly Deduction</th>
                             <th>Installment(s)</th>
-                            <th class="text-center">Status</th>
-                            <th>Last Approved by</th>
+                            <th class="text-center">Loan Status</th>
+                            <th class="text-center">Approval Status</th>
+                            <th>Last Processed By</th>
                             <th class="text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach (var item in Model.LoanTaken)
+                        {
                         <tr>
-                            <td>Medical Loan</td>
-                            <td>8 Mar 2019</td>
-                            <td>9 Mar 2019</td>
-                            <td>#30000</td>
-                            <td>#2000</td>
-                            <td>7</td>
+                            <td>@item.LoanType.Name</td>
+                            <td>@item.StartDate.ToString("dd MMMM yyyy")</td>
+                            <td>@item.EndDate.ToString("dd MMMM yyyy")</td>
+                            <td>₦@String.Format("{0:#,###.00}", item.AmountRequested)</td>
+                            <td>₦@String.Format("{0:#,###.00}", item.AmountApproved)</td>
+                            <td>₦@String.Format("{0:#,###.00}", item.InstallmentAmount)</td>
+                            <td>@item.NoOfInstallment</td>
                             <td class="text-center">
                                 <div class="action-label">
                                     <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-purple"></i> Pending
+                                        <i class="fa fa-dot-circle-o text-purple"></i> @item.LoanStatus
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="action-label">
+                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                        <i class="fa fa-dot-circle-o text-purple"></i> @item.Status
                                     </a>
                                 </div>
                             </td>
                             <td>
                                 <h2 class="table-avatar">
                                     <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
+                                    <a href="#">@item.LastApprover</a>
                                 </h2>
                             </td>
                             <td class="text-right">
@@ -100,66 +113,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>Emergency Loan</td>
-                            <td>8 Mar 2019</td>
-                            <td>9 Mar 2019</td>
-                            <td>#30000</td>
-                            <td>#2000</td>
-                            <td>7</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-purple"></i> Pending
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Housing Loan</td>
-                            <td>8 Mar 2019</td>
-                            <td>9 Mar 2019</td>
-                            <td>#30000</td>
-                            <td>#2000</td>
-                            <td>7</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-purple"></i> Pending
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+                        }
                     </tbody>
                 </table>
             </div>

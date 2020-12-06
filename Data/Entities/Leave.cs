@@ -17,9 +17,11 @@ namespace Data.Entities
         public bool IsFiveYearsAnniversary { get; set; }
         public bool IsTenYearsAnniversary { get; set; }
         public DateTime? ResumptionDate { get; set; }
+        public int NoOfDays { get; set; }
         public int? DaysUsed { get; set; }
         public ApprovalStatus Status { get; set; } //new, pending
         public LeaveStatus LeaveStatus { get; set; }
         public bool IsAllowanceRequested { get; set; }
+        public string LastProccessedBy { get; set; }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
+using Data.Entities;
+using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using ViewModel.Model;
 using Web.Helper.JWT;
@@ -38,8 +41,11 @@ namespace Web.Controllers
             LeaveViewModel leaveViewModel = new LeaveViewModel();
             var leaveType = await _leaveTypeService.GetAll();
             var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
+            var leaveTaken = await _leaveService.GetByEmployee(authData.Id);
+
             leaveViewModel.LeaveType = _mapper.Map<IEnumerable<LeaveTypeModel>>(leaveType);
             leaveViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
+            leaveViewModel.LeaveTaken = _mapper.Map<IEnumerable<LeaveModel>>(leaveTaken);
 
             return View(leaveViewModel);
         }
@@ -47,7 +53,7 @@ namespace Web.Controllers
         [Route("ApplyLeave")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyLeave(Guid leaveTypeId, DateTime dateFrom, DateTime dateTo, DateTime resumptionDate )
+        public async Task<ActionResult> ApplyLeave(Guid leaveTypeId, string dateFrom, string dateTo, string actualEndDate, string resumptionDate, int noOfDays, bool isAllowanceAdded )
         {
             try
             {
@@ -59,7 +65,37 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
-                    
+                    var startDate = DateTime.ParseExact(dateFrom, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var endDate = DateTime.ParseExact(dateTo, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var resumeDate = DateTime.ParseExact(resumptionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var realEndDate = DateTime.ParseExact(actualEndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    var model = new Leave()
+                    {
+                        EmployeeId = authData.Id,
+                        Emp_No = authData.Emp_No,
+                        DateFrom = startDate,
+                        DateTo = endDate,
+                        LeaveTypeId = leaveTypeId,
+                        IsAllowanceRequested = isAllowanceAdded,
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now,
+                        NoOfDays = noOfDays,
+                        DaysUsed = 0,
+                        ResumptionDate = resumeDate,
+                        ActualEndDate = realEndDate,
+                        LeaveStatus = LeaveStatus.Pending,
+                        Status = ApprovalStatus.Pending,
+                        LastProccessedBy = authData.Emp_No
+                    };
+
+                    var response = await _leaveService.Create(model);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+
                 }
                 return Json(new
                 {

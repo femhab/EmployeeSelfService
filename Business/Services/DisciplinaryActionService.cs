@@ -20,7 +20,7 @@ namespace Business.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<BaseResponse> CreateQuery(Guid employeeId, string empNo, string subject, string message, Guid initiatorId)
+        public async Task<BaseResponse> CreateQuery(Guid employeeId, string empNo, string subject, string message, Guid targetEmployeeId, string targetEmployeeNo)
         {
             if (string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(message))
             {
@@ -30,7 +30,8 @@ namespace Business.Services
                     Emp_No = empNo,
                     QuerySubject = subject,
                     QueryMessage = message,
-                    InitiatorId = initiatorId,
+                    TargetEmployeeId = targetEmployeeId,
+                    TargetEmployeeNo = targetEmployeeNo,
                     QueryDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
                     Id = Guid.NewGuid()
@@ -45,13 +46,13 @@ namespace Business.Services
 
         public async Task<IEnumerable<DisciplinaryAction>> GetByEmployee(Guid employeeId)
         {
-            var data = await GetAll(x => x.EmployeeId == employeeId);
+            var data = await GetAll(x => x.EmployeeId == employeeId, "Employee");
             return data;
         }
 
-        public async Task<IEnumerable<DisciplinaryAction>> GetByInitiator(Guid initiatorId)
+        public async Task<IEnumerable<DisciplinaryAction>> GetByTargetEmployee(Guid targetEmployeeId)
         {
-            var data = await GetAll(x => x.InitiatorId == initiatorId);
+            var data = await GetAll(x => x.TargetEmployeeId == targetEmployeeId, "Employee");
             return data;
         }
 
@@ -90,7 +91,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<DisciplinaryAction>> GetAll(Expression<Func<DisciplinaryAction, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<DisciplinaryAction>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var model = await _unitOfWork.GetRepository<DisciplinaryAction>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
             return model;
         }
 

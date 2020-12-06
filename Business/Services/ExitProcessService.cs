@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Entities;
@@ -44,6 +47,24 @@ namespace Business.Services
                 return new BaseResponse() { Status = false, Message = ResponseMessage.AlreadyApproved };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.NoRecordExist };
+        }
+
+        public async Task<IEnumerable<ExitProcess>> GetUnapprovedApplication()
+        {
+            var data = await GetAll(x => x.Status == ExitProcessStatus.Pending, "Employee");
+            return data;
+        }
+
+        public async Task<IEnumerable<ExitProcess>> GetAll(Expression<Func<ExitProcess, bool>> predicate, string include = null, bool includeDeleted = false)
+        {
+            var model = await _unitOfWork.GetRepository<ExitProcess>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
+            return model;
+        }
+
+        public async Task<ExitProcess> GetById(Guid id)
+        {
+            var model = await _unitOfWork.GetRepository<ExitProcess>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            return model;
         }
     }
 }

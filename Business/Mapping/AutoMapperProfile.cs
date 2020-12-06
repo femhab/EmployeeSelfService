@@ -24,6 +24,8 @@ namespace Business.Mapping
             CreateMap<AppraisalCategoryItem, AppraisalCategoryItemModel>().ReverseMap();
             CreateMap<LeaveType, LeaveTypeModel>().ReverseMap();
             CreateMap<Leave, LeaveTypeModel>().ReverseMap();
+            CreateMap<ExitProcess, ExitProcessModel>().ReverseMap();
+            CreateMap<ExitProcessModel, ExitProcess>().ReverseMap();
         }
     }
 }

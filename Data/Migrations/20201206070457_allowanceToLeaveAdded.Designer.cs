@@ -4,14 +4,16 @@ using Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(EmployeeServiceContext))]
-    partial class EmployeeServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20201206070457_allowanceToLeaveAdded")]
+    partial class allowanceToLeaveAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -326,6 +328,53 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApprovalWorkItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("16e21189-fa1c-424f-b341-e656ee54bddf"),
+                            CreatedBy = "Data Seed",
+                            CreatedDate = new DateTime(2020, 12, 6, 8, 4, 57, 537, DateTimeKind.Local).AddTicks(1102),
+                            Description = "Leave Service",
+                            IsDeleted = false,
+                            Name = "Leave"
+                        },
+                        new
+                        {
+                            Id = new Guid("5664bc94-6152-451f-809f-3c38ebade0eb"),
+                            CreatedBy = "Data Seed",
+                            CreatedDate = new DateTime(2020, 12, 6, 8, 4, 57, 537, DateTimeKind.Local).AddTicks(5913),
+                            Description = "Loan Service",
+                            IsDeleted = false,
+                            Name = "Loan"
+                        },
+                        new
+                        {
+                            Id = new Guid("01f7300a-94d6-4e43-8501-42e105e6faa1"),
+                            CreatedBy = "Data Seed",
+                            CreatedDate = new DateTime(2020, 12, 6, 8, 4, 57, 537, DateTimeKind.Local).AddTicks(5927),
+                            Description = "Appraisal Service",
+                            IsDeleted = false,
+                            Name = "Appraisal"
+                        },
+                        new
+                        {
+                            Id = new Guid("d8bd0c1d-f178-4c97-9a51-196765e75520"),
+                            CreatedBy = "Data Seed",
+                            CreatedDate = new DateTime(2020, 12, 6, 8, 4, 57, 537, DateTimeKind.Local).AddTicks(5929),
+                            Description = "Transfer Service",
+                            IsDeleted = false,
+                            Name = "Transfer"
+                        },
+                        new
+                        {
+                            Id = new Guid("7b1e39b9-d181-42d9-98da-08d9ad2e4781"),
+                            CreatedBy = "Data Seed",
+                            CreatedDate = new DateTime(2020, 12, 6, 8, 4, 57, 537, DateTimeKind.Local).AddTicks(5941),
+                            Description = "Diciplinary Service",
+                            IsDeleted = false,
+                            Name = "Diciplinary"
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.Department", b =>
@@ -373,6 +422,8 @@ namespace Data.Migrations
 
                     b.Property<Guid>("EmployeeId");
 
+                    b.Property<Guid>("InitiatorId");
+
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("ModifiedBy");
@@ -390,10 +441,6 @@ namespace Data.Migrations
                     b.Property<DateTime?>("QueryReplyDate");
 
                     b.Property<string>("QuerySubject");
-
-                    b.Property<Guid>("TargetEmployeeId");
-
-                    b.Property<string>("TargetEmployeeNo");
 
                     b.Property<DateTime?>("UpdatedDate");
 
@@ -811,15 +858,9 @@ namespace Data.Migrations
 
                     b.Property<Guid>("EmployeeId");
 
-                    b.Property<DateTime>("ExitDate");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("ModifiedBy");
-
-                    b.Property<DateTime>("NoticeDate");
-
-                    b.Property<string>("Reason");
 
                     b.Property<int>("Status");
 

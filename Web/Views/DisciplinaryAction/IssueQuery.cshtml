@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.DisciplinaryActionViewModel
+
 @{
     ViewData["Title"] = "IssueQuery";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -29,10 +30,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <select class="select">
+                                    <select class="select" id="targetemployeeid">
                                         <option value="">Select Employee</option>
-                                        <option value="">Lasisi Ola</option>
-                                        <option value="1">Ade Fortune</option>
+                                        @if (Model.Employee != null)
+                                        {
+                                            @foreach (var item in Model.Employee)
+                                            {
+                                                <option value="@item.Id">@item.LastName @item.FirstName - @item.Emp_No</option>
+                                            }
+                                        }
                                     </select>
                                 </div>
                             </div>
@@ -43,10 +49,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="text" placeholder="Subject" class="form-control">
+                            <input type="text" placeholder="Subject" class="form-control" id="querysubject">
                         </div>
                         <div class="form-group">
-                            <textarea rows="4" class="form-control summernote" placeholder="Enter your message here"></textarea>
+                            <textarea rows="5" class="form-control summernote" id="querymessage" placeholder="Enter your message here"></textarea>
                         </div>
                         <div class="form-group mb-0">
                             <div class="text-center">

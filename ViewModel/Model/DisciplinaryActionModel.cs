@@ -1,13 +1,13 @@
-﻿using Data.Entities.Common;
-using Data.Enums;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using ViewModel.Enumeration;
 
-namespace Data.Entities
+namespace ViewModel.Model
 {
-    public class DisciplinaryAction : BaseObject
+    public class DisciplinaryActionModel: BaseModel
     {
-        public Guid EmployeeId { get; set; } //initiator
-        public Employee Employee { get; set; } 
+        public Guid EmployeeId { get; set; }
+        public EmployeeModel Employee { get; set; }
         public string Emp_No { get; set; }
         public string QuerySubject { get; set; }
         public string QueryMessage { get; set; }
@@ -18,6 +18,12 @@ namespace Data.Entities
         public Guid TargetEmployeeId { get; set; }
         public string TargetEmployeeNo { get; set; }
         public DateTime? QueryActionDate { get; set; }
-        public QueryAction Action { get; set; }
+        public QueryActionEnum Action { get; set; }
+    }
+
+    public class DisciplinaryActionViewModel
+    {
+        public IEnumerable<EmployeeModel> Employee { get; set; }
+        public IEnumerable<DisciplinaryActionModel> DisciplinaryActions { get; set; }
     }
 }

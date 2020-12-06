@@ -35,6 +35,11 @@ namespace Business.DIExtension
             services.AddTransient<ILeaveTypeService, LeaveTypeService>();
             services.AddTransient<IGradeLevelService, GradeLevelService>();
             services.AddTransient<IRelationshipService, RelationshipService>();
+            services.AddTransient<ILoanService, LoanService>();
+            services.AddTransient<ILoanTypeService, LoanTypeService>();
+            services.AddTransient<IDisciplinaryActionService, DisciplinaryActionService>();
+            services.AddTransient<IExitProcessService, ExitProcessService>();
+            services.AddTransient<IExitProcessPriorityItemService, ExitProcessPriorityItemService>();
 
 
             return services;

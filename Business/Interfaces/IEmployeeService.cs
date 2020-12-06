@@ -16,5 +16,6 @@ namespace Business.Interfaces
         Task<Employee> GetById(Guid id);
         Task<IEnumerable<Employee>> GetAll();
         Task<IEnumerable<Employee>> GetByDepartment(Guid departmentId);
+        Task<IEnumerable<Employee>> GetAllLowGradeEmployee(Guid employeeId);
     }
 }

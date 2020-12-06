@@ -190,7 +190,7 @@ namespace Business.Services
 
         public async Task<Employee> GetByEmployerIdOrEmail(string employeeIdOrEmail)
         {
-            var model = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: c => c.Emp_No == employeeIdOrEmail || c.EmailAddress == employeeIdOrEmail);
+            var model = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: c => c.Emp_No == employeeIdOrEmail || c.EmailAddress == employeeIdOrEmail, null, include: c => c.Include(i => i.Department).Include(i => i.Unit).Include(i => i.GradeLevel).Include(i => i.Division));
             return model;
         }
 
@@ -247,6 +247,11 @@ namespace Business.Services
         {
             var model = await _unitOfWork.GetRepository<Employee>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
             return model;
+        }
+
+        public async Task<IEnumerable<Employee>> GetAllLowGradeEmployee(Guid employeeId)
+        {
+            return null;
         }
     }
 }

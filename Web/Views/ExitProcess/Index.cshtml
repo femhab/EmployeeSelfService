@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.ExitProcessViewModel
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -27,11 +28,11 @@
                 <div class="card-body">
                     <form>
                         <div class="form-group">
-                            <label>Exit/Resigning Employee <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text">
+                            <label>Employee Id<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" value="@Model.Employee.Emp_No" readonly>
                         </div>
                         <div class="form-group">
-                            <label>Exit/Resignation Date <span class="text-danger">*</span></label>
+                            <label>Exit Date <span class="text-danger">*</span></label>
                             <div class="cal-icon">
                                 <input type="text" class="form-control datetimepicker">
                             </div>
@@ -39,21 +40,33 @@
                         <div class="form-group">
                             <label>Date of Employment<span class="text-danger">*</span></label>
                             <div class="cal-icon">
-                                <input type="text" class="form-control datetimepicker">
+                                <input type="text" class="form-control" value="" readonly>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Department<span class="text-danger">*</span></label>
-                            <select class="select">
-                                <option>Select Department</option>
-
+                            <select class="select" disabled>
+                                @if (Model.Employee != null && Model.Employee.Department != null)
+                                {
+                                    <option value="@Model.Employee.DepartmentId" selected>@Model.Employee.Department.Descc</option>
+                                }
+                                else
+                                {
+                                    <option value="" selected>Unverified</option>
+                                }
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Designation/Unit<span class="text-danger">*</span></label>
-                            <select class="select" id="leavetypeid">
-                                <option>Select Designation/ Unit</option>
-
+                            <select class="select" disabled>
+                                @if (Model.Employee != null && Model.Employee.Unit != null)
+                                {
+                                    <option value="@Model.Employee.UnitId">@Model.Employee.Unit.Descc</option>
+                                }
+                                else
+                                {
+                                    <option value="" selected>Unverified</option>
+                                }
                             </select>
                         </div>
                         <div class="form-group">
@@ -70,4 +83,3 @@
     </div>
 </div>
 <!-- /Page Content -->
-

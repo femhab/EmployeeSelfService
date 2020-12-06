@@ -65,244 +65,52 @@
                             <th>To</th>
                             <th>No of Days</th>
                             <th>Resumption Date</th>
-                            <th class="text-center">Status</th>
-                            <th>Last Approved by</th>
+                            <th class="text-center">Leave Status</th>
+                            <th class="text-center">Approval Status</th>
+                            <th>Last Proccessed By</th>
                             <th class="text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Casual Leave</td>
-                            <td>8 Mar 2019</td>
-                            <td>9 Mar 2019</td>
-                            <td>2 days</td>
-                            <td>13 Mar 2019</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-purple"></i> Pending
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                        @foreach (var item in Model.LeaveTaken)
+                        {
+                            <tr>
+                                <td>@item.LeaveType.Class</td>
+                                <td>@item.DateFrom.ToString("dd MMMM yyyy")</td>
+                                <td>@item.DateTo.ToString("dd MMMM yyyy")</td>
+                                <td>@item.NoOfDays days</td>
+                                <td>@item.ResumptionDate?.ToString("dd MMMM yyyy")</td>
+                                <td class="text-center">
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i class="fa fa-dot-circle-o text-purple"></i> @item.LeaveStatus
+                                        </a>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Medical Leave</td>
-                            <td>27 Feb 2019</td>
-                            <td>27 Feb 2019</td>
-                            <td>1 day</td>
-                            <td>27 Feb 2019</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-success"></i> Approved
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="assets/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                </td>
+                                <td class="text-center">
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i class="fa fa-dot-circle-o text-purple"></i> @item.Status
+                                        </a>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>LOP</td>
-                            <td>24 Feb 2019</td>
-                            <td>25 Feb 2019</td>
-                            <td>2 days</td>
-                            <td>27 Feb 2019</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-success"></i> Approved
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="assets/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                </td>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
+                                        <a href="#">@item.LastProccessedBy</a>
+                                    </h2>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Paternity Leave</td>
-                            <td>13 Feb 2019</td>
-                            <td>17 Feb 2019</td>
-                            <td>5 days</td>
-                            <td>27 Feb 2019</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-danger"></i> Declined
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="assets/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Casual Leave</td>
-                            <td>30 Jan 2019</td>
-                            <td>30 Jan 2019</td>
-                            <td>Second Half</td>
-                            <td>27 Feb 2019</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-purple"></i> Approved
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="assets/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Hospitalisation</td>
-                            <td>15 Jan 2019</td>
-                            <td>25 Jan 2019</td>
-                            <td>10 days</td>
-                            <td>27 Feb 2019</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-success"></i> Approved
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="assets/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Casual Leave</td>
-                            <td>13 Jan 2019</td>
-                            <td>14 Jan 2019</td>
-                            <td>2 days</td>
-                            <td>27 Feb 2019</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-success"></i> Approved
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="assets/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Casual Leave</td>
-                            <td>10 Jan 2019</td>
-                            <td>10 Jan 2019</td>
-                            <td>First Half</td>
-                            <td>27 Feb 2019</td>
-                            <td class="text-center">
-                                <div class="action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
-                                        <i class="fa fa-dot-circle-o text-danger"></i> Declined
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar avatar-xs"><img src="assets/img/profiles/avatar-09.jpg" alt=""></a>
-                                    <a href="#">Richard Miles</a>
-                                </h2>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
