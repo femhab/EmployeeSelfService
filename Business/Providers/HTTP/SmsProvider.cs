@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Business.Providers.HTTP
 {
-    public class SmsProvider : ISmsProvider
+    public class SmsProvider
     {
         private readonly IHttpClientFactory _httpClient;
         private readonly IConfiguration _configuration;
@@ -21,15 +21,13 @@ namespace Business.Providers.HTTP
             baseUrl = new Uri(_configuration["SmsConfig:BaseUrl"]);
         }
 
-        //sendsinglesms
-        //sendbulksms
 
         public async Task<HttpResponseMessage> GetApiResponse(HttpMethod method, string subsidiaryUrl, object model = null)
         {
             var apiUrl = new Uri(baseUrl, subsidiaryUrl);
-            var request = new HttpRequestMessage(method, apiUrl); //get method fully and partly post method
+            var request = new HttpRequestMessage(method, apiUrl);
 
-            request.Headers.Add("X-App-AppID", _configuration["SmsConfig:Username"]);//expecting name and authorization
+            request.Headers.Add("X-App-AppID", _configuration["SmsConfig:Username"]);
             request.Headers.Add("X-App-ApiKey", _configuration["SmsConfig:Password"]);
 
             if (model != null)
@@ -40,7 +38,7 @@ namespace Business.Providers.HTTP
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
 
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json"); //complete post metho
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             }
 
             var client = _httpClient.CreateClient();

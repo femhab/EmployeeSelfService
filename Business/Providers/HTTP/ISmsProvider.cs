@@ -8,6 +8,5 @@ namespace Business.Providers.HTTP
 {
     class ISmsProvider
     {
-        private Task<HttpResponseMessage> GetApiResponse(HttpMethod method, string subsidiaryUrl, object model = null);
     }
 }

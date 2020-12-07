@@ -41,7 +41,7 @@ namespace Business.Providers.SmsProvider
         {
             try
             {
-                _configuration.GetSection("SmsConfig").Bind(_smsConfig);
+                _configuration.GetSection("SmsConfig");
 
                 var client = new RestClient(_smsConfig.Url);
                 var request = new RestRequest("checkcredits", Method.GET);
@@ -78,7 +78,7 @@ namespace Business.Providers.SmsProvider
         {
             try
             {
-                _configuration.GetSection("SmsConfig").Bind(_smsConfig);
+                _configuration.GetSection("SmsConfig");
 
                 phoneNumber = phoneNumber.Replace(" ", string.Empty);
 
