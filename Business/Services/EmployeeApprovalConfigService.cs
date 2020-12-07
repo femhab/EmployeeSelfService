@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Entities;
@@ -23,7 +25,7 @@ namespace Business.Services
             {
                 foreach (var item in model)
                 {
-                    var check = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.ApprovalLevel == item.ApprovalLevel && x.EmployeeId == item.EmployeeId);
+                    var check = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.ApprovalLevel == item.ApprovalLevel && x.EmployeeId == item.EmployeeId && x.ApprovalWorkItemId == item.ApprovalWorkItemId);
                     if (check == null)
                     {
                         _unitOfWork.GetRepository<EmployeeApprovalConfig>().Insert(model);
@@ -42,9 +44,21 @@ namespace Business.Services
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
+        public async Task<IEnumerable<EmployeeApprovalConfig>> GetByEmployee(Guid employeeId)
+        {
+            var data = await GetAll(x => x.EmployeeId == employeeId, "Employee,ApprovalWorkItem");
+            return data;
+        }
+
         public async Task<EmployeeApprovalConfig> GetById(Guid id)
         {
             var model = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            return model;
+        }
+
+        public async Task<EmployeeApprovalConfig> GetBy(Expression<Func<EmployeeApprovalConfig, bool>> predicate)
+        {
+            var model = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: predicate, null, include: e => e.Include(i => i.Employee));
             return model;
         }
 
@@ -72,6 +86,12 @@ namespace Business.Services
         {
             var model = await _unitOfWork.GetRepository<EmployeeApprovalCount>().GetFirstOrDefaultAsync(predicate: c => c.EmployeeId == employeeId && c.ApprovalWorkItemId == approvalWorkItemId);
             return model.MaximumCount;
+        }
+
+        public async Task<IEnumerable<EmployeeApprovalConfig>> GetAll(Expression<Func<EmployeeApprovalConfig, bool>> predicate, string include = null, bool includeDeleted = false)
+        {
+            var model = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
+            return model;
         }
     }
 }

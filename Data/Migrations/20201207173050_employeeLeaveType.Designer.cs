@@ -4,14 +4,16 @@ using Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(EmployeeServiceContext))]
-    partial class EmployeeServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20201207173050_employeeLeaveType")]
+    partial class employeeLeaveType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,8 +273,6 @@ namespace Data.Migrations
 
                     b.Property<int>("ApprovalLevel");
 
-                    b.Property<string>("ApprovalProcessor");
-
                     b.Property<Guid>("ApprovalProcessorId");
 
                     b.Property<Guid>("ApprovalWorkItemId");
@@ -296,6 +296,8 @@ namespace Data.Migrations
                     b.Property<DateTime?>("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApprovalProcessorId");
 
                     b.HasIndex("ApprovalWorkItemId");
 
@@ -631,8 +633,6 @@ namespace Data.Migrations
 
                     b.Property<string>("ModifiedBy");
 
-                    b.Property<string>("Processor");
-
                     b.Property<Guid?>("ProcessorIId");
 
                     b.Property<DateTime?>("UpdatedDate");
@@ -683,8 +683,6 @@ namespace Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Course");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
@@ -695,19 +693,11 @@ namespace Data.Migrations
 
                     b.Property<Guid>("EducationalQualificationId");
 
-                    b.Property<string>("Emp_No");
-
                     b.Property<Guid>("EmployeeId");
-
-                    b.Property<DateTime>("EndDate");
-
-                    b.Property<string>("Institution");
 
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("ModifiedBy");
-
-                    b.Property<DateTime>("StartDate");
 
                     b.Property<DateTime?>("UpdatedDate");
 
@@ -1442,6 +1432,11 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.ApprovalBoard", b =>
                 {
+                    b.HasOne("Data.Entities.Employee", "ApprovalProcessor")
+                        .WithMany()
+                        .HasForeignKey("ApprovalProcessorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Data.Entities.ApprovalWorkItem", "ApprovalWorkItem")
                         .WithMany()
                         .HasForeignKey("ApprovalWorkItemId")

@@ -3,6 +3,7 @@ using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -13,13 +14,15 @@ namespace Business.Services
 {
     public class EducationalGradeService: IEducationalGradeService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ServiceContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly SqlConnection _sqlConnection;
 
-        public EducationalGradeService(IUnitOfWork unitOfWork, ServiceContext dbContext)
+        public EducationalGradeService(ServiceContext dbContext, IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
             _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
+            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<IEnumerable<EducationalGrade>> GetAll(Expression<Func<EducationalGrade, bool>> predicate, string include = null, bool includeDeleted = false)
@@ -36,7 +39,25 @@ namespace Business.Services
 
         public async Task<BaseResponse> Refresh()
         {
-            var resource = await _dbContext.HREducGrade.ToListAsync();
+            var sql = "select * from HREducGrade";
+            SqlCommand query = new SqlCommand(sql, _sqlConnection);
+            List<HREducGrade> resource = new List<HREducGrade>();
+            _sqlConnection.Open();
+            using (SqlDataReader reader = query.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    HREducGrade requester = new HREducGrade()
+                    {
+                        Gradecode = reader["Gradecode"].ToString(),
+                        Educlevelcode = reader["Educlevelcode"].ToString(),
+                        descc = reader["descc"].ToString(),
+                    };
+                    resource.Add(requester);
+                }
+                _sqlConnection.Close();
+            }
+
             if (resource != null)
             {
                 foreach (var item in resource)

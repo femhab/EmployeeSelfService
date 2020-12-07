@@ -13,7 +13,6 @@ namespace Data.Entities
         public LeaveType LeaveType { get; set; } //leavetype per gradelevel
         public DateTime DateFrom { get; set; } //to be specified
         public DateTime DateTo { get; set; } //to be specified
-        public DateTime? ActualEndDate { get; set; } //to be specified
         public bool IsFiveYearsAnniversary { get; set; }
         public bool IsTenYearsAnniversary { get; set; }
         public DateTime? ResumptionDate { get; set; }

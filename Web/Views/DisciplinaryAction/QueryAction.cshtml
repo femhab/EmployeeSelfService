@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewData["Title"] = "QueryAction";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Diciplinary Action</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Services</a></li>
+                    <li class="breadcrumb-item active">Issue Query</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#reply_query"><i class="fa fa-plus"></i>Query Action</a>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped custom-table mb-0 datatable">
+                    <thead>
+                        <tr>
+                            <th>Query By (Name)</th>
+                            <th>Query By(Emp Id)</th>
+                            <th>Issued Date Date</th>
+                            <th>Subject</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.DisciplinaryActions)
+                        {
+                            <tr>
+                                <td>@item.Employee.LastName @item.Employee.FirstName</td>
+                                <td>@item.Employee.Emp_No</td>
+                                <td>@item.QueryDate.ToString("dd MMMM yyyy")</td>
+                                <td>@item.QuerySubject</td>
+                                <td class="text-center">
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i class="fa fa-dot-circle-o text-purple"></i> @item.Action
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#reply_query"><i class="fa fa-pencil m-r-5"></i> View</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+<div id="reply_query" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Take an Action</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" placeholder="Issued Date" readonly class="form-control datetimepicker">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" placeholder="Query By" readonly class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Subject" readonly class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="5" class="form-control" placeholder="Query message" readonly disabled></textarea>
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="5" class="form-control" placeholder="Response from the employee" readonly disabled></textarea>
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="5" class="form-control summernote" placeholder="Make a comment"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <select class="select" id="leavetypeid">
+                            <option>Select Action</option>
+                            <option>Refer</option>
+                            <option>Drop</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-0">
+                        <div class="text-center">
+                            <button class="btn btn-primary"><span>Take Action</span> <i class="fa fa-send m-l-5"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

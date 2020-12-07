@@ -21,7 +21,7 @@ namespace Business.Services
         public async  Task<BaseResponse> Create(EmployeeEducationDetail model)
         {
             var check = await GetAll(x => x.EmployeeId == model.EmployeeId && x.EducationalQualificationId == model.EducationalQualificationId);
-            if (check.Count() < 3)
+            if (check != null || check.Count() < 3)
             {
                 _unitOfWork.GetRepository<EmployeeEducationDetail>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
@@ -49,13 +49,13 @@ namespace Business.Services
 
         public async Task<IEnumerable<EmployeeEducationDetail>> GetByEmployee(Guid employeeId)
         {
-            var data = await GetAll(x => x.EmployeeId != employeeId, "Employee,EducationalLevel,EducationalQualification,EducationalGrade");
+            var data = await GetAll(x => x.EmployeeId == employeeId, "Employee,EducationalLevel,EducationalQualification,EducationalGrade");
             return data;
         }
 
         public async Task<IEnumerable<EmployeeEducationDetail>> GetAll(Expression<Func<EmployeeEducationDetail, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<EmployeeEducationDetail>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var model = await _unitOfWork.GetRepository<EmployeeEducationDetail>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
             return model;
         }
 

@@ -3,6 +3,7 @@ using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -13,13 +14,15 @@ namespace Business.Services
 {
     public class EducationalQualificationService: IEducationalQualificationService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ServiceContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly SqlConnection _sqlConnection;
 
-        public EducationalQualificationService(IUnitOfWork unitOfWork, ServiceContext dbContext)
+        public EducationalQualificationService(ServiceContext dbContext, IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
             _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
+            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<IEnumerable<EducationalQualification>> GetAll(Expression<Func<EducationalQualification, bool>> predicate, string include = null, bool includeDeleted = false)
@@ -36,7 +39,24 @@ namespace Business.Services
 
         public async Task<BaseResponse> Refresh()
         {
-            var resource = await _dbContext.HREducQual.ToListAsync();
+            var sql = "select * from HREducQual";
+            SqlCommand query = new SqlCommand(sql, _sqlConnection);
+            List<HREducQual> resource = new List<HREducQual>();
+            _sqlConnection.Open();
+            using (SqlDataReader reader = query.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    HREducQual requester = new HREducQual()
+                    {
+                        Educlevelcode = reader["Educlevelcode"].ToString(),
+                        descc = reader["descc"].ToString(),
+                        qualcode = reader["qualcode"].ToString(),
+                    };
+                    resource.Add(requester);
+                }
+                _sqlConnection.Close();
+            }
             if (resource != null)
             {
                 foreach (var item in resource)

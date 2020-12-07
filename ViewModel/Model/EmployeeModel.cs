@@ -57,5 +57,10 @@ namespace ViewModel.Model
         public IEnumerable<EmployeeNOKDetailModel> NOKDetails { get; set; }
         public IEnumerable<UserRoleModel> UserRoles { get; set; }
         public IEnumerable<ApprovalWorkItemModel> ApprovalWorkItems { get; set; }
+        public IEnumerable<EducationalGradeModel> EducationalGrade { get; set; }
+        public IEnumerable<EducationalLevelModel> EducationalLevel { get; set; }
+        public IEnumerable<EducationalQualificationModel> EducationalQualification { get; set; }
+        public IEnumerable<EmployeeEducationDetailModel> EmployeeEducationDetail { get; set; }
+        public IEnumerable<EmployeeApprovalconfigModel> EmployeeApprovalconfig { get; set; }
     }
 }

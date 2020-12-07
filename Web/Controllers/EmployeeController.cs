@@ -23,12 +23,16 @@ namespace Web.Controllers
         private readonly IEmployeeFamilyDependentService _employeeFamilyDependentService;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IEmployeeAddressService _employeeAddressService;
+        private readonly IEmployeeEducationalDetailService _employeeEducationalDetailService;
+        private readonly IEducationalGradeService _educationalGradeService;
+        private readonly IEducationalLevelService _educationalLevelService;
+        private readonly IEducationalQualificationService _educationalQualificationService;
         private readonly IRoleService _roleService;
         private readonly IUserRoleService _userRoleService;
         private readonly IRelationshipService _relationshipService;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService)
+        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService)
         {
             _employeeService = employeeService;
             _approvalWorkItemService = approvalWorkItemService;
@@ -38,6 +42,10 @@ namespace Web.Controllers
             _employeeFamilyDependentService = employeeFamilyDependentService;
             _employeeAddressService = employeeAddressService;
             _employeeApprovalConfigService = employeeApprovalConfigService;
+            _employeeEducationalDetailService = employeeEducationalDetailService;
+            _educationalGradeService = educationalGradeService;
+            _educationalLevelService = educationalLevelService;
+            _educationalQualificationService = educationalQualificationService;
             _roleService = roleService;
             _userRoleService = userRoleService;
             _relationshipService = relationshipService;
@@ -102,7 +110,11 @@ namespace Web.Controllers
                 var dependentList = await _employeeFamilyDependentService.GetByEmployee(authData.Id);
                 var userRoles = await _userRoleService.GetAll();
                 var workItems = await _approvalWorkItemService.GetAll();
-
+                var eduLevel = await _educationalLevelService.GetAll();
+                var eduGrade = await _educationalGradeService.GetAll();
+                var eduQual = await _educationalQualificationService.GetAll();
+                var eduDetail = await _employeeEducationalDetailService.GetByEmployee(authData.Id);
+                var approvalList = await _employeeApprovalConfigService.GetByEmployee(authData.Id);
 
                 profileViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
                 profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(approvalWorkItem);
@@ -111,6 +123,11 @@ namespace Web.Controllers
                 profileViewModel.Dependents = _mapper.Map<IEnumerable<EmployeeFamilyDependentModel>>(dependentList);
                 profileViewModel.UserRoles = _mapper.Map<IEnumerable<UserRoleModel>>(userRoles);
                 profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(workItems);
+                profileViewModel.EducationalGrade = _mapper.Map<IEnumerable<EducationalGradeModel>>(eduGrade);
+                profileViewModel.EducationalLevel = _mapper.Map<IEnumerable<EducationalLevelModel>>(eduLevel);
+                profileViewModel.EducationalQualification = _mapper.Map<IEnumerable<EducationalQualificationModel>>(eduQual);
+                profileViewModel.EmployeeEducationDetail = _mapper.Map<IEnumerable<EmployeeEducationDetailModel>>(eduDetail);
+                profileViewModel.EmployeeApprovalconfig = _mapper.Map<IEnumerable<EmployeeApprovalconfigModel>>(approvalList);
                 return View(profileViewModel);
             }
             catch(Exception ex)
@@ -307,12 +324,14 @@ namespace Web.Controllers
 
                     foreach (var item in levelApproval)
                     {
+                        var employee = await _employeeService.GetById(item.Value);
                         var approvalConfig = new EmployeeApprovalConfig()
                         {
                             Emp_No = empNo,
                             EmployeeId = employeeId,
                             ApprovalWorkItemId = workItem,
                             ProcessorIId = item.Value,
+                            Processor = employee.LastName + "-" + employee.FirstName,
                             ApprovalLevel = (Level)item.Key,
                             Id = Guid.NewGuid(),
                             CreatedDate = DateTime.Now
@@ -371,6 +390,59 @@ namespace Web.Controllers
                     };
 
                     var response = await _employeeAddressService.Create(addressDetail); //dependent service
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message ?? "Failed to create Next of Kin Detail."
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        //action section
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> AddEducationaldetail(string institution, Guid level, Guid qualification, string course, Guid grade, string startDate, string endDate)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var dateFrom = DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var dateTo = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    var educationDetail = new EmployeeEducationDetail()
+                    {
+                        Emp_No = authData.Emp_No,
+                        EmployeeId = authData.Id,
+                        Institution = institution,
+                        Course = course,
+                        EducationalLevelId = level,
+                        EducationalGradeId = grade,
+                        EducationalQualificationId = qualification,
+                        StartDate = dateFrom,
+                        EndDate = dateTo,
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now
+                    };
+
+                    var response = await _employeeEducationalDetailService.Create(educationDetail);
 
                     return Json(new
                     {

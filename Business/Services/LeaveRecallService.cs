@@ -11,26 +11,24 @@ namespace Business.Services
     public class LeaveRecallService: ILeaveRecallService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILeaveService _leaveService;
 
-        public LeaveRecallService(IUnitOfWork unitOfWork)
+        public LeaveRecallService(IUnitOfWork unitOfWork, ILeaveService leaveService)
         {
             _unitOfWork = unitOfWork;
+            _leaveService = leaveService;
         }
 
         public async Task<BaseResponse> Create(LeaveRecall model)
         {
-            var check = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == model.LeaveId && x.LeaveStatus == LeaveStatus.Recall);
+            var check = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == model.LeaveId);
+
             if(check != null)
             {
-                var interval = Convert.ToInt32(check.ActualEndDate - check.DateFrom);
-                if(check.DaysUsed < interval)
-                {
-                    _unitOfWork.GetRepository<LeaveRecall>().Insert(model);
-                    await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.GetRepository<LeaveRecall>().Insert(model);
+                await _unitOfWork.SaveChangesAsync();
 
-                    return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
-                }
-                return new BaseResponse() { Status = false, Message = ResponseMessage.MaximumLeaveReached };
+                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.LeaveExecuted };
         }

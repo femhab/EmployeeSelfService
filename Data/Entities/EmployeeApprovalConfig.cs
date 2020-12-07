@@ -11,6 +11,7 @@ namespace Data.Entities
         public string Emp_No { get; set; }
         public Level ApprovalLevel { get; set; } //first level
         public Guid? ProcessorIId { get; set; }
+        public string Processor { get; set; }
         public Guid ApprovalWorkItemId { get; set; }
         public ApprovalWorkItem ApprovalWorkItem { get; set; } //leave service
     }

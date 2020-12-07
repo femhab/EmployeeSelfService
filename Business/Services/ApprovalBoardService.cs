@@ -41,31 +41,39 @@ namespace Business.Services
 
         public async Task<BaseResponse> Create(ApprovalBoard model)
         {
-            var check = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: x => x.ServiceId == model.ServiceId && x.ApprovalWorkItemId == model.ApprovalWorkItemId && x.EmployeeId == model.EmployeeId);
+            var check = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: x => x.ServiceId == model.ServiceId && x.ApprovalWorkItemId == model.ApprovalWorkItemId && x.EmployeeId == model.EmployeeId && x.ApprovalLevel == model.ApprovalLevel);
             if (check == null)
             {
-                _unitOfWork.GetRepository<ApprovalBoard>().Insert(model);
-                await _unitOfWork.SaveChangesAsync();
-                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+                try
+                {
+                    _unitOfWork.GetRepository<ApprovalBoard>().Insert(model);
+                    await _unitOfWork.SaveChangesAsync();
+                    return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
+                
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.RecordExist };
         }
 
         public async  Task<IEnumerable<ApprovalBoard>> GetApprovalUpdate(Guid serviceId, Guid approvalWorkItemId)
         {
-            var model = await GetAll(x => x.ServiceId == serviceId && x.ApprovalWorkItemId == approvalWorkItemId, "Employee,ApprovalProcessor,ApprovalWorkItem");
+            var model = await GetAll(x => x.ServiceId == serviceId && x.ApprovalWorkItemId == approvalWorkItemId, "Employee,ApprovalWorkItem");
             return model;
         }
          
-        public async Task<IEnumerable<ApprovalBoard>> GetByProcessor(Guid processorId, int pageIndex = 0, int pageSize = 20)
+        public async Task<IEnumerable<ApprovalBoard>> GetByProcessor(Guid processorId)
         {
-            var model = await GetAll(x => x.ApprovalProcessorId == processorId, "Employee,ApprovalProcessor,ApprovalWorkItem");
+            var model = await GetAll(x => x.ApprovalProcessorId == processorId, "Employee,ApprovalWorkItem");
             return model;
         }
 
         public async Task<IEnumerable<ApprovalBoard>> GetAll(Expression<Func<ApprovalBoard, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
             return model;
         }
 

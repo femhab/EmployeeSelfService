@@ -1,25 +1,21 @@
-﻿using Data.Entities.Common;
-using System;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace Data.Entities
+namespace ViewModel.Model
 {
-    public class EmployeeEducationDetail: BaseObject
+    public class EmployeeEducationDetailModel: BaseModel
     {
         public Guid EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+        public EmployeeModel Employee { get; set; }
         public string Emp_No { get; set; }
         public string Institution { get; set; }
         public string Course { get; set; }
         public Guid EducationalLevelId { get; set; }
-        public EducationalLevel EducationalLevel { get; set; }
+        public EducationalLevelModel EducationalLevel { get; set; }
         public Guid EducationalQualificationId { get; set; }
-        public EducationalQualification EducationalQualification { get; set; }
+        public EducationalQualificationModel EducationalQualification { get; set; }
         public Guid EducationalGradeId { get; set; }
-        public EducationalGrade EducationalGrade { get; set; }
+        public EducationalGradeModel EducationalGrade { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        //list to be updated
-
     }
 }

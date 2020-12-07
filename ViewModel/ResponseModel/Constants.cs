@@ -2,6 +2,7 @@
 {
     public class ResponseMessage
     {
+        public const string OperationSuccessful = "Record retrieved successfully";
         public const string CreatedSuccessful = "Record successfully created";
         public const string DeletedSuccessful = "Record successfully deleted";
         public const string UpdatedSuccessful = "Record successfully updated";

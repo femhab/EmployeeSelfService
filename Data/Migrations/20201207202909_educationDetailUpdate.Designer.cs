@@ -4,14 +4,16 @@ using Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(EmployeeServiceContext))]
-    partial class EmployeeServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20201207202909_educationDetailUpdate")]
+    partial class educationDetailUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,8 +273,6 @@ namespace Data.Migrations
 
                     b.Property<int>("ApprovalLevel");
 
-                    b.Property<string>("ApprovalProcessor");
-
                     b.Property<Guid>("ApprovalProcessorId");
 
                     b.Property<Guid>("ApprovalWorkItemId");
@@ -296,6 +296,8 @@ namespace Data.Migrations
                     b.Property<DateTime?>("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApprovalProcessorId");
 
                     b.HasIndex("ApprovalWorkItemId");
 
@@ -630,8 +632,6 @@ namespace Data.Migrations
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("ModifiedBy");
-
-                    b.Property<string>("Processor");
 
                     b.Property<Guid?>("ProcessorIId");
 
@@ -1442,6 +1442,11 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.ApprovalBoard", b =>
                 {
+                    b.HasOne("Data.Entities.Employee", "ApprovalProcessor")
+                        .WithMany()
+                        .HasForeignKey("ApprovalProcessorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Data.Entities.ApprovalWorkItem", "ApprovalWorkItem")
                         .WithMany()
                         .HasForeignKey("ApprovalWorkItemId")

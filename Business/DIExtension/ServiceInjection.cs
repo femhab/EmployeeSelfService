@@ -25,6 +25,9 @@ namespace Business.DIExtension
             services.AddTransient<IEmployeeFamilyDependentService, EmployeeFamilyDependentService>();
             services.AddTransient<IEmployeeAddressService, EmployeeAddressService>();
             services.AddTransient<IEmployeeEducationalDetailService, EmployeeEducationalDetailService>();
+            services.AddTransient<IEducationalGradeService, EducationalGradeService>();
+            services.AddTransient<IEducationalLevelService, EducationalLevelService>();
+            services.AddTransient<IEducationalQualificationService, EducationalQualificationService>();
             services.AddTransient<IEmployeeApprovalConfigService, EmployeeApprovalConfigService>();
             services.AddTransient<IApprovalWorkItemService, ApprovalWorkItemService>();
             services.AddTransient<IApprovalBoardService, ApprovalBoardService>();

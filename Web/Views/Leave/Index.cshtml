@@ -96,7 +96,7 @@
                                 </td>
                                 <td>
                                     <h2 class="table-avatar">
-                                        <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
+                                        <a href="profile.html" class="avatar avatar-xs"><img src="~/img/user.jpg" alt=""></a>
                                         <a href="#">@item.LastProccessedBy</a>
                                     </h2>
                                 </td>
@@ -169,11 +169,11 @@
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" name="checkbox"> Request Leave Allowance
+                            <input type="checkbox" name="checkbox" id="isallowanceadded"> Request Leave Allowance
                         </label>
                     </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
+                    <div class="submit-section"onclick="SubmitLeaveApplication()">
+                        <div class="btn btn-primary submit-btn">Apply for Leave</div>
                     </div>
                 </form>
             </div>
@@ -232,8 +232,8 @@
                         <label>Remaining Leave Days <span class="text-danger">*</span></label>
                         <input class="form-control" readonly type="text">
                     </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
+                    <div class="submit-section" onclick="">
+                        <div class="btn btn-primary submit-btn">Recall leave</div>
                     </div>
                 </form>
             </div>
@@ -329,6 +329,8 @@
         var noofdays;
         var remainingdays;
         var resumptiondate;
+        var isallowanceadded;
+
         var query = JSON.parse('@Json.Serialize(@Model.LeaveType)');
 
         var redirectUrl = '@Url.Action("Index","Leave")';
@@ -352,8 +354,11 @@
                 }
 
                 remainingdays = leavetype.availableDays - parseInt(noofdays);
+
+                resumptiondate = getNextBusinessDay(dateto);
+
                 $("#dateto").val(dateToString(dateto));
-                $("#resumptiondate").val("Next working day after:  " + dateToString(dateto));
+                $("#resumptiondate").val(dateToString(resumptiondate));
                 $("#remainingdays").val(remainingdays);
             }
             else {
@@ -361,21 +366,25 @@
             }
         }
 
-        function SubmitLoginDetail()
+        function SubmitLeaveApplication()
         {
-            sendForm();
+            datefrom = $("#datefrom").val();
+            dateto = $("#dateto").val();
+            resumptiondate = $("#resumptiondate").val();
+            if (document.getElementById('isallowanceadded').checked) { isallowanceadded = true }
+            else { isallowanceadded = false }
+            sendLeaveForm(leavetypeid, datefrom, dateto, resumptiondate, noofdays, isallowanceadded);
         }
 
-        function sendForm() {
+        function sendLeaveForm(leaveTypeId,dateFrom,dateTo,resumptionDate,noOfDays,isAllowanceAdded ) {
             $.ajax({
                 url: '@Url.Action("ApplyLeave", "Leave")',
                 type: 'POST',
                 dataType: 'json',
-                data: {  },
+                data: { leaveTypeId: leaveTypeId,dateFrom: dateFrom ,dateTo: dateTo,resumptionDate: resumptionDate,noOfDays: noOfDays,isAllowanceAdded: isAllowanceAdded },
                 success: function (response) {
                     if (response.status) {
-                        //toastr.success(response?.message);
-                        window.location.href = redirectUrl;
+                        window.location.href = '@Url.Action("Index","Leave")';
                     }
                     else {
                         toastr.error(response ?.message);
@@ -402,6 +411,17 @@
             day = ("0" + date.getDate()).slice(-2);
             return [day, mnth, date.getFullYear()].join("/");
         }
+
+        function getNextBusinessDay(date) {
+          // Copy date so don't affect original
+          date = new Date(+date);
+          // Add days until get not Sat or Sun
+          do {
+            date.setDate(date.getDate() + 1);
+          } while (!(date.getDay() % 6))
+          return date;
+        }
+
 
     </script>
 }

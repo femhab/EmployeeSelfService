@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.ApprovalBoardViewModel
+
 @{
     ViewData["Title"] = "Approval";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -17,7 +18,7 @@
                     <li class="breadcrumb-item active">Approval Board</li>
                 </ul>
             </div>
-            
+
         </div>
     </div>
     <!-- /Page Header -->
@@ -72,134 +73,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><a href="estimate-view.html">Leave</a></td>
-                            <td>Babatunde Habeebullah</td>
-                            <td>11 Mar 2019</td>
-                            <td>First Level</td>
-                            <td>Busari Abiodun</td>
-                            <td><span class="badge bg-inverse-success">Approved</span></td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
+                        @foreach (var item in Model.ApprovalBoard)
+                        {
+                            <tr>
+                                <td><a href="estimate-view.html">@item.ApprovalWorkItem.Name</a></td>
+                                <td>@item.Employee.LastName @item.Employee.FirstName</td>
+                                <td>@item.CreatedDate.ToString("dd MMMM yyyy")9</td>
+                                <td>@item.ApprovalLevel.ToString()</td>
+                                <td>@item.ApprovalProcessor</td>
+                                <td><span class="badge bg-inverse-success">@item.Status</span></td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><a href="estimate-view.html">Leave</a></td>
-                            <td>Babatunde Habeebullah</td>
-                            <td>11 Mar 2019</td>
-                            <td>Second Level</td>
-                            <td>Rufai Fatai</td>
-                            <td><span class="badge bg-inverse-success">Approved</span></td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><a href="estimate-view.html">Leave</a></td>
-                            <td>Babatunde Habeebullah</td>
-                            <td>11 Mar 2019</td>
-                            <td>Third Level</td>
-                            <td>Sonubi Olawale</td>
-                            <td><span class="badge bg-inverse-success">Pending</span></td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><a href="estimate-view.html">Loan</a></td>
-                            <td>Babatunde Habeebullah</td>
-                            <td>11 Mar 2019</td>
-                            <td>First Level</td>
-                            <td>Rufai Fatai</td>
-                            <td><span class="badge bg-inverse-success">Approved</span></td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><a href="estimate-view.html">Loan</a></td>
-                            <td>Babatunde Habeebullah</td>
-                            <td>11 Mar 2019</td>
-                            <td>Second Level</td>
-                            <td>Sonubi Olawale</td>
-                            <td><span class="badge bg-inverse-success">Approved</span></td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><a href="estimate-view.html">Loan</a></td>
-                            <td>Babatunde Habeebullah</td>
-                            <td>11 Mar 2019</td>
-                            <td>Third Level</td>
-                            <td>Rufai Fatai</td>
-                            <td><span class="badge bg-inverse-success">Pending</span></td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><a href="estimate-view.html">Transfer</a></td>
-                            <td>Babatunde Habeebullah</td>
-                            <td>11 Mar 2019</td>
-                            <td>First Level</td>
-                            <td>Rufai Fatai</td>
-                            <td><span class="badge bg-inverse-success">Pending</span></td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><a href="estimate-view.html">Training</a></td>
-                            <td>Babatunde Habeebullah</td>
-                            <td>11 Mar 2019</td>
-                            <td>First Level</td>
-                            <td>Rufai Fatai</td>
-                            <td><span class="badge bg-inverse-success">Pending</span></td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

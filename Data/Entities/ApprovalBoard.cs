@@ -15,7 +15,7 @@ namespace Data.Entities
         public Guid ServiceId { get; set; } //leaveId, LoadId
         public Level ApprovalLevel { get; set; } //Approval setting i.e First Level
         public Guid ApprovalProcessorId { get; set; } // processor employee no
-        public Employee ApprovalProcessor { get; set; } // processor employee no
+        public string ApprovalProcessor { get; set; } // processor employee no
         public ApprovalStatus Status { get; set; } //new, pending
     }
 }

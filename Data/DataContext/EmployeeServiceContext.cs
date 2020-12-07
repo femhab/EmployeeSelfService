@@ -28,6 +28,7 @@ namespace Data.DataContext
         public DbSet<EmployeeApprovalCount> EmployeeApprovalCounts { get; set; }
         public DbSet<EmployeeEducationDetail> EmployeesEducationDetail { get; set; }
         public DbSet<EmployeeFamilyDependent> EmployeeFamilyDependents { get; set; }
+        public DbSet<EmployeeLeave> EmployeeLeaves { get; set; }
         public DbSet<EmployeeNOKDetail> EmployeeNOKDetails { get; set; }
         public DbSet<ExitProcess> ExitProcess { get; set; }
         public DbSet<ExitProcessPriorityItem> ExitProcessPriorityItem { get; set; }

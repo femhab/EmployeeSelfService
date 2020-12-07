@@ -16,5 +16,8 @@ namespace Business.Interfaces
         Task<IEnumerable<Leave>> GetApprovedLeave(); //approved but not started
         Task<BaseResponse> Edit(Guid id, DateTime startDate, int noOfDays);
         Task<BaseResponse> Delete(Guid id);
+        Task<LeaveResponseModel> CheckEligibility(Guid employeeId);
+        Task EmployeeLeavePreset(Guid employeeId, string empNo, Guid gradeLevelId);
+        Task ResetEmployeeLeave();
     }
 }

@@ -54,5 +54,21 @@ namespace Web.Controllers
 
             return View(disciplinaryActionViewModel);
         }
+
+        public async Task<ActionResult> QueryAction()
+        {
+            var authData = JwtHelper.GetAuthData(Request);
+            if (authData == null)
+            {
+                return RedirectToAction("Signout", "Employee");
+            }
+
+            DisciplinaryActionViewModel disciplinaryActionViewModel = new DisciplinaryActionViewModel();
+            var query = await _disciplinaryActionService.GetByTargetEmployee(authData.Id);
+
+            disciplinaryActionViewModel.DisciplinaryActions = _mapper.Map<IEnumerable<DisciplinaryActionModel>>(query);
+
+            return View(disciplinaryActionViewModel);
+        }
     }
 }

@@ -53,7 +53,7 @@ namespace Web.Controllers
         [Route("ApplyLeave")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyLeave(Guid leaveTypeId, string dateFrom, string dateTo, string actualEndDate, string resumptionDate, int noOfDays, bool isAllowanceAdded )
+        public async Task<ActionResult> ApplyLeave(Guid leaveTypeId, string dateFrom, string dateTo, string resumptionDate, int noOfDays, bool isAllowanceAdded )
         {
             try
             {
@@ -68,7 +68,6 @@ namespace Web.Controllers
                     var startDate = DateTime.ParseExact(dateFrom, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     var endDate = DateTime.ParseExact(dateTo, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     var resumeDate = DateTime.ParseExact(resumptionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var realEndDate = DateTime.ParseExact(actualEndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
                     var model = new Leave()
                     {
@@ -83,7 +82,6 @@ namespace Web.Controllers
                         NoOfDays = noOfDays,
                         DaysUsed = 0,
                         ResumptionDate = resumeDate,
-                        ActualEndDate = realEndDate,
                         LeaveStatus = LeaveStatus.Pending,
                         Status = ApprovalStatus.Pending,
                         LastProccessedBy = authData.Emp_No

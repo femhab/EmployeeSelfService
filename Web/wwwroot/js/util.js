@@ -130,3 +130,28 @@ function ShowTenthLevelApproval() {
     document.getElementById('table9').removeAttribute("hidden");
     document.getElementById('table10').removeAttribute("hidden");
 }
+
+function stringToDate(str) {
+    var date = str.split("/"),
+        m = date[1],
+        d = date[0],
+        y = date[2];
+    return (new Date(y + "/" + m + "/" + d));
+}
+
+function dateToString(date) {
+    //var date = new Date(str),
+    mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+        day = ("0" + date.getDate()).slice(-2);
+    return [day, mnth, date.getFullYear()].join("/");
+}
+
+function getNextBusinessDay(date) {
+    // Copy date so don't affect original
+    date = new Date(+date);
+    // Add days until get not Sat or Sun
+    do {
+        date.setDate(date.getDate() + 1);
+    } while (!(date.getDay() % 6))
+    return date;
+}
