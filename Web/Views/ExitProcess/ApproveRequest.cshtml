@@ -42,7 +42,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.ExitProcessList)
+                        @foreach (var item in Model.ExitProcessList.Where(x => x.Status == ViewModel.Enumeration.ExitProcessStatusEnum.Pending))
                         {
                             <tr>
                                 <td>1</td>
@@ -123,16 +123,20 @@
                     </div>
                     <div class="form-group">
                         <label>Department<span class="text-danger">*</span></label>
-                        <select class="select">
+                        <select class="select" id="clearingdepartment">
                             <option>Select Department</option>
+                            @foreach (var item in Model.ClearanceDepartment)
+                            {
+                                <option value="@item.Id">@item.Descc</option>
+                            }
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Comment <span class="text-danger">*</span></label>
-                        <textarea class="form-control" rows="4"></textarea>
+                        <textarea class="form-control" id="exitcomment" rows="4"></textarea>
                     </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Approve</button>
+                    <div class="submit-section" onclick="ApproveExitRequest()">
+                        <div class="btn btn-primary submit-btn">Approve</div>
                     </div>
                 </form>
             </div>
@@ -162,18 +166,18 @@
 
         function ApproveExitRequest()
         {
-            var exitdate = $("#exitdate").val();
-            var exitreason = $("#exitreason").val();
+            var clearingdepartment = $("#clearingdepartment").val();
+            var exitcomment = $("#exitcomment").val();
 
-            submitApproveRequestForm(exitdate, exitreason);
+            submitApproveRequestForm(selectedId, clearingdepartment, exitcomment);
         }
 
-        function submitApproveRequestForm(exitdate, exitreason) {
+        function submitApproveRequestForm(selectedId, clearingdepartment, exitcomment) {
             $.ajax({
                 url: '@Url.Action("ApproveRequestExit", "ExitProcess")',
                 type: 'POST',
                 dataType: 'json',
-                data: { exitDate: exitdate, reason: exitreason },
+                data: { exitId: selectedId, departmentId: clearingdepartment, exitComment: exitcomment },
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message);

@@ -19,13 +19,15 @@ namespace Web.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly IExitProcessService _exitProcessService;
         private readonly IExitProcessPriorityItemService _exitProcessPriorityItemService;
+        private readonly IDepartmentService _departmentService;
         private readonly IMapper _mapper;
 
-        public ExitProcessController(IEmployeeService employeeService, IExitProcessService exitProcessService, IExitProcessPriorityItemService exitProcessPriorityItemService, IMapper mapper)
+        public ExitProcessController(IEmployeeService employeeService, IExitProcessService exitProcessService, IExitProcessPriorityItemService exitProcessPriorityItemService, IMapper mapper, IDepartmentService departmentService)
         {
             _employeeService = employeeService;
             _exitProcessService = exitProcessService;
             _exitProcessPriorityItemService = exitProcessPriorityItemService;
+            _departmentService = departmentService;
             _mapper = mapper;
         }
 
@@ -55,8 +57,10 @@ namespace Web.Controllers
 
             ExitProcessViewModel exitProcessViewModel = new ExitProcessViewModel();
             var exitApplication =await _exitProcessService.GetUnapprovedApplication();
+            var clearingDepartment = await _departmentService.GetByExitApproval();
 
             exitProcessViewModel.ExitProcessList = _mapper.Map<IEnumerable<ExitProcessModel>>(exitApplication);
+            exitProcessViewModel.ClearanceDepartment = _mapper.Map<IEnumerable<DepartmentModel>>(clearingDepartment);
 
             return View(exitProcessViewModel);
         }
@@ -91,6 +95,41 @@ namespace Web.Controllers
                     };
 
                     var response = await _exitProcessService.Create(exitProcess);
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        //action section
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ApproveRequestExit(Guid exitId, Guid departmentId, string exitComment)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var response = await _exitProcessPriorityItemService.Create(exitId, departmentId,authData.Emp_No,exitComment);
 
                     return Json(new
                     {

@@ -37,6 +37,12 @@ namespace Business.Services
             return data;
         }
 
+        public async Task<IEnumerable<Department>> GetByExitApproval()
+        {
+            var data = await GetAll(x => x.CanClearEmployeeOnExit);
+            return data;
+        }
+
         public async Task<BaseResponse> Refresh()
         {
             var sql = "select * from HRDept";
