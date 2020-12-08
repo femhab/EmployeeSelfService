@@ -22,7 +22,7 @@ namespace Business.Services
 
         public async Task<BaseResponse> Create(ExitProcess model)
         {
-            if (model == null)
+            if (model != null)
             {
                 _unitOfWork.GetRepository<ExitProcess>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
@@ -51,7 +51,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<ExitProcess>> GetUnapprovedApplication()
         {
-            var data = await GetAll(x => x.Status == ExitProcessStatus.Pending, "Employee");
+            var data = await GetAll(x => x.Status == ExitProcessStatus.Pending, "Employee,Employee.Department");
             return data;
         }
 

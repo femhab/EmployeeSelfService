@@ -21,6 +21,7 @@ namespace ViewModel.Model
         public DepartmentModel Department { get; set; }
         public Guid UnitId { get; set; }
         public UnitModel Unit { get; set; }
+        public string Location { get; set; }
         public AccessTypeEnum AccessType { get; set; }
         public StatusEnum Status { get; set; }
         public DateTime? DOB { get; set; }

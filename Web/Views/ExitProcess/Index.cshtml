@@ -34,7 +34,7 @@
                         <div class="form-group">
                             <label>Exit Date <span class="text-danger">*</span></label>
                             <div class="cal-icon">
-                                <input type="text" class="form-control datetimepicker">
+                                <input type="text" id="exitdate" class="form-control datetimepicker">
                             </div>
                         </div>
                         <div class="form-group">
@@ -71,10 +71,10 @@
                         </div>
                         <div class="form-group">
                             <label>Reason <span class="text-danger">*</span></label>
-                            <textarea class="form-control" rows="4"></textarea>
+                            <textarea class="form-control" id="exitreason" rows="4"></textarea>
                         </div>
-                        <div class="submit-section">
-                            <button class="btn btn-primary submit-btn">Submit</button>
+                        <div class="submit-section" onclick="SubmitExitRequest()">
+                            <div class="btn btn-primary submit-btn">Submit</div>
                         </div>
                     </form>
                 </div>
@@ -83,3 +83,36 @@
     </div>
 </div>
 <!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function SubmitExitRequest()
+        {
+            var exitdate = $("#exitdate").val();
+            var exitreason = $("#exitreason").val();
+
+            sendRequestForm(exitdate, exitreason);
+        }
+
+        function sendRequestForm(exitdate, exitreason) {
+            $.ajax({
+                url: '@Url.Action("RequestExit", "ExitProcess")',
+                type: 'POST',
+                dataType: 'json',
+                data: { exitDate: exitdate, reason: exitreason },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message);
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}

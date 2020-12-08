@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Business.Interfaces;
+using Data.Entities;
+using Data.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ViewModel.Model;
 using Web.Helper.JWT;
 
 namespace Web.Controllers
 {
-    public class ExitProcessController : Controller
+    public class ExitProcessController : BaseController
     {
         private readonly IEmployeeService _employeeService;
         private readonly IExitProcessService _exitProcessService;
@@ -55,6 +59,55 @@ namespace Web.Controllers
             exitProcessViewModel.ExitProcessList = _mapper.Map<IEnumerable<ExitProcessModel>>(exitApplication);
 
             return View(exitProcessViewModel);
+        }
+
+        //action section
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> RequestExit(string exitDate, string reason)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var exitTime = DateTime.ParseExact(exitDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    var exitProcess = new ExitProcess()
+                    {
+                        Emp_No = authData.Emp_No,
+                        EmployeeId = authData.Id,
+                        ExitDate = exitTime,
+                        NoticeDate = DateTime.Now,
+                        Reason = reason,
+                        Status = ExitProcessStatus.Pending,
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now
+                    };
+
+                    var response = await _exitProcessService.Create(exitProcess);
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
         }
     }
 }

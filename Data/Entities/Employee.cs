@@ -21,6 +21,7 @@ namespace Data.Entities
         public Department Department { get; set; }
         public Guid? UnitId { get; set; }
         public Unit Unit { get; set; }
+        public string Location { get; set; }
         public string StaffType { get; set; }
         public AccessType AccessType { get; set; }
         public Status Status { get; set; }

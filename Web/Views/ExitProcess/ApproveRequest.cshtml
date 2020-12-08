@@ -34,7 +34,7 @@
                             <th>#</th>
                             <th>Employee </th>
                             <th>Department </th>
-                            <th>Unit/Designation </th>
+                            <th>/Location/Designation </th>
                             <th>Reason </th>
                             <th>Notice Date </th>
                             <th>Resignation Date </th>
@@ -52,17 +52,31 @@
                                         <a href="profile.html">@item.Emp_No -@item.Employee.LastName @item.Employee.FirstName</a>
                                     </h2>
                                 </td>
-                                <td>@item.Employee.Department.Descc</td>
-                                <td>@item.Employee.Unit.Descc</td>
+                                @if (item.Employee.Department != null)
+                                {
+                                    <td>@item.Employee.Department.Descc</td>
+                                }
+                                else
+                                {
+                                    <td>Unverified</td>
+                                }
+
+                                @if (item.Employee.Unit != null)
+                                {
+                                    <td>@item.Employee.Location/ @item.Employee.Unit.Descc</td>
+                                }
+                                else
+                                {
+                                    <td>Unverified/Unverified</td>
+                                }
                                 <td>@item.Reason</td>
                                 <td>@item.NoticeDate.ToString("dd MMMM yyyy")</td>
                                 <td>@item.ExitDate.ToString("dd MMMM yyyy")</td>
                                 <td class="text-right">
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#add_resignation"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_resignation"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        <div class="dropdown-menu dropdown-menu-right" id="@item.Id" onclick="OnExitSelect(this.id)">
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#add_resignation"><i class="fa fa-pencil m-r-5"></i> Detail</a>
                                         </div>
                                     </div>
                                 </td>
@@ -88,24 +102,24 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label>Resigning Employee <span class="text-danger">*</span></label>
-                        <input class="form-control" readonly type="text">
+                        <label>Employee <span class="text-danger">*</span></label>
+                        <input class="form-control" readonly type="text" id="exitemployee">
                     </div>
                     <div class="form-group">
                         <label>Notice Date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input type="text" readonly class="form-control datetimepicker">
+                            <input type="text" readonly class="form-control datetimepicker" id="createddate">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Resignation Date <span class="text-danger">*</span></label>
+                        <label>Exit Date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input type="text" readonly class="form-control datetimepicker">
+                            <input type="text" readonly class="form-control datetimepicker" id="exitdate">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Reason <span class="text-danger">*</span></label>
-                        <textarea class="form-control" readonly rows="4"></textarea>
+                        <textarea class="form-control" id="exitreason" readonly rows="4"></textarea>
                     </div>
                     <div class="form-group">
                         <label>Department<span class="text-danger">*</span></label>
@@ -126,3 +140,53 @@
     </div>
 </div>
 <!-- /Approve Resignation Modal -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var selectedId;
+       //on select of unregisterd nam action
+        var exitList = JSON.parse('@Json.Serialize(@Model.ExitProcessList)');
+
+        function OnExitSelect(itemId) {
+            exitList.forEach(function (entry) {
+               if (entry.id == itemId) {
+                   $("#exitemployee").val(entry.employee.lastName + " " + entry.employee.firstName + "-" + entry.employee.emp_No);
+                   $("#exitreason").val(entry.reason);
+                   $("#createddate").val(entry.noticeDate);
+                   $("#exitdate").val(entry.exitDate);
+                   selectedId = entry.id;
+                }
+            });
+        }
+
+        function ApproveExitRequest()
+        {
+            var exitdate = $("#exitdate").val();
+            var exitreason = $("#exitreason").val();
+
+            submitApproveRequestForm(exitdate, exitreason);
+        }
+
+        function submitApproveRequestForm(exitdate, exitreason) {
+            $.ajax({
+                url: '@Url.Action("ApproveRequestExit", "ExitProcess")',
+                type: 'POST',
+                dataType: 'json',
+                data: { exitDate: exitdate, reason: exitreason },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message);
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}
+
