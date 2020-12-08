@@ -286,68 +286,68 @@
 @section Scripts{
     <script type="text/javascript">
 
-    //on select of unregisterd nam action
-    var unregisteredList = JSON.parse('@Json.Serialize(@Model.Employeee)');
+        //on select of unregisterd nam action
+        var unregisteredList = JSON.parse('@Json.Serialize(@Model.Employeee)');
 
-    function OnSelect() {
-        let pendingUser = $("#pendinguser option:selected").val();
-        unregisteredList.forEach(function (entry) {
-           if (entry.emp_No == pendingUser) {
-                $("#empno").val(entry.emp_No);
-                $("#firstname").val(entry.firstName);
-                $("#lastname").val(entry.lastName);
-                $("#username").val(entry.userName);
-                $("#email").val(entry.emailAddress);
-            }
-        });
-    }
+        function OnSelect() {
+            let pendingUser = $("#pendinguser option:selected").val();
+            unregisteredList.forEach(function (entry) {
+               if (entry.emp_No == pendingUser) {
+                    $("#empno").val(entry.emp_No);
+                    $("#firstname").val(entry.firstName);
+                    $("#lastname").val(entry.lastName);
+                    $("#username").val(entry.userName);
+                    $("#email").val(entry.emailAddress);
+                }
+            });
+        }
 
-    //submit button action
-    var redirectUrl = '@Url.Action("Enroll","Employee")'; //redirect to emlpoyee profile page
+        //submit button action
+        var redirectUrl = '@Url.Action("Enroll","Employee")'; //redirect to emlpoyee profile page
 
-    function SubmitRegisterDetail()
-    {
-        var email = $("#email").val();
-        var empno = $("#empno").val();
-        var firstname = $("#firstname").val();
-        var lastname = $("#lastname").val();
-        var username = $("#username").val();
-        var password = $("#password").val();
-        var confirmpassword = $("#confirmpassword").val();
-        //var roleid = $("#roleid").val();
-        var roleidlist = [];
-        $('input[type=checkbox]').each(function () {
-            if (this.checked) {
-                roleidlist.push(this.value);
+        function SubmitRegisterDetail()
+        {
+            var email = $("#email").val();
+            var empno = $("#empno").val();
+            var firstname = $("#firstname").val();
+            var lastname = $("#lastname").val();
+            var username = $("#username").val();
+            var password = $("#password").val();
+            var confirmpassword = $("#confirmpassword").val();
+            //var roleid = $("#roleid").val();
+            var roleidlist = [];
+            $('input[type=checkbox]').each(function () {
+                if (this.checked) {
+                    roleidlist.push(this.value);
 
-            }
-        });
+                }
+            });
 
 
-        sendRegisterForm(email, password, confirmpassword, firstname, lastname, username, empno, roleidlist);
-    }
+            sendRegisterForm(email, password, confirmpassword, firstname, lastname, username, empno, roleidlist);
+        }
 
         function sendRegisterForm(email, password, confirmPassword, firstName, lastName, userName, empNo, roleId) {
 
 
-        $.ajax({
-            url: '@Url.Action("Register", "Employee")',
-            type: 'POST',
-            dataType: 'json',
-            data: { email: email, password: password, confirmPassword: confirmPassword, firstName: firstName, lastName: lastName, userName: userName, empNo: empNo, roleId: roleId },
-            success: function (response) {
-                if (response.status) {
-                    window.location.href = redirectUrl;
-                    toastr.success(response?.message);
+            $.ajax({
+                url: '@Url.Action("Register", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: { email: email, password: password, confirmPassword: confirmPassword, firstName: firstName, lastName: lastName, userName: userName, empNo: empNo, roleId: roleId },
+                success: function (response) {
+                    if (response.status) {
+                        window.location.href = redirectUrl;
+                        toastr.success(response?.message);
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
                 }
-                else {
-                    toastr.warning(response ?.message);
-                }
-                return;
-            }, error: function () {
-                alerty("danger", "Opps", "request Failed");
-            }
-        });
+            });
         }
 
     </script>

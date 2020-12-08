@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.DisciplinaryActionViewModel
+
 @{
     ViewData["Title"] = "QueryAction";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -16,9 +17,6 @@
                     <li class="breadcrumb-item"><a href="index.html">Services</a></li>
                     <li class="breadcrumb-item active">Issue Query</li>
                 </ul>
-            </div>
-            <div class="col-auto float-right ml-auto">
-                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#reply_query"><i class="fa fa-plus"></i>Query Action</a>
             </div>
         </div>
     </div>
@@ -56,7 +54,7 @@
                                 <td class="text-right">
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                        <div class="dropdown-menu dropdown-menu-right">
+                                        <div class="dropdown-menu dropdown-menu-right" id="@item.Id" onclick="OnSelectView(this.id)">
                                             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#reply_query"><i class="fa fa-pencil m-r-5"></i> View</a>
                                         </div>
                                     </div>
@@ -85,37 +83,40 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" placeholder="Issued Date" readonly class="form-control datetimepicker">
+                                <input type="text" placeholder="Issued Date" readonly class="form-control datetimepicker" id="actionquerydate">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" placeholder="Query By" readonly class="form-control">
+                                <input type="text" placeholder="Query By" readonly class="form-control" id="actionqueryto">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <input type="text" placeholder="Subject" readonly class="form-control">
+                        <input type="text" placeholder="Subject" readonly class="form-control" id="actionquerysubject">
                     </div>
                     <div class="form-group">
-                        <textarea rows="5" class="form-control" placeholder="Query message" readonly disabled></textarea>
+                        <textarea rows="5" class="form-control" placeholder="Query message" readonly disabled id="actionquerymessage"></textarea>
                     </div>
                     <div class="form-group">
-                        <textarea rows="5" class="form-control" placeholder="Response from the employee" readonly disabled></textarea>
+                        <textarea rows="5" class="form-control" placeholder="Response from the employee" readonly disabled id="actionqueryreply"></textarea>
                     </div>
                     <div class="form-group">
-                        <textarea rows="5" class="form-control summernote" placeholder="Make a comment"></textarea>
+                        <textarea rows="5" class="form-control" placeholder="Response from the employee" hidden readonly disabled id="querycommentmessage"></textarea>
                     </div>
-                    <div class="form-group">
-                        <select class="select" id="leavetypeid">
+                    <div class="form-group" id="querycoomentdiv">
+                        <textarea rows="5" class="form-control summernote" id="queryactioncomment" placeholder="Make a comment"></textarea>
+                    </div>
+                    <div class="form-group" id="queryactiondiv">
+                        <select class="select" id="queryaction">
                             <option>Select Action</option>
-                            <option>Refer</option>
-                            <option>Drop</option>
+                            <option value="4">Refer</option>
+                            <option value="3">Drop</option>
                         </select>
                     </div>
                     <div class="form-group mb-0">
-                        <div class="text-center">
-                            <button class="btn btn-primary"><span>Take Action</span> <i class="fa fa-send m-l-5"></i></button>
+                        <div class="text-center" id="queryactionsubmit" onclick="SubmitQueryActionDetail()">
+                            <div class="btn btn-primary"><span>Take Action</span> <i class="fa fa-send m-l-5"></i></div>
                         </div>
                     </div>
                 </form>
@@ -123,4 +124,61 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var selectedId;
+        var createdDate;
+
+        var queryList = JSON.parse('@Json.Serialize(@Model.DisciplinaryActions)');
+
+        function OnSelectView(itemId) {
+            queryList.forEach(function (entry) {
+                if (entry.id == itemId) {
+                   $("#actionqueryto").val(entry.targetEmployeeNo);
+                   $("#actionquerysubject").val(entry.querySubject);
+                   $("#actionquerymessage").val(entry.queryMessage);
+                    $("#actionquerydate").val(entry.createdDate);
+                    $("#actionqueryreply").val(entry.queryReply);
+                   selectedId = itemId;
+                }
+                if (entry.queryActionComment != null) {
+                    $("#querycommentmessage").val(entry.queryActionComment);
+                    document.getElementById('querycommentmessage').removeAttribute("hidden");
+                    document.getElementById('querycoomentdiv').setAttribute("hidden", true);
+                    document.getElementById('queryactiondiv').setAttribute("hidden", true);
+                    document.getElementById('queryactionsubmit').setAttribute("hidden", true);
+                }
+            });
+        }
+
+        function SubmitQueryActionDetail()
+        {
+            var queryaction = $("#queryaction").val();
+            var queryactioncomment = $("#queryactioncomment").val();
+            sendQueryActionForm(selectedId, queryactioncomment, queryaction);
+        }
+
+        function sendQueryActionForm(selectedId, queryactioncomment, queryaction) {
+            $.ajax({
+                url: '@Url.Action("TakeQueryAction", "DisciplinaryAction")',
+                type: 'POST',
+                dataType: 'json',
+                data: { id: selectedId, comment: queryactioncomment, action: queryaction },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message);
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}
 

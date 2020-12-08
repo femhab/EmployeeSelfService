@@ -21,14 +21,16 @@ namespace Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ServiceContext _dbContext;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly IGradeLevelService _gradeLevelService;
         private readonly SqlConnection _sqlConnection;
         private readonly IMapper _mapper;
 
-        public EmployeeService(IUnitOfWork unitOfWork, ServiceContext dbContext, IApprovalBoardService approvalBoardService, IMapper mapper)
+        public EmployeeService(IUnitOfWork unitOfWork, ServiceContext dbContext, IApprovalBoardService approvalBoardService, IMapper mapper, IGradeLevelService gradeLevelService)
         {
             _unitOfWork = unitOfWork;
             _dbContext = dbContext;
             _approvalBoardService = approvalBoardService;
+            _gradeLevelService = gradeLevelService;
             _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
             _mapper = mapper;
         }
@@ -184,7 +186,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<Employee>> GetAll()
         {
-            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()), "Department,Division,Unit,GradeLevel");
+            var data = await GetAll(x => x.Status == Status.Active, "Department,Division,Unit,GradeLevel");
             return data;
         }
 
@@ -251,7 +253,57 @@ namespace Business.Services
 
         public async Task<IEnumerable<Employee>> GetAllLowGradeEmployee(Guid employeeId)
         {
-            return null;
+            try
+            {
+                var allGradeLevels = await _gradeLevelService.GetAll();
+                var employee = await GetById(employeeId);
+                var allEmployee = await GetAll();
+
+                int employeeLevel = 0;
+
+                List<Employee> lowGradeEmployee = new List<Employee>();
+
+                foreach (var item in allGradeLevels)
+                {
+                    if (employee.GradeLevelId.ToString().ToLower() == item.Id.ToString().ToLower())
+                    {
+                        string formattedGrade = item.GradeCode.Replace("GL", string.Empty);
+                        if (formattedGrade.ToLower() == "dr")
+                            employeeLevel = 17;
+                        if (formattedGrade.StartsWith("EX"))
+                            employeeLevel = 16;
+                        if (formattedGrade.ToLower() == "sp")
+                            employeeLevel = 15;
+                        else
+                        {
+                            employeeLevel = int.Parse(formattedGrade);
+                        }
+
+                        foreach (var employeeUnit in allEmployee)
+                        {
+                            if (employeeUnit.GradeLevelId != item.Id)
+                            {
+                                string formattedEmployeeGrade =  allGradeLevels.Where(x => x.Id == employeeUnit.GradeLevelId).FirstOrDefault().GradeCode.Replace("GL", string.Empty);
+                                if (formattedEmployeeGrade.StartsWith("EX") && employeeLevel == 17)
+                                    lowGradeEmployee.Add(employeeUnit);
+                                else if (formattedEmployeeGrade.ToLower() == "sp" && (employeeLevel == 16 || employeeLevel == 17))
+                                    lowGradeEmployee.Add(employeeUnit);
+                                else if (formattedEmployeeGrade.All(char.IsDigit))
+                                {
+                                    var employeeUnitLevel = int.Parse(formattedEmployeeGrade);
+                                    if (employeeLevel > employeeUnitLevel)
+                                        lowGradeEmployee.Add(employeeUnit);
+                                }
+                            }
+                        }
+                    }
+                }
+                return lowGradeEmployee;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

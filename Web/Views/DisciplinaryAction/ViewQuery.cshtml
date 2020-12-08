@@ -18,9 +18,6 @@
                     <li class="breadcrumb-item active">Issue Query</li>
                 </ul>
             </div>
-            <div class="col-auto float-right ml-auto">
-                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#reply_query"><i class="fa fa-plus"></i> Reply Query</a>
-            </div>
         </div>
     </div>
     <!-- /Page Header -->
@@ -57,7 +54,7 @@
                                 <td class="text-right">
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                        <div class="dropdown-menu dropdown-menu-right">
+                                        <div class="dropdown-menu dropdown-menu-right" id="@item.Id" onclick="OnSelect(this.id)">
                                             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#reply_query"><i class="fa fa-pencil m-r-5"></i> View</a>
                                         </div>
                                     </div>
@@ -86,27 +83,30 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" placeholder="Issued Date" readonly class="form-control datetimepicker">
+                                <input type="text" placeholder="Issued Date" readonly class="form-control datetimepicker" id="querydate">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" placeholder="Query By" readonly class="form-control">
+                                <input type="text" placeholder="Query By" readonly class="form-control" id="queryby">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <input type="text" placeholder="Subject" readonly class="form-control">
+                        <input type="text" placeholder="Subject" readonly class="form-control" id="querysubject">
                     </div>
                     <div class="form-group">
-                        <textarea rows="5" class="form-control" placeholder="Query message" readonly disabled></textarea>
+                        <textarea rows="3" class="form-control" id="querymessage" placeholder="Query message" readonly disabled></textarea>
                     </div>
                     <div class="form-group">
-                        <textarea rows="5" class="form-control summernote" placeholder="Reply to query here"></textarea>
+                        <textarea rows="3" class="form-control" id="queryreplymessage" hidden placeholder="Query reply" readonly disabled></textarea>
                     </div>
-                    <div class="form-group mb-0">
+                    <div class="form-group" id="queryreplydiv">
+                        <textarea rows="5" class="form-control summernote" id="queryreply" placeholder="Reply to query here"></textarea>
+                    </div>
+                    <div class="form-group mb-0" onclick="SubmitReplyQueryDetail()" id="querysubmit">
                         <div class="text-center">
-                            <button class="btn btn-primary"><span>Respond To Query</span> <i class="fa fa-send m-l-5"></i></button>
+                            <div class="btn btn-primary"><span>Respond To Query</span> <i class="fa fa-send m-l-5"></i></div>
                         </div>
                     </div>
                 </form>
@@ -114,3 +114,57 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var selectedId;
+        var createdDate;
+
+        var queryList = JSON.parse('@Json.Serialize(@Model.DisciplinaryActions)');
+
+        function OnSelect(itemId) {
+            queryList.forEach(function (entry) {
+                if (entry.id == itemId) {
+                   $("#queryby").val(entry.employee.lastName + "-" +entry.employee.firstName);
+                   $("#querysubject").val(entry.querySubject);
+                   $("#querymessage").val(entry.queryMessage);
+                   $("#querydate").val(entry.createdDate);
+                   selectedId = itemId;
+                }
+                if (entry.queryReply != null) {
+                    $("#queryreplymessage").val(entry.queryReply);
+                    document.getElementById('queryreplymessage').removeAttribute("hidden");
+                    document.getElementById('queryreplydiv').setAttribute("hidden", true);
+                    document.getElementById('querysubmit').setAttribute("hidden", true);
+                }
+            });
+        }
+
+        function SubmitReplyQueryDetail()
+        {
+            var queryreply = $("#queryreply").val();
+            sendReplyQueryForm(selectedId, queryreply);
+        }
+
+        function sendReplyQueryForm(id, reply) {
+            $.ajax({
+                url: '@Url.Action("ReplyQuery", "DisciplinaryAction")',
+                type: 'POST',
+                dataType: 'json',
+                data: { id: id, reply: reply },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message);
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}
