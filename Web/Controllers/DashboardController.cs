@@ -22,7 +22,16 @@ namespace Web.Controllers
         [Route("Dashboard")]
         public IActionResult Employee()
         {
-            return View();
+            var authData = JwtHelper.GetAuthData(Request);
+            if (authData == null)
+            {
+                return RedirectToAction("Signout", "Employee");
+            }
+
+            DashboardModel dashModel = new DashboardModel();
+            dashModel = _mapper.Map<DashboardModel>(authData);
+
+            return View(dashModel);
         }
 
         [Route("Approval-Board")]
@@ -38,6 +47,7 @@ namespace Web.Controllers
 
             var approvalBoard = await _approvalBoardService.GetByProcessor(authData.Id);
 
+            approvalBoardViewModel = _mapper.Map<ApprovalBoardViewModel>(authData);
             approvalBoardViewModel.ApprovalBoard = _mapper.Map<IEnumerable<ApprovalBaordModel>>(approvalBoard);
 
             return View(approvalBoardViewModel);

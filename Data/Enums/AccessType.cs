@@ -2,7 +2,7 @@
 {
     public enum AccessType
     {
-        Employee,
+        Employee = 1,
         Admin,
         SuperAdmin
     }

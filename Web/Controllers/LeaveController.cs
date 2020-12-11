@@ -43,6 +43,7 @@ namespace Web.Controllers
             var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
             var leaveTaken = await _leaveService.GetByEmployee(authData.Id);
 
+            leaveViewModel = _mapper.Map<LeaveViewModel>(authData);
             leaveViewModel.LeaveType = _mapper.Map<IEnumerable<LeaveTypeModel>>(leaveType);
             leaveViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
             leaveViewModel.LeaveTaken = _mapper.Map<IEnumerable<LeaveModel>>(leaveTaken);

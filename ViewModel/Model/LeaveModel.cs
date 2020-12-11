@@ -25,7 +25,7 @@ namespace ViewModel.Model
         public string LastProccessedBy { get; set; }
     }
 
-    public class LeaveViewModel
+    public class LeaveViewModel: AuthDataModel
     {
         public EmployeeModel Employee { get; set; }
         public IEnumerable<LeaveTypeModel> LeaveType { get; set; }

@@ -112,7 +112,7 @@
                                                                 <select name="customer_experience" class="form-control" id="appraisalrating">
                                                                     @foreach (var item in Model.AppraisalRatings)
                                                                     {
-                                                                        <option value="@categoryItem.Id/@item.Weight">@item.Description</option>
+                                                                        <option value="@category.Id/@categoryItem.Id/@item.Id">@item.Description</option>
                                                                     }
                                                                 </select>
                                                             </td>

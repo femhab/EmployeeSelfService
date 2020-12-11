@@ -40,7 +40,7 @@ namespace ViewModel.Model
         public string Emp_No { get; set; }
     }
 
-    public class EmployeeViewModel
+    public class EmployeeViewModel: AuthDataModel
     {
         public IEnumerable<EmployeeModel> EmployeeList { get; set; }
         public IEnumerable<HRUserModel> Employeee { get; set; }
@@ -48,7 +48,7 @@ namespace ViewModel.Model
         public IEnumerable<DepartmentModel> Departments { get; set; }
     }
 
-    public class EmployeeProfileViewModel
+    public class EmployeeProfileViewModel: AuthDataModel
     {
         public EmployeeModel Employee { get; set; }
         public int ApprovalCount { get; set; }

@@ -42,6 +42,7 @@ namespace Web.Controllers
             ExitProcessViewModel exitProcessViewModel = new ExitProcessViewModel();
             var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
 
+            exitProcessViewModel = _mapper.Map<ExitProcessViewModel>(authData);
             exitProcessViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
 
             return View(exitProcessViewModel);
@@ -59,6 +60,7 @@ namespace Web.Controllers
             var exitApplication =await _exitProcessService.GetUnapprovedApplication();
             var clearingDepartment = await _departmentService.GetByExitApproval();
 
+            exitProcessViewModel = _mapper.Map<ExitProcessViewModel>(authData);
             exitProcessViewModel.ExitProcessList = _mapper.Map<IEnumerable<ExitProcessModel>>(exitApplication);
             exitProcessViewModel.ClearanceDepartment = _mapper.Map<IEnumerable<DepartmentModel>>(clearingDepartment);
 

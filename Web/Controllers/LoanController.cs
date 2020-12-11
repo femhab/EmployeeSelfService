@@ -41,6 +41,7 @@ namespace Web.Controllers
             var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
             var loanTaken = await _loanService.GetByEmployee(authData.Id);
 
+            loanViewModel = _mapper.Map<LoanViewModel>(authData);
             loanViewModel.LoanType = _mapper.Map<IEnumerable<LoanTypeModel>>(loanType);
             loanViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
             loanViewModel.LoanTaken = _mapper.Map<IEnumerable<LoanModel>>(loanTaken);

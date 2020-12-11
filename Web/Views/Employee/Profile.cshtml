@@ -112,8 +112,11 @@
             <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
                 <ul class="nav nav-tabs nav-tabs-bottom">
                     <li class="nav-item"><a href="#emp_profile" data-toggle="tab" class="nav-link active">Profile</a></li>
-                    <li class="nav-item"><a href="#emp_update" data-toggle="tab" class="nav-link">Request Name Change</a></li>
-                    <li class="nav-item"><a href="#emp_transfer" data-toggle="tab" class="nav-link">Request Transfer</a></li>
+                    @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee)
+                    {
+                        <li class="nav-item"><a href="#emp_update" data-toggle="tab" class="nav-link">Request Name Change</a></li>
+                        <li class="nav-item"><a href="#emp_transfer" data-toggle="tab" class="nav-link">Request Transfer</a></li>
+                    }
                 </ul>
             </div>
         </div>
@@ -127,7 +130,7 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Next Of Kin <a href="#" class="edit-icon" data-toggle="modal" data-target="#employee_nok_modal"><i class="fa fa-pencil"></i></a></h3>
+                            <h3 class="card-title">Next Of Kin @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#employee_nok_modal"><i class="fa fa-pencil"></i></a>}</h3>
                             <div class="table-responsive">
                                 <table class="table table-nowrap">
                                     <thead>
@@ -168,7 +171,7 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Family Dependents <a href="#" class="edit-icon" data-toggle="modal" data-target="#family_info_modal"><i class="fa fa-pencil"></i></a></h3>
+                            <h3 class="card-title">Family Dependents @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#family_info_modal"><i class="fa fa-pencil"></i></a>}</h3>
                             <div class="table-responsive">
                                 <table class="table table-nowrap">
                                     <thead>
@@ -210,7 +213,7 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Education Informations <a href="#" class="edit-icon" data-toggle="modal" data-target="#education_info"><i class="fa fa-pencil"></i></a></h3>
+                            <h3 class="card-title">Education Informations @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#education_info"><i class="fa fa-pencil"></i></a>}</h3>
                             <div class="experience-box">
                                 <ul class="experience-list">
                                     @foreach (var item in Model.EmployeeEducationDetail.Take(3))
@@ -238,7 +241,7 @@
                 <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "leave").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Leave Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
+                            <h3 class="card-title">Leave Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -265,18 +268,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex">
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "loan").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Loan Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
-                                        <input class="form-control" readonly type="number">
-                                    </div>
-                                </div>
-                            </div>
+                            <h3 class="card-title">Loan Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
+                           
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -286,64 +282,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>First Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Second Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Third Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Forth Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "loan").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        {
+                                            <tr>
+                                                <td>@item.ApprovalLevel.ToString()</td>
+                                                <td class="text-center">
+                                                    <select class="select" disabled>
+                                                        <option value="" selected>@item.Processor</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex">
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "transfer").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Transfer Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
-                                        <input class="form-control" readonly type="number">
-                                    </div>
-                                </div>
-                            </div>
+                            <h3 class="card-title">Transfer Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
+                            
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -353,64 +313,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>First Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Second Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Third Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Forth Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "transfer").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        {
+                                            <tr>
+                                                <td>@item.ApprovalLevel.ToString()</td>
+                                                <td class="text-center">
+                                                    <select class="select" disabled>
+                                                        <option value="" selected>@item.Processor</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex">
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "appraisal").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Appraisal Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
-                                        <input class="form-control" readonly type="number">
-                                    </div>
-                                </div>
-                            </div>
+                            <h3 class="card-title">Appraisal Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
+                           
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -420,46 +344,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>First Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Second Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Third Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Forth Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "appraisal").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        {
+                                            <tr>
+                                                <td>@item.ApprovalLevel.ToString()</td>
+                                                <td class="text-center">
+                                                    <select class="select" disabled>
+                                                        <option value="" selected>@item.Processor</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>

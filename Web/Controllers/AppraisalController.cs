@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
+using Data.Entities;
+using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,15 +17,17 @@ namespace Web.Controllers
         private readonly IAppraisalRatingService _appraisalRatingService;
         private readonly IAppraisalCategoryService _appraisalCategoryService;
         private readonly IAppraisalCategoryItemService _appraisalCategoryItemService;
+        private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IEmployeeService _employeeService;
         private readonly IMapper _mapper;
 
-        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper)
+        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService)
         {
             _appraisalRatingService = appraisalRatingService;
             _appraisalCategoryService = appraisalCategoryService;
             _appraisalCategoryItemService = appraisalCategoryItemService;
             _employeeService = employeeService;
+            _employeeApprovalConfigService = employeeApprovalConfigService;
             _mapper = mapper;
         }
 
@@ -43,6 +47,8 @@ namespace Web.Controllers
                 var categoryItemList = await _appraisalCategoryItemService.GetAll();
                 var employeeList = await _employeeService.GetAll();
                 var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
+
+                appraisalViewModel = _mapper.Map<AppraisalViewModel>(authData);
                 appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
                 appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(categoryList);
                 appraisalViewModel.AppraisalCategoryItems = _mapper.Map<IEnumerable<AppraisalCategoryItemModel>>(categoryItemList);
@@ -90,7 +96,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> AddAppraisal(List<string> catItemWeight)
+        public async Task<ActionResult> AddAppraisal(List<string> catItemWeight, Guid apparisalPeriod)
         {
             try
             {
@@ -101,10 +107,47 @@ namespace Web.Controllers
                     {
                         return RedirectToAction("Signout", "Employee");
                     }
+
+                    //get first level approver
+                    var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "appraisal", Level.FirstLevel);
+                    if(approverConfig != null)
+                    {
+                        var employeeAppraisal = new EmployeeAppraisal()
+                        {
+                            EmployeeId = authData.Id,
+                            Emp_No = authData.Emp_No,
+                            LastRatingManagerId = authData.Emp_No,
+                            LastRatingManagerName = authData.LastName + authData.LastName,
+                            NextRatingManagerId = approverConfig.Emp_No,
+                            NextRatingManagerName = approverConfig.Employee.LastName + approverConfig.Employee.FirstName,
+                            AppraisalPeriodId = apparisalPeriod,
+                            Id = Guid.NewGuid(),
+                            CreatedDate = DateTime.Now,
+                        };
+
+                        var appraisalItemList = new List<AppraisalItem>();
+
+                        foreach (var item in catItemWeight)
+                        {
+                            Guid category = Guid.Parse(item.Split("/")[0]);
+                            Guid categoryItem = Guid.Parse(item.Split("/")[1]);
+                            Guid rating = Guid.Parse(item.Split("/")[2]);
+
+                            appraisalItemList.Add(new AppraisalItem() { AppraisalCategoryId = category, AppraisalCategoryItemId = categoryItem, AppraisalRatingId = rating, EmployeeAppraisalId = employeeAppraisal.Id, Id = Guid.NewGuid(), CreatedDate = DateTime.Now });
+                        }
+
+                        return Json(new
+                        {
+                            status = true,
+                            message = "Appraisal created successfully"
+                        });
+                    }
+                    
+
                     return Json(new
                     {
                         status = false,
-                        message = "Please check the password"
+                        message = "You don't have approval configuration for appraisal yet, reach out to the admin."
                     });
                 }
                 return Json(new

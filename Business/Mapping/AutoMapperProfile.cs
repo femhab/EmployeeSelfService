@@ -28,6 +28,15 @@ namespace Business.Mapping
             CreateMap<ExitProcess, ExitProcessModel>().ReverseMap();
             CreateMap<ExitProcessModel, ExitProcess>().ReverseMap();
             CreateMap<ApprovalBoard, ApprovalBaordModel>().ReverseMap();
+            CreateMap<AuthDataModel, EmployeeViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, EmployeeProfileViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, LeaveViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, AppraisalViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, ApprovalBoardViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, DisciplinaryActionViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, ExitProcessViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, LoanViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, DashboardModel>().ReverseMap();
         }
     }
 }

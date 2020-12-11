@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Entities;
+using Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using ViewModel.ResponseModel;
 
@@ -47,6 +48,13 @@ namespace Business.Services
         public async Task<IEnumerable<EmployeeApprovalConfig>> GetByEmployee(Guid employeeId)
         {
             var data = await GetAll(x => x.EmployeeId == employeeId, "Employee,ApprovalWorkItem");
+            return data;
+        }
+
+        public async Task<EmployeeApprovalConfig> GetByServiceLevel(Guid employeeId, string approverWorkItem, Level level)
+        {
+            var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains(approverWorkItem));
+            var data = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: c => c.EmployeeId == employeeId && c.ApprovalWorkItemId == approvalWorkItem.Id && c.ApprovalLevel == level);
             return data;
         }
 

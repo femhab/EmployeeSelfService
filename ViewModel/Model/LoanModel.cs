@@ -25,7 +25,7 @@ namespace ViewModel.Model
         public string LastApprover { get; set; }
     }
 
-    public class LoanViewModel
+    public class LoanViewModel: AuthDataModel
     {
         public EmployeeModel Employee { get; set; }
         public IEnumerable<LoanTypeModel> LoanType { get; set; }

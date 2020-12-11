@@ -2,7 +2,7 @@
 
 namespace ViewModel.Model
 {
-    public class AppraisalViewModel
+    public class AppraisalViewModel: AuthDataModel
     {
         public IEnumerable<AppraisalRatingModel> AppraisalRatings { get; set; }
         public IEnumerable<AppraisalCategoryModel> AppraisalCategories { get; set; }

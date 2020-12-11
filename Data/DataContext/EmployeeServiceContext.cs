@@ -11,6 +11,7 @@ namespace Data.DataContext
         public DbSet<AppliedNameUpdate> AppliedNameUpdates { get; set; }
         public DbSet<AppraisalCategory> AppraisalCategories { get; set; }
         public DbSet<AppraisalCategoryItem> AppraisalCategoryItems { get; set; }
+        public DbSet<AppraisalItem> AppraisalItems { get; set; }
         public DbSet<AppraisalPeriod> AppraisalPeriods { get; set; }
         public DbSet<AppraisalRating> AppraisalRatings { get; set; }
         public DbSet<AppliedTransfer> AppliedTransfers { get; set; }
@@ -24,6 +25,7 @@ namespace Data.DataContext
         public DbSet<EducationalQualification> EducationalQualifications { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeAddress> EmployeesAddress { get; set; }
+        public DbSet<EmployeeAppraisal> EmployeeAppraisals { get; set; }
         public DbSet<EmployeeApprovalConfig> EmployeesApprovalConfig { get; set; }
         public DbSet<EmployeeApprovalCount> EmployeeApprovalCounts { get; set; }
         public DbSet<EmployeeEducationDetail> EmployeesEducationDetail { get; set; }

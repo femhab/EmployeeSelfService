@@ -77,6 +77,8 @@ namespace Web.Controllers
                 var roleList = await _roleService.GetAll();
                 var employeeList = await _employeeService.GetAll();
                 var employeeListResponse = await _employeeService.GetUnregisteredBaseEmployee();
+
+                employeeViewModel = _mapper.Map<EmployeeViewModel>(authData);
                 employeeViewModel.Employeee = _mapper.Map<IEnumerable<HRUserModel>>(employeeListResponse);
                 employeeViewModel.Roles = _mapper.Map<IEnumerable<RoleModel>>(roleList);
                 employeeViewModel.Departments = _mapper.Map<IEnumerable<DepartmentModel>>(deptList);
@@ -122,6 +124,7 @@ namespace Web.Controllers
                 var department = await _departmentService.GetAll();
                 //var unit = await _employeeApprovalConfigService.GetByEmployee(authData.Id);
 
+                profileViewModel = _mapper.Map<EmployeeProfileViewModel>(authData);
                 profileViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
                 profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(approvalWorkItem);
                 profileViewModel.Relationshiop = _mapper.Map<IEnumerable<RelationshipModel>>(relationshipList);

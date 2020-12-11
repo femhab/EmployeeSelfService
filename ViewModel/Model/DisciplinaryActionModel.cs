@@ -21,7 +21,7 @@ namespace ViewModel.Model
         public QueryActionEnum Action { get; set; }
     }
 
-    public class DisciplinaryActionViewModel
+    public class DisciplinaryActionViewModel: AuthDataModel
     {
         public IEnumerable<EmployeeModel> Employee { get; set; }
         public IEnumerable<DisciplinaryActionModel> DisciplinaryActions { get; set; }

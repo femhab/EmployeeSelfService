@@ -1,6 +1,6 @@
 ﻿namespace ViewModel.Model
 {
-    public class DashboardModel
+    public class DashboardModel: AuthDataModel
     {
     }
 }

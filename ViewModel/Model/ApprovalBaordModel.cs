@@ -18,7 +18,7 @@ namespace ViewModel.Model
         public ApprovalStatusEnum Status { get; set; } //new, pending
     }
 
-    public class ApprovalBoardViewModel
+    public class ApprovalBoardViewModel: AuthDataModel
     {
         public IEnumerable<ApprovalBaordModel> ApprovalBoard { get; set; }
     }

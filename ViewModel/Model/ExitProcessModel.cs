@@ -15,7 +15,7 @@ namespace ViewModel.Model
         public DateTime ExitDate { get; set; }
     }
 
-    public class ExitProcessViewModel
+    public class ExitProcessViewModel: AuthDataModel
     {
         public EmployeeModel Employee { get; set; }
         public IEnumerable<ExitProcessModel> ExitProcessList { get; set; }

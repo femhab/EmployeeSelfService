@@ -36,6 +36,7 @@ namespace Web.Controllers
             DisciplinaryActionViewModel disciplinaryActionViewModel = new DisciplinaryActionViewModel();
             var lowGradeStaff = await _employeeService.GetAllLowGradeEmployee(authData.Id);
 
+            disciplinaryActionViewModel = _mapper.Map<DisciplinaryActionViewModel>(authData);
             disciplinaryActionViewModel.Employee = _mapper.Map<IEnumerable<EmployeeModel>>(lowGradeStaff);
 
             return View(disciplinaryActionViewModel);
@@ -52,6 +53,7 @@ namespace Web.Controllers
             DisciplinaryActionViewModel disciplinaryActionViewModel = new DisciplinaryActionViewModel();
             var query = await _disciplinaryActionService.GetByTargetEmployee(authData.Id);
 
+            disciplinaryActionViewModel = _mapper.Map<DisciplinaryActionViewModel>(authData);
             disciplinaryActionViewModel.DisciplinaryActions = _mapper.Map<IEnumerable<DisciplinaryActionModel>>(query);
 
             return View(disciplinaryActionViewModel);
@@ -68,6 +70,7 @@ namespace Web.Controllers
             DisciplinaryActionViewModel disciplinaryActionViewModel = new DisciplinaryActionViewModel();
             var query = await _disciplinaryActionService.GetByEmployee(authData.Id);
 
+            disciplinaryActionViewModel = _mapper.Map<DisciplinaryActionViewModel>(authData);
             disciplinaryActionViewModel.DisciplinaryActions = _mapper.Map<IEnumerable<DisciplinaryActionModel>>(query);
 
             return View(disciplinaryActionViewModel);
