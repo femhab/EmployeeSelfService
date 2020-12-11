@@ -145,8 +145,10 @@ namespace Business.Services
                         DivisionId = divisionId,
                         DepartmentId = departmentId,
                         UnitId = unitId,
-                        Emp_No = model.Emp_No
-
+                        Emp_No = model.Emp_No,
+                        ApprovalStatus = ApprovalStatus.Pending,
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now
                     };
                     _unitOfWork.GetRepository<AppliedTransfer>().Update(appliedTransfer);
                     await _unitOfWork.SaveChangesAsync();
@@ -204,7 +206,7 @@ namespace Business.Services
 
         public async Task<Employee> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            var model = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: c => c.Id == id, include: c => c.Include(i => i.Department).Include(i => i.Unit).Include(i => i.GradeLevel).Include(i => i.Division));
             return model;
         }
 

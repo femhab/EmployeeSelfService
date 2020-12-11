@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,68 @@ namespace Web.Controllers
                 appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
 
                 return View(appraisalViewModel);
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        public async Task<ActionResult> PerformanceReview()
+        {
+            try
+            {
+                var authData = JwtHelper.GetAuthData(Request);
+                if (authData == null)
+                {
+                    return RedirectToAction("Signout", "Employee");
+                }
+
+                AppraisalViewModel appraisalViewModel = new AppraisalViewModel();
+                var ratingList = await _appraisalRatingService.GetAll();
+                var categoryList = await _appraisalCategoryService.GetAll();
+                var categoryItemList = await _appraisalCategoryItemService.GetAll();
+                var employeeList = await _employeeService.GetAll();
+                var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
+                appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
+                appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(categoryList);
+                appraisalViewModel.AppraisalCategoryItems = _mapper.Map<IEnumerable<AppraisalCategoryItemModel>>(categoryItemList);
+                appraisalViewModel.EmployeeList = _mapper.Map<IEnumerable<EmployeeModel>>(employeeList);
+                appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
+
+                return View(appraisalViewModel);
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        //action section
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> AddAppraisal(List<string> catItemWeight)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    return Json(new
+                    {
+                        status = false,
+                        message = "Please check the password"
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
             }
             catch (Exception ex)
             {

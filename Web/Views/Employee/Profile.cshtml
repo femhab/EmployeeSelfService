@@ -471,114 +471,152 @@
         <!-- /Profile Info Tab -->
         <!-- Employee Update Tab -->
         <div class="tab-pane fade" id="emp_update">
-            <form>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                            <input type="text" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Email <span class="text-danger">*</span></label>
-                            <input class="form-control" type="email">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Last Name</label>
-                            <input class="form-control" type="text">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Username <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                                            <input type="text" readonly value="@Model.Employee.Emp_No" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                            <input class="form-control" id="namechangeemail" value="@Model.Employee.EmailAddress" type="email">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                            <input class="form-control" id="namechangefirstname" value="@Model.Employee.FirstName" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Last Name</label>
+                                            <input class="form-control" id="namechangelastname" value="@Model.Employee.LastName" type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section" onclick="SubmitNameChnageRequest()">
+                                    <div class="btn btn-primary submit-btn">Request Name Change</div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div class="submit-section">
-                    <button class="btn btn-primary submit-btn">Save</button>
-                </div>
-            </form>
+            </div>       
         </div>
         <!-- /Employee Update Tab -->
         <!-- Transfer Tab -->
         <div class="tab-pane fade" id="emp_transfer">
-            <form>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                            <input type="text" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Current Division <span class="text-danger">*</span></label>
-                            <select class="select" disabled>
-                                <option value="">Select</option>
-                                <option selected value="1">Finance</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Current Department <span class="text-danger">*</span></label>
-                            <select class="select" disabled>
-                                <option value="">Select</option>
-                                <option selected value="1">Account</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Current Unit <span class="text-danger">*</span></label>
-                            <select class="select" disabled>
-                                <option value="">Select</option>
-                                <option selected value="1">Account Payable</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Proposed Division <span class="text-danger">*</span></label>
-                            <select class="select">
-                                <option value="">Select</option>
-                                <option value="">HR</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Proposed Department <span class="text-danger">*</span></label>
-                            <select class="select">
-                                <option value="">Select</option>
-                                <option value="">Admin</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Proposed Unit <span class="text-danger">*</span></label>
-                            <select class="select">
-                                <option value="">Select</option>
-                                <option value="">Staff Welfare</option>
-                            </select>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Employee Name<span class="text-danger">*</span></label>
+                                            <input type="text" readonly value="@Model.Employee.LastName @Model.Employee.FirstName" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Employee Id <span class="text-danger">*</span></label>
+                                            <input type="text" readonly value="@Model.Employee.Emp_No" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current Division <span class="text-danger">*</span></label>
+                                            <select class="select" disabled>
+                                                @if (Model.Employee.Division != null)
+                                                {
+                                                    <option value="@Model.Employee.DivisionId" selected>@Model.Employee.Division.Descc</option>
+                                                }
+                                                else
+                                                {
+                                                    <option selected value="">Unverified</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Proposed Division <span class="text-danger">*</span></label>
+                                            <select class="select" id="transferdivision" onchange="GetDepartment()">
+                                                <option value="">Select</option>
+                                                @foreach (var item in Model.Division)
+                                                {
+                                                    <option value="@item.Id">@item.Descc</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current Department <span class="text-danger">*</span></label>
+                                            <select class="select" disabled>
+                                                @if (Model.Employee.Department != null)
+                                                {
+                                                    <option value="@Model.Employee.DepartmentId" selected>@Model.Employee.Department.Descc</option>
+                                                }
+                                                else
+                                                {
+                                                    <option selected value="">Unverified</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Proposed Department <span class="text-danger">*</span></label>
+                                            <select class="select" id="transferdepartment">
+                                                <option value="">Select</option>
+                                                <option value="">Admin</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current Unit <span class="text-danger">*</span></label>
+                                            <select class="select" disabled>
+                                                @if (Model.Employee.Unit != null)
+                                                {
+                                                    <option value="@Model.Employee.UnitId" selected>@Model.Employee.Unit.Descc</option>
+                                                }
+                                                else
+                                                {
+                                                    <option selected value="">Unverified</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Proposed Unit<span class="text-danger">*</span></label>
+                                            <select class="select" id="transferunit">
+                                                <option value="">Select</option>
+                                                <option value="">Staff Welfare</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section" onclick="SubmitTransferRequest()">
+                                    <button class="btn btn-primary submit-btn">Request Transfer</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div class="submit-section">
-                    <button class="btn btn-primary submit-btn">Save</button>
-                </div>
-            </form>
+            </div>
+           
         </div>
         <!-- /Transfer Tab -->
 
@@ -1197,6 +1235,21 @@
             console.log(workItem);
         }
 
+        var divisionList = JSON.parse('@Json.Serialize(@Model.Division)');
+        var departmentList = JSON.parse('@Json.Serialize(@Model.Department)');
+        var newDeptList = [];
+        var transferdivision = $("#transferdivision").val();
+        var activeDivision;
+        function GetDepartment() {
+            console.log(transferdivision);
+            //divisionList.forEach(function (entry) {
+            //   if (entry.id == transferdivision) {
+            //       activeDivision = entry.divisionCode;
+            //    }
+            //    console.log(transferdivision);
+            //});
+        }
+
         function SubmitCount()
         {
             var count = $("#maxcount").val();
@@ -1277,6 +1330,24 @@
             var eduenddate = $("#eduenddate").val();
 
             AddEducationalInfo(eduschool, edulevelid, eduqualid, educourse, edugradeid, edustartdate, eduenddate);
+        }
+
+        function SubmitTransferRequest()
+        {
+            var transferdivision = $("#transferdivision").val();
+            var transferdepartment = $("#transferdepartment").val();
+            var transferunit = $("#transferunit").val();
+
+            RequestTransfer(transferdivision, transferdepartment, transferunit);
+        }
+
+        function SubmitNameChnageRequest()
+        {
+            var namechangelastname = $("#namechangelastname").val();
+            var namechangefirstname = $("#namechangefirstname").val();
+            var namechangeemail = $("#namechangeemail").val();
+
+            RequestNameChange(namechangelastname, namechangefirstname, namechangeemail);
         }
 
         function sendApprovalCount(count) {
@@ -1377,5 +1448,40 @@
             });
         }
 
+        function RequestTransfer(newDivision, newDepartment, newUnit ) {
+            $.ajax({
+                url: '@Url.Action("RequestTransfer", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: {newDivision: newDivision, newDepartment: newDepartment, newUnit: newUnit },
+                success: function (response) {
+                    if (response.status) {
+                    }
+                    else {
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function RequestNameChange(lastName, firstName, email ) {
+            $.ajax({
+                url: '@Url.Action("RequestNameChange", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: {lastName: lastName, firstName: firstName, email: email },
+                success: function (response) {
+                    if (response.status) {
+                    }
+                    else {
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
     </script>
 }

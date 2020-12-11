@@ -43,6 +43,7 @@ namespace Business.DIExtension
             services.AddTransient<IDisciplinaryActionService, DisciplinaryActionService>();
             services.AddTransient<IExitProcessService, ExitProcessService>();
             services.AddTransient<IExitProcessPriorityItemService, ExitProcessPriorityItemService>();
+            services.AddTransient<IDivisionService, DivisionService>();
 
 
             return services;

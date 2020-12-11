@@ -51,7 +51,7 @@ namespace Web.Controllers
         [Route("RequestLoan")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyLeave(Guid loanTypeId, string dateFrom, string dateTo, decimal amountRequested, decimal interestRate, int noOfInstallment)
+        public async Task<ActionResult> ApplyLoan(Guid loanTypeId, string dateFrom, string dateTo, decimal amountRequested, decimal interestRate, int noOfInstallment, string reason)
         {
             try
             {
@@ -81,7 +81,8 @@ namespace Web.Controllers
                         InterestRate = interestRate,
                         LoanStatus = LoanStatus.Pending,
                         Status = ApprovalStatus.Pending,
-                        LastApprover = authData.Emp_No
+                        LastApprover = authData.Emp_No,
+                        Reason = reason
                     };
 
                     var response = await _loanService.Create(model);

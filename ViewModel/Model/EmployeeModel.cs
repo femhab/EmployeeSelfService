@@ -63,5 +63,8 @@ namespace ViewModel.Model
         public IEnumerable<EducationalQualificationModel> EducationalQualification { get; set; }
         public IEnumerable<EmployeeEducationDetailModel> EmployeeEducationDetail { get; set; }
         public IEnumerable<EmployeeApprovalconfigModel> EmployeeApprovalconfig { get; set; }
+        public IEnumerable<DivisionModel> Division { get; set; }
+        public IEnumerable<DepartmentModel> Department { get; set; }
+        public IEnumerable<UnitModel> Unit { get; set; }
     }
 }
