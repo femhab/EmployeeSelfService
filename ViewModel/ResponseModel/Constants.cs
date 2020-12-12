@@ -12,6 +12,7 @@
         public const string LeaveExist = "You already enjoyed a leave or on a/pending leave request. If it is a recall case, please proceed to request leave recall instead";
         public const string MaximumLeaveReached = "Maximum allowed leave days reached";
         public const string LeaveExecuted = "No record found/ leave process already executed";
+        public const string LeaveRecallExecuted = "No record found/ leave recall already requested";
         public const string RecordExist = "Record already exist";
         public const string NoRecordExist = "No record exist";
         public const string MaximumReached = "Maximum record allowed reached! update/delete from the existing record";

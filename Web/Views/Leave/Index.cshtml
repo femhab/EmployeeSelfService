@@ -149,21 +149,21 @@
                     </div>
                     <div class="form-group">
                         <label>Number of days <span class="text-danger">*</span></label>
-                        <input class="form-control" type="text" id="noofdays" onkeyup="OnDaysEntered()">
+                        <input class="form-control" type="text" id="noofdays">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="datetodiv" hidden>
                         <label>To <span class="text-danger">*</span></label>
                         <div class="cal-icon">
                             <input class="form-control datetimepicker" readonly type="text" id="dateto">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="resumptiondatediv" hidden>
                         <label>Resumption Date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
                             <input class="form-control datetimepicker" readonly type="text" id="resumptiondate">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="remainingdaysdiv" hidden>
                         <label>Remaining Leave Days <span class="text-danger">*</span></label>
                         <input class="form-control" readonly type="text" id="remainingdays">
                     </div>
@@ -172,7 +172,10 @@
                             <input type="checkbox" name="checkbox" id="isallowanceadded"> Request Leave Allowance
                         </label>
                     </div>
-                    <div class="submit-section"onclick="SubmitLeaveApplication()">
+                    <div class="submit-section" onclick="RunLeaveValidation()" id="validateleave">
+                        <div class="btn btn-primary submit-btn">Validate</div>
+                    </div>
+                    <div class="submit-section" onclick="SubmitLeaveApplication()" id="submitleave" hidden>
                         <div class="btn btn-primary submit-btn">Apply for Leave</div>
                     </div>
                 </form>
@@ -196,43 +199,56 @@
                 <form>
                     <div class="form-group">
                         <label>Leave To Recall <span class="text-danger">*</span></label>
-                        <select class="select" id="leaveid">
+                        <select class="select" id="selectedleave" onchange="OnLeaveSelect()">
                             <option>Select Leave To Recall</option>
+                            @foreach (var item in Model.LeaveTaken.Where(x => x.CreatedDate.Year == DateTime.Now.Year || x.CreatedDate.Year == DateTime.Now.AddYears(-1).Year))
+                            {
+                                <option value="@item.Id">@item.LeaveType.Class Leave: @item.DateFrom.ToString("dd MMMM yyyy") to @item.DateTo.ToString("dd MMMM yyyy")</option>
+                            }
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Leave Type <span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" type="text" readonly id="recallleavetype">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Recall Date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" type="text" readonly>
+                            <input class="form-control datetimepicker" id="recalldate" type="text">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>From <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" type="text">
+                            <input class="form-control datetimepicker" id="recalldatefrom" type="text">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Number of days <span class="text-danger">*</span></label>
-                        <input class="form-control" type="text">
+                        <input class="form-control" id="recallnoofdays" type="text">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="recalldatetodiv" hidden>
                         <label>To <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" readonly type="text">
+                            <input class="form-control datetimepicker" id="recalldateto" readonly type="text">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="recallresumptiondatediv" hidden>
                         <label>Resumption Date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" readonly type="text">
+                            <input class="form-control datetimepicker" id="recallresumptiondate" readonly type="text">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" hidden id="remainingrecalldaysdiv">
                         <label>Remaining Leave Days <span class="text-danger">*</span></label>
-                        <input class="form-control" readonly type="text">
+                        <input class="form-control"  id="remainingrecalldays" readonly type="text">
                     </div>
-                    <div class="submit-section" onclick="">
+                    <div class="submit-section" onclick="RunRecallLeaveValidation()" id="validaterecallleave">
+                        <div class="btn btn-primary submit-btn">Validate</div>
+                    </div>
+                    <div class="submit-section" hidden id="submitrecallleave" onclick="SubmitRecallLeaveApplication()">
                         <div class="btn btn-primary submit-btn">Recall leave</div>
                     </div>
                 </form>
@@ -241,61 +257,6 @@
     </div>
 </div>
 <!-- Recall Leave Modal -->
-<!-- Edit Leave Modal -->
-<div id="edit_leave" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Leave</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label>Leave Type <span class="text-danger">*</span></label>
-                        <select class="select">
-                            <option>Annual Leave</option>
-                            <option>Study Leave</option>
-                            <option>Medical Leave</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>From <span class="text-danger">*</span></label>
-                        <div class="cal-icon">
-                            <input class="form-control datetimepicker" value="01-01-2019" type="text">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Number of days <span class="text-danger">*</span></label>
-                        <input class="form-control" type="number" value="2">
-                    </div>
-                    <div class="form-group">
-                        <label>To <span class="text-danger">*</span></label>
-                        <div class="cal-icon">
-                            <input class="form-control datetimepicker" value="01-01-2019" readonly type="text">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Resumption Date <span class="text-danger">*</span></label>
-                        <div class="cal-icon">
-                            <input class="form-control datetimepicker" readonly type="text">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Remaining Leaves <span class="text-danger">*</span></label>
-                        <input class="form-control" readonly type="text">
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Edit Leave Modal -->
 <!-- Delete Leave Modal -->
 <div class="modal custom-modal fade" id="delete_approve" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
@@ -332,8 +293,15 @@
         var isallowanceadded;
 
         var query = JSON.parse('@Json.Serialize(@Model.LeaveType)');
+        var queryLeave = JSON.parse('@Json.Serialize(@Model.LeaveTaken)');
 
         var redirectUrl = '@Url.Action("Index","Leave")';
+
+        function OnLeaveSelect() {
+            var selectedleave = $("#selectedleave").val();
+            var leaveSelected = queryLeave.find(x => x.id == selectedleave);
+            $("#recallleavetype").val(leaveSelected.leaveType.class);
+        }
 
         function OnDaysEntered() {
             datefrom = $("#datefrom").val();
@@ -366,6 +334,81 @@
             }
         }
 
+        function OnRecallDaysEntered() {
+            var recalldatefrom = $("#recalldatefrom").val();
+            var recallnoofdays = $("#recallnoofdays").val();
+            var recalldateto;
+            var count = 0;
+            recalldatefrom = stringToDate(recalldatefrom);
+
+            while (count < recallnoofdays) {
+                recalldateto = new Date(recalldatefrom.setDate(recalldatefrom.getDate() + 1));
+                if (recalldatefrom.getDay() != 0 && recalldatefrom.getDay() != 6) {
+                    count++;
+                }
+            }
+
+            var recallresumptiondate = getNextBusinessDay(recalldateto);
+
+            $("#recalldateto").val(dateToString(recalldateto));
+            $("#recallresumptiondate").val(dateToString(recallresumptiondate));
+        }
+
+        function RunLeaveValidation() {
+            leavetypeid = $("#leavetypeid").val();
+            var leavetype = query.find(x => x.id == leavetypeid);
+            noofdays = $("#noofdays").val();
+            if (leavetype.availableDays > 0 && leavetype.availableDays >= noofdays) {
+                OnDaysEntered();
+                document.getElementById('datetodiv').removeAttribute("hidden");
+                document.getElementById('resumptiondatediv').removeAttribute("hidden");
+                document.getElementById('remainingdaysdiv').removeAttribute("hidden");
+                document.getElementById('submitleave').removeAttribute("hidden");
+                document.getElementById('validateleave').setAttribute("hidden", true);
+            }
+            else {
+                toastr.warning("Your input is greater than available days");
+            }       
+        }
+
+        function RunRecallLeaveValidation() {
+            var recalldate = $("#recalldate").val();
+            var recallnoofdays = $("#recallnoofdays").val();
+            recalldate = stringToDate(recalldate);
+
+            var selectedleave = $("#selectedleave").val();
+            var leaveSelected = queryLeave.find(x => x.id == selectedleave);
+            //enddate
+            var leaveenddate = leaveSelected.dateTo;
+            recalldate = new Date(recalldate);
+            leaveenddate = new Date(leaveenddate);
+            var diff = new Date(leaveenddate.getTime() - recalldate.getTime());
+            var fulldaysdiff = Math.floor(diff / (1000 * 3600 * 24));
+            var weekenddivision = (fulldaysdiff / 7).toFixed(0);
+            var realdiff = fulldaysdiff - (2 * weekenddivision);
+            //startdate
+            var leavestartdate = leaveSelected.dateFrom;
+            leavestartdate = new Date(leavestartdate);
+            var difference = new Date(recalldate.getTime() - leavestartdate.getTime());
+            var fullstartdaysdiff = Math.floor(difference / (1000 * 3600 * 24));
+            var weekendstartdivision = (fullstartdaysdiff / 7).toFixed(0);
+            var realstartdiff = fullstartdaysdiff - (2 * weekendstartdivision);
+
+            if (realdiff > 0 && realstartdiff > 0 && realdiff >= recallnoofdays) {
+                OnRecallDaysEntered();
+                $("#remainingrecalldays").val(realdiff);
+                document.getElementById('recalldatetodiv').removeAttribute("hidden");
+                document.getElementById('recallresumptiondatediv').removeAttribute("hidden");
+                document.getElementById('remainingrecalldaysdiv').removeAttribute("hidden");
+                document.getElementById('submitrecallleave').removeAttribute("hidden");
+                document.getElementById('validaterecallleave').setAttribute("hidden", true);
+            }
+            else {
+                toastr.warning("You have to enter a date between last leave session and days requested can not be greater than available days from recall date")
+            }
+            
+        }
+
         function SubmitLeaveApplication()
         {
             datefrom = $("#datefrom").val();
@@ -376,12 +419,45 @@
             sendLeaveForm(leavetypeid, datefrom, dateto, resumptiondate, noofdays, isallowanceadded);
         }
 
+        function SubmitRecallLeaveApplication()
+        {
+            var selectedleave = $("#selectedleave").val();
+            var recalldatefrom = $("#recalldatefrom").val();
+            var recallnoofdays = $("#recallnoofdays").val();
+            var recalldateto = $("#recalldateto").val();
+            var recalldate = $("#recalldate").val();
+            var recallresumptiondate = $("#recallresumptiondate").val();
+
+            sendRecallLeaveForm(selectedleave, recalldate, recalldatefrom, recalldateto, recallresumptiondate, recallnoofdays);
+        }
+
         function sendLeaveForm(leaveTypeId,dateFrom,dateTo,resumptionDate,noOfDays,isAllowanceAdded ) {
             $.ajax({
                 url: '@Url.Action("ApplyLeave", "Leave")',
                 type: 'POST',
                 dataType: 'json',
                 data: { leaveTypeId: leaveTypeId,dateFrom: dateFrom ,dateTo: dateTo,resumptionDate: resumptionDate,noOfDays: noOfDays,isAllowanceAdded: isAllowanceAdded },
+                success: function (response) {
+                    if (response.status) {
+                        window.location.href = '@Url.Action("Index","Leave")';
+                    }
+                    else {
+                        toastr.error(response ?.message);
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function sendRecallLeaveForm(leaveId, recallDate, dateFrom, dateTo, resumptionDate, recallNoOfDays ) {
+            $.ajax({
+                url: '@Url.Action("ApplyRecallLeave", "Leave")',
+                type: 'POST',
+                dataType: 'json',
+                data: { leaveId: leaveId, recallDate: recallDate, dateFrom: dateFrom ,dateTo: dateTo,resumptionDate: resumptionDate, recallNoOfDays: recallNoOfDays },
                 success: function (response) {
                     if (response.status) {
                         window.location.href = '@Url.Action("Index","Leave")';

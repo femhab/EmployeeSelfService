@@ -35,6 +35,7 @@ namespace Business.DIExtension
             services.AddTransient<IUserRoleService, UserRoleService>();
             services.AddTransient<IDepartmentService, DepartmentService>();
             services.AddTransient<ILeaveService, LeaveService>();
+            services.AddTransient<ILeaveRecallService, LeaveRecallService>();
             services.AddTransient<ILeaveTypeService, LeaveTypeService>();
             services.AddTransient<IGradeLevelService, GradeLevelService>();
             services.AddTransient<IRelationshipService, RelationshipService>();

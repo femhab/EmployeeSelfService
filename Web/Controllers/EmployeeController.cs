@@ -105,6 +105,7 @@ namespace Web.Controllers
                 if(id.ToLower() == "default")
                 {
                     id = authData.Id.ToString();
+                    authData.AccessType = ViewModel.Enumeration.AccessTypeEnum.Employee;
                 }
 
                 EmployeeProfileViewModel profileViewModel = new EmployeeProfileViewModel();
