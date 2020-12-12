@@ -20,6 +20,7 @@ namespace Business.DIExtension
             services.AddTransient<IAppraisalRatingService, AppraisalRatingService>();
             services.AddTransient<IAppraisalCategoryService, AppraisalCategoryService>();
             services.AddTransient<IAppraisalCategoryItemService, AppraisalCategoryItemService>();
+            services.AddTransient<IAppraisalPeriodService, AppraisalPeriodService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IEmployeeNOKDetailService, EmployeeNOKDetailService>();
             services.AddTransient<IEmployeeFamilyDependentService, EmployeeFamilyDependentService>();

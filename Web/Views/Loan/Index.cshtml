@@ -157,7 +157,7 @@
                         <input class="form-control" type="number" id="noofinstallment">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="loandatetodiv" hidden>
                         <label>End date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
                             <input class="form-control datetimepicker" type="text" id="loandateto">
@@ -165,17 +165,20 @@
                     </div>
 
 
-                    <div class="form-group">
+                    <div class="form-group" id="monthlydeductiondiv" hidden>
                         <label>Monthly Deduction <span class="text-danger">*</span></label>
-                        <div class="cal-icon">
-                            <input class="form-control" readonly type="text" id="resumptiondate">
+                        <div>
+                            <input class="form-control" readonly type="text" id="frequencyamount">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Reason <span class="text-danger">*</span></label>
                         <input class="form-control" type="text" id="loanreason">
                     </div>
-                    <div class="submit-section" onclick="OnSubmitLoanRequest()">
+                    <div class="submit-section" onclick="RunLoanValidation()" id="validateloan">
+                        <div class="btn btn-primary submit-btn">Validate</div>
+                    </div>
+                    <div class="submit-section" onclick="OnSubmitLoanRequest()" id="submitloan" hidden>
                         <div class="btn btn-primary submit-btn">Submit</div>
                     </div>
                 </form>
@@ -213,7 +216,7 @@
 @section Scripts{
     <script type="text/javascript">
 
-        var interestrate;
+        var interestrate = 0;
 
         var loanTypeList = JSON.parse('@Json.Serialize(@Model.LoanType)');
         var loantypeid = $("#loantypeid").val();
@@ -222,9 +225,26 @@
                if (entry.id == loantypeid) {
                    //$("#createddate").val(entry.noticeDate);
                    //$("#exitdate").val(entry.exitDate);
-                   interestrate = entry.id;
+                   interestrate = entry.interestRate;
                 }
             });
+        }
+
+        function RunLoanValidation() {
+            var loanamount = $("#loanamount").val();
+            var noofinstallment = $("#noofinstallment").val();
+            var loandatefrom = $("#loandatefrom").val();
+            var frequencymount = loanamount / noofinstallment;
+
+            loandatefrom = stringToDate(loandatefrom);
+            var loandateto = new Date(loandatefrom.setDate(loandatefrom.getMonth() + noofinstallment));
+
+            $("#frequencyamount").val(frequencymount.toFixed(5));
+            $("#loandateto").val(dateToString(loandateto));
+            document.getElementById('submitloan').removeAttribute("hidden");
+            document.getElementById('monthlydeductiondiv').removeAttribute("hidden");
+            document.getElementById('loandatetodiv').removeAttribute("hidden");
+            document.getElementById('validateloan').setAttribute("hidden", true);
         }
 
         function OnSubmitLoanRequest()
@@ -233,18 +253,19 @@
             var loandatefrom = $("#loandatefrom").val();
             var loandateto = $("#loandateto").val();
             var noofinstallment = $("#noofinstallment").val();
+            var frequencyamount = $("#frequencyamount").val();
             var loanamount = $("#loanamount").val();
-            var loanreason = $("#loanreason+").val();
+            var loanreason = $("#loanreason").val();
 
-            submitLoanForm(loantypeid, loandatefrom, loandateto, loanamount, interestrate, noofinstallment, loanreason);
+            submitLoanForm(loantypeid, loandatefrom, loandateto, loanamount, interestrate, noofinstallment, loanreason, frequencyamount);
         }
 
-        function submitLoanForm(loanTypeId, dateFrom, dateTo, amountRequested, interestRate, noOfInstallment, reason) {
+        function submitLoanForm(loanTypeId, dateFrom, dateTo, amountRequested, interestRate, noOfInstallment, reason, frequencyAmount) {
             $.ajax({
                 url: '@Url.Action("ApplyLoan", "Loan")',
                 type: 'POST',
                 dataType: 'json',
-                data: { loanTypeId: loanTypeId, dateFrom: dateFrom, dateTo: dateTo, amountRequested: amountRequested, interestRate: interestRate, noOfInstallment: noOfInstallment, reason: reason },
+                data: { loanTypeId: loanTypeId, dateFrom: dateFrom, dateTo: dateTo, amountRequested: amountRequested, interestRate: interestRate, noOfInstallment: noOfInstallment, reason: reason, frequencyAmount: frequencyAmount },
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message);

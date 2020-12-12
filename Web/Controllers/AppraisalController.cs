@@ -17,15 +17,17 @@ namespace Web.Controllers
         private readonly IAppraisalRatingService _appraisalRatingService;
         private readonly IAppraisalCategoryService _appraisalCategoryService;
         private readonly IAppraisalCategoryItemService _appraisalCategoryItemService;
+        private readonly IAppraisalPeriodService _appraisalPeriodService;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IEmployeeService _employeeService;
         private readonly IMapper _mapper;
 
-        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService)
+        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService)
         {
             _appraisalRatingService = appraisalRatingService;
             _appraisalCategoryService = appraisalCategoryService;
             _appraisalCategoryItemService = appraisalCategoryItemService;
+            _appraisalPeriodService = appraisalPeriodService;
             _employeeService = employeeService;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _mapper = mapper;
@@ -96,7 +98,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> AddAppraisal(List<string> catItemWeight, Guid apparisalPeriod)
+        public async Task<ActionResult> AddAppraisal(List<string> catItemWeight)
         {
             try
             {
@@ -110,7 +112,9 @@ namespace Web.Controllers
 
                     //get first level approver
                     var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "appraisal", Level.FirstLevel);
-                    if(approverConfig != null)
+                    var appraisalPeriod = await _appraisalPeriodService.GetActivePeriod();
+
+                    if (approverConfig != null)
                     {
                         var employeeAppraisal = new EmployeeAppraisal()
                         {
@@ -120,7 +124,7 @@ namespace Web.Controllers
                             LastRatingManagerName = authData.LastName + authData.LastName,
                             NextRatingManagerId = approverConfig.Emp_No,
                             NextRatingManagerName = approverConfig.Employee.LastName + approverConfig.Employee.FirstName,
-                            AppraisalPeriodId = apparisalPeriod,
+                            AppraisalPeriodId = appraisalPeriod.Id,
                             Id = Guid.NewGuid(),
                             CreatedDate = DateTime.Now,
                         };

@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.DashboardModel
+
 @{
     ViewData["Title"] = "Employee";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -13,7 +14,7 @@
                     <img alt="" src="~/img/user.jpg">
                 </div>
                 <div class="welcome-det">
-                    <h3>Welcome, Rufai Fatai</h3>
+                    <h3>Welcome, @Model.LastName @Model.FirstName</h3>
                     <p>Monday, 20 May 2020</p>
                 </div>
             </div>

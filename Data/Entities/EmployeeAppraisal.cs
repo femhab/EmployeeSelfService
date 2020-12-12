@@ -1,4 +1,5 @@
 ﻿using Data.Entities.Common;
+using Data.Enums;
 using System;
 
 namespace Data.Entities
@@ -14,6 +15,7 @@ namespace Data.Entities
         public string LastRatingManagerName { get; set; }
         public string NextRatingManagerId { get; set; }
         public string NextRatingManagerName { get; set; }
+        public Level ActiveLevel { get; set; }
     }
 
     public class AppraisalItem: BaseObject

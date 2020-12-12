@@ -52,7 +52,7 @@ namespace Web.Controllers
         [Route("RequestLoan")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyLoan(Guid loanTypeId, string dateFrom, string dateTo, decimal amountRequested, decimal interestRate, int noOfInstallment, string reason)
+        public async Task<ActionResult> ApplyLoan(Guid loanTypeId, string dateFrom, string dateTo, decimal amountRequested, decimal interestRate, int noOfInstallment, string reason, decimal frequencyAmount)
         {
             try
             {
@@ -77,6 +77,7 @@ namespace Web.Controllers
                         Id = Guid.NewGuid(),
                         CreatedDate = DateTime.Now,
                         NoOfInstallment = noOfInstallment,
+                        InstallmentAmount = frequencyAmount,
                         AmountRequested = amountRequested,
                         AmountApproved = 0,
                         InterestRate = interestRate,

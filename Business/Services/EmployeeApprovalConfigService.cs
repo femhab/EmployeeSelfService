@@ -54,7 +54,7 @@ namespace Business.Services
         public async Task<EmployeeApprovalConfig> GetByServiceLevel(Guid employeeId, string approverWorkItem, Level level)
         {
             var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains(approverWorkItem));
-            var data = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: c => c.EmployeeId == employeeId && c.ApprovalWorkItemId == approvalWorkItem.Id && c.ApprovalLevel == level);
+            var data = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: c => c.EmployeeId == employeeId && c.ApprovalWorkItemId == approvalWorkItem.Id && c.ApprovalLevel == level, null, include: e => e.Include(i => i.Employee));
             return data;
         }
 
