@@ -24,6 +24,11 @@
             </div>
         </div>
     </div>
+    <style>
+        .error{
+            color:red;
+        }
+    </style>
     <!-- /Page Header -->
     <!-- Leave Statistics -->
     <div class="row">
@@ -129,11 +134,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="addLeaveForm">
                     <div class="form-group">
                         <label>Leave Type <span class="text-danger">*</span></label>
-                        <select class="select" id="leavetypeid">
-                            <option>Select Leave Type</option>
+                        <select  name="leavetypeid" class="select" id="leavetypeid">
+                            <option value="">Select Leave Type</option>
                             @foreach (var item in Model.LeaveType.Where(x => x.GradeLevelId == Model.Employee.GradeLevelId))
                             {
                                 <option value="@item.Id">@item.Class Leave  - @item.AvailableDays days</option>
@@ -144,12 +149,12 @@
                     <div class="form-group">
                         <label>From <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" type="text" id="datefrom">
+                            <input name="datefrom" class="form-control datetimepicker" type="text" id="datefrom">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Number of days <span class="text-danger">*</span></label>
-                        <input class="form-control" type="text" id="noofdays" onkeyup="OnDaysEntered()">
+                        <input name="noofdays" class="form-control" type="text" id="noofdays" onkeyup="OnDaysEntered()">
                     </div>
                     <div class="form-group">
                         <label>To <span class="text-danger">*</span></label>
@@ -172,8 +177,8 @@
                             <input type="checkbox" name="checkbox" id="isallowanceadded"> Request Leave Allowance
                         </label>
                     </div>
-                    <div class="submit-section"onclick="SubmitLeaveApplication()">
-                        <div class="btn btn-primary submit-btn">Apply for Leave</div>
+                    <div class="submit-section" >
+                        <button  class="btn btn-primary submit-btn" >Apply for Leave</button>
                     </div>
                 </form>
             </div>
@@ -181,7 +186,6 @@
     </div>
 </div>
 <!-- /Add Leave Modal -->
-
 <!-- Recall Leave Modal -->
 <div id="recall_leave" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -193,17 +197,17 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="recallLeaveForm">
                     <div class="form-group">
                         <label>Leave To Recall <span class="text-danger">*</span></label>
-                        <select class="select" id="leaveid">
+                        <select name="leaveId" class="select" id="leaveid">
                             <option>Select Leave To Recall</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Leave Type <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" type="text" readonly>
+                            <input name="" class="form-control datetimepicker" type="text" readonly>
                         </div>
                     </div>
                     <div class="form-group">
@@ -334,7 +338,25 @@
         var query = JSON.parse('@Json.Serialize(@Model.LeaveType)');
 
         var redirectUrl = '@Url.Action("Index","Leave")';
+        $("#addLeaveForm").validate({
+            rules: {
+                leavetypeid: "required",
+                datefrom: "required",
+                noofdays: "required",
 
+            },
+            messages: {
+                leavetypeid: "Please select a leave type",
+                datefrom: "Choose your leave start date",
+                noofdays: "Specify number of leave days"
+
+            },
+            submitHandler: function (form)
+            {
+                event.preventDefault();
+                SubmitLeaveApplication();
+            }
+        })
         function OnDaysEntered() {
             datefrom = $("#datefrom").val();
             noofdays = $("#noofdays").val();
@@ -368,6 +390,7 @@
 
         function SubmitLeaveApplication()
         {
+            event.preventDefault();
             datefrom = $("#datefrom").val();
             dateto = $("#dateto").val();
             resumptiondate = $("#resumptiondate").val();
@@ -392,7 +415,7 @@
 
                     return;
                 }, error: function () {
-                    alerty("danger", "Opps", "request Failed");
+                    toastr.error("Request Error, Try again later")
                 }
             });
         }
@@ -405,8 +428,9 @@
             return (new Date(y + "/" + m + "/" + d));
         }
 
-        function dateToString(date) {
-          //var date = new Date(str),
+        function dateToString(date)
+        {
+            var date = new Date(date),
             mnth = ("0" + (date.getMonth() + 1)).slice(-2),
             day = ("0" + date.getDate()).slice(-2);
             return [day, mnth, date.getFullYear()].join("/");
