@@ -7,5 +7,6 @@
         public string CompanyCode { get; set; }
         public string DivisionCode { get; set; }
         public int Slot { get; set; }
+        public bool CanClearEmployeeOnExit { get; set; }
     }
 }

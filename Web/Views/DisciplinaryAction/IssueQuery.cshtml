@@ -30,13 +30,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <select class="select" id="targetemployeeid">
+                                    <select class="select" id="targetemployeeid" onchange="OnSelect()">
                                         <option value="">Select Employee</option>
                                         @if (Model.Employee != null)
                                         {
                                             @foreach (var item in Model.Employee)
                                             {
-                                                <option value="@item.Id">@item.LastName @item.FirstName - @item.Emp_No</option>
+                                                <option value="@item.Emp_No">@item.LastName @item.FirstName - @item.Emp_No</option>
                                             }
                                         }
                                     </select>
@@ -44,7 +44,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input type="email" placeholder="EmployeeId" readonly class="form-control">
+                                    <input type="text" placeholder="EmployeeId" readonly class="form-control" id="employeeno">
                                 </div>
                             </div>
                         </div>
@@ -54,9 +54,9 @@
                         <div class="form-group">
                             <textarea rows="5" class="form-control summernote" id="querymessage" placeholder="Enter your message here"></textarea>
                         </div>
-                        <div class="form-group mb-0">
+                        <div class="form-group mb-0" onclick="SubmitQueryDetail()">
                             <div class="text-center">
-                                <button class="btn btn-primary"><span>Send Query</span> <i class="fa fa-send m-l-5"></i></button>
+                                <div class="btn btn-primary"><span>Send Query</span> <i class="fa fa-send m-l-5"></i></div>
                             </div>
                         </div>
                     </form>
@@ -66,3 +66,51 @@
     </div>
 </div>
 <!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var selectedId;
+       //on select of unregisterd nam action
+        var lowGradeList = JSON.parse('@Json.Serialize(@Model.Employee)');
+
+        function OnSelect() {
+            let selectedUser = $("#targetemployeeid option:selected").val();
+            lowGradeList.forEach(function (entry) {
+               if (entry.emp_No == selectedUser) {
+                   $("#employeeno").val(entry.emp_No);
+                   selectedId = entry.id;
+                }
+            });
+        }
+
+        function SubmitQueryDetail()
+        {
+            var targetemployeeid = $("#targetemployeeid").val();
+            var querysubject = $("#querysubject").val();
+            var querymessage = $("#querymessage").val();
+
+            sendQueryForm(selectedId, targetemployeeid, querysubject, querymessage);
+        }
+
+        function sendQueryForm(queriedId, queriedEmpNo, subject, message) {
+            $.ajax({
+                url: '@Url.Action("AddQuery", "DisciplinaryAction")',
+                type: 'POST',
+                dataType: 'json',
+                data: { queriedId: queriedId, queriedEmpNo: queriedEmpNo, subject: subject, message: message },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message);
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}

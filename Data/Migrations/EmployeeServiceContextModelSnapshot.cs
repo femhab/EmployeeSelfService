@@ -135,7 +135,9 @@ namespace Data.Migrations
 
                     b.Property<string>("ModifiedBy");
 
-                    b.Property<Guid>("UnitId");
+                    b.Property<Guid>("SectionId");
+
+                    b.Property<Guid?>("UnitId");
 
                     b.Property<DateTime?>("UpdatedDate");
 
@@ -146,6 +148,8 @@ namespace Data.Migrations
                     b.HasIndex("DivisionId");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("SectionId");
 
                     b.HasIndex("UnitId");
 
@@ -210,6 +214,42 @@ namespace Data.Migrations
                     b.HasIndex("AppraisalCategoryId");
 
                     b.ToTable("AppraisalCategoryItems");
+                });
+
+            modelBuilder.Entity("Data.Entities.AppraisalItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("AppraisalCategoryId");
+
+                    b.Property<Guid>("AppraisalCategoryItemId");
+
+                    b.Property<Guid>("AppraisalRatingId");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<Guid>("EmployeeAppraisalId");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppraisalCategoryId");
+
+                    b.HasIndex("AppraisalCategoryItemId");
+
+                    b.HasIndex("AppraisalRatingId");
+
+                    b.HasIndex("EmployeeAppraisalId");
+
+                    b.ToTable("AppraisalItems");
                 });
 
             modelBuilder.Entity("Data.Entities.AppraisalPeriod", b =>
@@ -304,6 +344,34 @@ namespace Data.Migrations
                     b.ToTable("ApprovalBoards");
                 });
 
+            modelBuilder.Entity("Data.Entities.ApprovalBoardActiveLevel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveLevel");
+
+                    b.Property<Guid>("ApprovalWorkItemId");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<Guid>("ServiceId");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovalWorkItemId");
+
+                    b.ToTable("ApprovalBoardActiveLevels");
+                });
+
             modelBuilder.Entity("Data.Entities.ApprovalWorkItem", b =>
                 {
                     b.Property<Guid>("Id")
@@ -328,10 +396,86 @@ namespace Data.Migrations
                     b.ToTable("ApprovalWorkItems");
                 });
 
+            modelBuilder.Entity("Data.Entities.AvalaibilityStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Active");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("StatusCode");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AvalaibilityStatus");
+                });
+
+            modelBuilder.Entity("Data.Entities.Country", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CountryCode");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("Data.Entities.Courtesy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CourtesyCode");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Courtesy");
+                });
+
             modelBuilder.Entity("Data.Entities.Department", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("CanClearEmployeeOnExit");
 
                     b.Property<string>("CompanyCode");
 
@@ -513,19 +657,31 @@ namespace Data.Migrations
 
                     b.Property<int>("AccessType");
 
+                    b.Property<Guid?>("AvalaibilityStatusId");
+
+                    b.Property<Guid?>("CountryId");
+
+                    b.Property<Guid?>("CourtesyId");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<DateTime?>("DOB");
 
+                    b.Property<DateTime?>("DateConf");
+
                     b.Property<Guid?>("DepartmentId");
 
                     b.Property<Guid?>("DivisionId");
 
+                    b.Property<DateTime?>("EffectiveDate");
+
                     b.Property<string>("EmailAddress");
 
                     b.Property<string>("Emp_No");
+
+                    b.Property<Guid?>("EmployeeTitleId");
 
                     b.Property<DateTime?>("EmploymentDate");
 
@@ -537,15 +693,29 @@ namespace Data.Migrations
 
                     b.Property<bool>("IsDeleted");
 
+                    b.Property<Guid?>("LGAId");
+
                     b.Property<string>("LastName");
+
+                    b.Property<Guid?>("LocationId");
+
+                    b.Property<Guid?>("MaritalStatusId");
 
                     b.Property<string>("ModifiedBy");
 
                     b.Property<string>("PensionNo");
 
+                    b.Property<DateTime?>("PreAppDate");
+
+                    b.Property<DateTime?>("ProRetireDate");
+
                     b.Property<byte[]>("ProfilePhoto");
 
+                    b.Property<Guid?>("SectionId");
+
                     b.Property<string>("StaffType");
+
+                    b.Property<Guid?>("StateId");
 
                     b.Property<int>("Status");
 
@@ -559,11 +729,29 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AvalaibilityStatusId");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("CourtesyId");
+
                     b.HasIndex("DepartmentId");
 
                     b.HasIndex("DivisionId");
 
+                    b.HasIndex("EmployeeTitleId");
+
                     b.HasIndex("GradeLevelId");
+
+                    b.HasIndex("LGAId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("MaritalStatusId");
+
+                    b.HasIndex("SectionId");
+
+                    b.HasIndex("StateId");
 
                     b.HasIndex("UnitId");
 
@@ -608,6 +796,44 @@ namespace Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeesAddress");
+                });
+
+            modelBuilder.Entity("Data.Entities.EmployeeAppraisal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("AppraisalPeriodId");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Emp_No");
+
+                    b.Property<Guid>("EmployeeId");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastRatingManagerId");
+
+                    b.Property<string>("LastRatingManagerName");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("NextRatingManagerId");
+
+                    b.Property<string>("NextRatingManagerName");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppraisalPeriodId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeeAppraisals");
                 });
 
             modelBuilder.Entity("Data.Entities.EmployeeApprovalConfig", b =>
@@ -846,6 +1072,32 @@ namespace Data.Migrations
                     b.ToTable("EmployeeNOKDetails");
                 });
 
+            modelBuilder.Entity("Data.Entities.EmployeeTitle", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<int>("Slot");
+
+                    b.Property<string>("TitleCode");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmployeeTitles");
+                });
+
             modelBuilder.Entity("Data.Entities.ExitProcess", b =>
                 {
                     b.Property<Guid>("Id")
@@ -944,6 +1196,32 @@ namespace Data.Migrations
                     b.ToTable("GradeLevels");
                 });
 
+            modelBuilder.Entity("Data.Entities.LGA", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LGACode");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("StateCode");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LGAs");
+                });
+
             modelBuilder.Entity("Data.Entities.Leave", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1014,6 +1292,12 @@ namespace Data.Migrations
                     b.Property<Guid>("LeaveId");
 
                     b.Property<string>("ModifiedBy");
+
+                    b.Property<int>("NoOfDays");
+
+                    b.Property<DateTime>("RecallDate");
+
+                    b.Property<DateTime>("ResumptionDate");
 
                     b.Property<DateTime?>("UpdatedDate");
 
@@ -1128,6 +1412,58 @@ namespace Data.Migrations
                     b.ToTable("LoanTypes");
                 });
 
+            modelBuilder.Entity("Data.Entities.Location", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AccountNo");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LocationCode");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("StateCode");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("Data.Entities.MaritalStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("MaritalCode");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MaritalStatus");
+                });
+
             modelBuilder.Entity("Data.Entities.Relationship", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1172,6 +1508,64 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RoleType");
+                });
+
+            modelBuilder.Entity("Data.Entities.Section", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CompanyCode");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("DeptCode");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<string>("DivisionCode");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("SectionAccount");
+
+                    b.Property<string>("SectionCode");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sections");
+                });
+
+            modelBuilder.Entity("Data.Entities.State", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Descc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("StateCode");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.Property<string>("ZoneCode");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("States");
                 });
 
             modelBuilder.Entity("Data.Entities.Transfer", b =>
@@ -1427,10 +1821,14 @@ namespace Data.Migrations
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("Data.Entities.Section", "Section")
+                        .WithMany()
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Data.Entities.Unit", "Unit")
                         .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UnitId");
                 });
 
             modelBuilder.Entity("Data.Entities.AppraisalCategoryItem", b =>
@@ -1438,6 +1836,29 @@ namespace Data.Migrations
                     b.HasOne("Data.Entities.AppraisalCategory", "AppraisalCategory")
                         .WithMany()
                         .HasForeignKey("AppraisalCategoryId");
+                });
+
+            modelBuilder.Entity("Data.Entities.AppraisalItem", b =>
+                {
+                    b.HasOne("Data.Entities.AppraisalCategory", "AppraisalCategory")
+                        .WithMany()
+                        .HasForeignKey("AppraisalCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Data.Entities.AppraisalCategoryItem", "AppraisalCategoryItem")
+                        .WithMany()
+                        .HasForeignKey("AppraisalCategoryItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Data.Entities.AppraisalRating", "AppraisalRating")
+                        .WithMany()
+                        .HasForeignKey("AppraisalRatingId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Data.Entities.EmployeeAppraisal", "EmployeeAppraisal")
+                        .WithMany()
+                        .HasForeignKey("EmployeeAppraisalId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Data.Entities.ApprovalBoard", b =>
@@ -1453,6 +1874,14 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Data.Entities.ApprovalBoardActiveLevel", b =>
+                {
+                    b.HasOne("Data.Entities.ApprovalWorkItem", "ApprovalWorkItem")
+                        .WithMany()
+                        .HasForeignKey("ApprovalWorkItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Data.Entities.DisciplinaryAction", b =>
                 {
                     b.HasOne("Data.Entities.Employee", "Employee")
@@ -1463,6 +1892,18 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.Employee", b =>
                 {
+                    b.HasOne("Data.Entities.AvalaibilityStatus", "AvalaibilityStatus")
+                        .WithMany()
+                        .HasForeignKey("AvalaibilityStatusId");
+
+                    b.HasOne("Data.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId");
+
+                    b.HasOne("Data.Entities.Courtesy", "Courtesy")
+                        .WithMany()
+                        .HasForeignKey("CourtesyId");
+
                     b.HasOne("Data.Entities.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId");
@@ -1471,9 +1912,33 @@ namespace Data.Migrations
                         .WithMany()
                         .HasForeignKey("DivisionId");
 
+                    b.HasOne("Data.Entities.EmployeeTitle", "EmployeeTitle")
+                        .WithMany()
+                        .HasForeignKey("EmployeeTitleId");
+
                     b.HasOne("Data.Entities.GradeLevel", "GradeLevel")
                         .WithMany()
                         .HasForeignKey("GradeLevelId");
+
+                    b.HasOne("Data.Entities.LGA", "LGA")
+                        .WithMany()
+                        .HasForeignKey("LGAId");
+
+                    b.HasOne("Data.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("Data.Entities.MaritalStatus", "MaritalStatus")
+                        .WithMany()
+                        .HasForeignKey("MaritalStatusId");
+
+                    b.HasOne("Data.Entities.Section", "Section")
+                        .WithMany()
+                        .HasForeignKey("SectionId");
+
+                    b.HasOne("Data.Entities.State", "State")
+                        .WithMany()
+                        .HasForeignKey("StateId");
 
                     b.HasOne("Data.Entities.Unit", "Unit")
                         .WithMany()
@@ -1482,6 +1947,19 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.EmployeeAddress", b =>
                 {
+                    b.HasOne("Data.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Data.Entities.EmployeeAppraisal", b =>
+                {
+                    b.HasOne("Data.Entities.AppraisalPeriod", "AppraisalPeriod")
+                        .WithMany()
+                        .HasForeignKey("AppraisalPeriodId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Data.Entities.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")

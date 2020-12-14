@@ -3,6 +3,7 @@ using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -14,13 +15,15 @@ namespace Business.Services
 {
     public class DivisionService: IDivisionService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ServiceContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly SqlConnection _sqlConnection;
 
-        public DivisionService(IUnitOfWork unitOfWork, ServiceContext dbContext)
+        public DivisionService(ServiceContext dbContext, IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
             _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
+            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<IEnumerable<Division>> GetAll(Expression<Func<Division, bool>> predicate, string include = null, bool includeDeleted = false)
@@ -37,7 +40,24 @@ namespace Business.Services
 
         public async Task<BaseResponse> Refresh()
         {
-            var resource = await _dbContext.HRDivision.ToListAsync();
+            var sql = "select * from HRDivision";
+            SqlCommand query = new SqlCommand(sql, _sqlConnection);
+            List<HRDivision> resource = new List<HRDivision>();
+            _sqlConnection.Open();
+            using (SqlDataReader reader = query.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    HRDivision requester = new HRDivision()
+                    {
+                        CompanyCode = reader["CompanyCode"].ToString(),
+                        DivisionCode = reader["DivisionCode"].ToString(),
+                        DESCC = reader["DESCC"].ToString()
+                    };
+                    resource.Add(requester);
+                }
+                _sqlConnection.Close();
+            }
             if (resource != null)
             {
                 foreach (var item in resource)

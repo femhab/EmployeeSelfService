@@ -39,15 +39,23 @@
                                         <h3 class="user-name m-t-0 mb-0">@Model.Employee.FirstName.ToLower() @Model.Employee.LastName</h3>
                                         @if (Model.Employee.Unit != null)
                                         {
-                                            <h6 class="text-muted">UI/UX Design Team</h6>
+                                            <h6 class="text-muted">@Model.Employee.Unit.Descc</h6>
                                         }
                                         else
                                         {
                                             <h6 class="text-muted">Unit: Unverified</h6>
                                         }
+                                        @if (Model.Employee.Section != null)
+                                        {
+                                            <div class="staff-id">Section: @Model.Employee.Section.Descc</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="staff-id">Section: Unverified</div>
+                                        }
                                         @if (Model.Employee.Department != null)
                                         {
-                                            <div class="staff-id">Department: Web Designer</div>
+                                            <div class="staff-id">Department: @Model.Employee.Department.Descc</div>
                                         }
                                         else
                                         {
@@ -56,7 +64,7 @@
 
                                         @if (Model.Employee.Division != null)
                                         {
-                                            <div class="staff-id">Division: Web Designer</div>
+                                            <div class="staff-id">Division: @Model.Employee.Division.Descc</div>
                                         }
                                         else
                                         {
@@ -66,7 +74,7 @@
                                         <div class="staff-id">Employee ID : @Model.Employee.Emp_No</div>
                                         @if (Model.Employee.EmploymentDate != null)
                                         {
-                                            <div class="small doj text-muted">Date of Join : @Model.Employee.EmploymentDate</div>
+                                    <div class="small doj text-muted">Date of Join : @Model.Employee.EmploymentDate?.ToString("dd MMMM yyyy")</div>
                                         }
                                         else
                                         {
@@ -81,7 +89,31 @@
                                             <div class="title">GradeLevel</div>
                                             @if (Model.Employee.GradeLevel != null)
                                             {
-                                                <div class="text"><a href="">Model.Employee.GradeLevel</a></div>
+                                                <div class="text"><a href="">@Model.Employee.GradeLevel.Descc</a></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="text"><a href="">Unverified</a></div>
+                                            }
+
+                                        </li>
+                                        <li>
+                                            <div class="title">Location</div>
+                                            @if (Model.Employee.Location != null)
+                                            {
+                                                <div class="text"><a href="">@Model.Employee.Location.Descc</a></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="text"><a href="">Unverified</a></div>
+                                            }
+
+                                        </li>
+                                        <li>
+                                            <div class="title">Staff Type</div>
+                                            @if (Model.Employee.StaffType != null)
+                                            {
+                                                <div class="text"><a href="">@Model.Employee.StaffType </a></div>
                                             }
                                             else
                                             {
@@ -95,7 +127,7 @@
                                         </li>
                                         <li>
                                             <div class="title">Birthday:</div>
-                                            <div class="text">@Model.Employee.DOB</div>
+                                            <div class="text"> @Model.Employee.DOB?.ToString("dd MMMM yyyy")</div>
                                         </li>
                                     </ul>
                                 </div>
@@ -112,8 +144,11 @@
             <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
                 <ul class="nav nav-tabs nav-tabs-bottom">
                     <li class="nav-item"><a href="#emp_profile" data-toggle="tab" class="nav-link active">Profile</a></li>
-                    <li class="nav-item"><a href="#emp_update" data-toggle="tab" class="nav-link">Request Name Change</a></li>
-                    <li class="nav-item"><a href="#emp_transfer" data-toggle="tab" class="nav-link">Request Transfer</a></li>
+                    @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee)
+                    {
+                        <li class="nav-item"><a href="#emp_update" data-toggle="tab" class="nav-link">Request Name Change</a></li>
+                        <li class="nav-item"><a href="#emp_transfer" data-toggle="tab" class="nav-link">Request Transfer</a></li>
+                    }
                 </ul>
             </div>
         </div>
@@ -127,7 +162,7 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Next Of Kin <a href="#" class="edit-icon" data-toggle="modal" data-target="#employee_nok_modal"><i class="fa fa-pencil"></i></a></h3>
+                            <h3 class="card-title">Next Of Kin @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#employee_nok_modal"><i class="fa fa-pencil"></i></a>}</h3>
                             <div class="table-responsive">
                                 <table class="table table-nowrap">
                                     <thead>
@@ -168,7 +203,7 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Family Dependents <a href="#" class="edit-icon" data-toggle="modal" data-target="#family_info_modal"><i class="fa fa-pencil"></i></a></h3>
+                            <h3 class="card-title">Family Dependents @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#family_info_modal"><i class="fa fa-pencil"></i></a>}</h3>
                             <div class="table-responsive">
                                 <table class="table table-nowrap">
                                     <thead>
@@ -210,7 +245,7 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Education Informations <a href="#" class="edit-icon" data-toggle="modal" data-target="#education_info"><i class="fa fa-pencil"></i></a></h3>
+                            <h3 class="card-title">Education Informations @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#education_info"><i class="fa fa-pencil"></i></a>}</h3>
                             <div class="experience-box">
                                 <ul class="experience-list">
                                     @foreach (var item in Model.EmployeeEducationDetail.Take(3))
@@ -238,7 +273,7 @@
                 <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "leave").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Leave Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
+                            <h3 class="card-title">Leave Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -265,18 +300,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex">
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "loan").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Loan Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
-                                        <input class="form-control" readonly type="number">
-                                    </div>
-                                </div>
-                            </div>
+                            <h3 class="card-title">Loan Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
+                           
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -286,64 +314,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>First Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Second Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Third Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Forth Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "loan").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        {
+                                            <tr>
+                                                <td>@item.ApprovalLevel.ToString()</td>
+                                                <td class="text-center">
+                                                    <select class="select" disabled>
+                                                        <option value="" selected>@item.Processor</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex">
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "transfer").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Transfer Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
-                                        <input class="form-control" readonly type="number">
-                                    </div>
-                                </div>
-                            </div>
+                            <h3 class="card-title">Transfer Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
+                            
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -353,64 +345,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>First Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Second Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Third Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Forth Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "transfer").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        {
+                                            <tr>
+                                                <td>@item.ApprovalLevel.ToString()</td>
+                                                <td class="text-center">
+                                                    <select class="select" disabled>
+                                                        <option value="" selected>@item.Processor</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex">
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "appraisal").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Appraisal Approval Settings<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a></h3>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
-                                        <input class="form-control" readonly type="number">
-                                    </div>
-                                </div>
-                            </div>
+                            <h3 class="card-title">Appraisal Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
+                           
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -420,46 +376,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>First Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Second Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Third Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Forth Level</td>
-                                            <td class="text-center">
-                                                <select class="select" disabled>
-                                                    <option value="">Select</option>
-                                                    <option value="">Lasisi Ola</option>
-                                                    <option value="1">Ade Fortune</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "appraisal").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        {
+                                            <tr>
+                                                <td>@item.ApprovalLevel.ToString()</td>
+                                                <td class="text-center">
+                                                    <select class="select" disabled>
+                                                        <option value="" selected>@item.Processor</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
@@ -471,114 +398,191 @@
         <!-- /Profile Info Tab -->
         <!-- Employee Update Tab -->
         <div class="tab-pane fade" id="emp_update">
-            <form>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                            <input type="text" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Email <span class="text-danger">*</span></label>
-                            <input class="form-control" type="email">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Last Name</label>
-                            <input class="form-control" type="text">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Username <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                                            <input type="text" readonly value="@Model.Employee.Emp_No" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                            <input class="form-control" id="namechangeemail" value="@Model.Employee.EmailAddress" type="email">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                            <input class="form-control" id="namechangefirstname" value="@Model.Employee.FirstName" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Last Name</label>
+                                            <input class="form-control" id="namechangelastname" value="@Model.Employee.LastName" type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section" onclick="SubmitNameChnageRequest()">
+                                    <div class="btn btn-primary submit-btn">Request Name Change</div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div class="submit-section">
-                    <button class="btn btn-primary submit-btn">Save</button>
-                </div>
-            </form>
+            </div>       
         </div>
         <!-- /Employee Update Tab -->
         <!-- Transfer Tab -->
         <div class="tab-pane fade" id="emp_transfer">
-            <form>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                            <input type="text" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Current Division <span class="text-danger">*</span></label>
-                            <select class="select" disabled>
-                                <option value="">Select</option>
-                                <option selected value="1">Finance</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Current Department <span class="text-danger">*</span></label>
-                            <select class="select" disabled>
-                                <option value="">Select</option>
-                                <option selected value="1">Account</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Current Unit <span class="text-danger">*</span></label>
-                            <select class="select" disabled>
-                                <option value="">Select</option>
-                                <option selected value="1">Account Payable</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Proposed Division <span class="text-danger">*</span></label>
-                            <select class="select">
-                                <option value="">Select</option>
-                                <option value="">HR</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Proposed Department <span class="text-danger">*</span></label>
-                            <select class="select">
-                                <option value="">Select</option>
-                                <option value="">Admin</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Proposed Unit <span class="text-danger">*</span></label>
-                            <select class="select">
-                                <option value="">Select</option>
-                                <option value="">Staff Welfare</option>
-                            </select>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Employee Name<span class="text-danger">*</span></label>
+                                            <input type="text" readonly value="@Model.Employee.LastName @Model.Employee.FirstName" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Employee Id <span class="text-danger">*</span></label>
+                                            <input type="text" readonly value="@Model.Employee.Emp_No" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current Division <span class="text-danger">*</span></label>
+                                            <select class="select" disabled>
+                                                @if (Model.Employee.Division != null)
+                                                {
+                                                    <option value="@Model.Employee.DivisionId" selected>@Model.Employee.Division.Descc</option>
+                                                }
+                                                else
+                                                {
+                                                    <option selected value="">Unverified</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Proposed Division <span class="text-danger">*</span></label>
+                                            <select class="select" id="transferdivision">
+                                                <option value="">Select</option>
+                                                @foreach (var item in Model.Division)
+                                                {
+                                                    <option value="@item.Id">@item.Descc</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current Department <span class="text-danger">*</span></label>
+                                            <select class="select" disabled>
+                                                @if (Model.Employee.Department != null)
+                                                {
+                                                    <option value="@Model.Employee.DepartmentId" selected>@Model.Employee.Department.Descc</option>
+                                                }
+                                                else
+                                                {
+                                                    <option selected value="">Unverified</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Proposed Department <span class="text-danger">*</span></label>
+                                            <select class="select" id="transferdepartment">
+                                                <option value="">Select</option>
+                                                @foreach (var item in Model.Department)
+                                                {
+                                                    <option value="@item.Id">@item.Descc</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current Section <span class="text-danger">*</span></label>
+                                            <select class="select" disabled>
+                                                @if (Model.Employee.Section != null)
+                                                {
+                                                    <option value="@Model.Employee.SectionId" selected>@Model.Employee.Section.Descc</option>
+                                                }
+                                                else
+                                                {
+                                                    <option selected value="">Unverified</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Proposed Section<span class="text-danger">*</span></label>
+                                            <select class="select" id="transfersection">
+                                                <option value="">Select</option>
+                                                @if (Model.Section != null)
+                                                {
+                                                    @foreach (var item in Model.Section)
+                                                    {
+                                                        <option value="@item.Id">@item.Descc</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current Unit <span class="text-danger">*</span></label>
+                                            <select class="select" disabled>
+                                                @if (Model.Employee.Unit != null)
+                                                {
+                                                    <option value="@Model.Employee.UnitId" selected>@Model.Employee.Unit.Descc</option>
+                                                }
+                                                else
+                                                {
+                                                    <option selected value="">Unverified</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Proposed Unit<span class="text-danger">*</span></label>
+                                            <select class="select" id="transferunit">
+                                                <option value="">Select</option>
+                                                @if (Model.Unit != null)
+                                                {
+                                                    @foreach (var item in Model.Unit)
+                                                    {
+                                                        <option value="@item.Id">@item.Descc</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section" onclick="SubmitTransferRequest()">
+                                    <button class="btn btn-primary submit-btn">Request Transfer</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div class="submit-section">
-                    <button class="btn btn-primary submit-btn">Save</button>
-                </div>
-            </form>
+            </div>
+           
         </div>
         <!-- /Transfer Tab -->
 
@@ -1197,6 +1201,21 @@
             console.log(workItem);
         }
 
+        var divisionList = JSON.parse('@Json.Serialize(@Model.Division)');
+        var departmentList = JSON.parse('@Json.Serialize(@Model.Department)');
+        var newDeptList = [];
+        var transferdivision = $("#transferdivision").val();
+        var activeDivision;
+        function GetDepartment() {
+            console.log(transferdivision.toString());
+            //divisionList.forEach(function (entry) {
+            //   if (entry.id == transferdivision) {
+            //       activeDivision = entry.divisionCode;
+            //    }
+            //    console.log(transferdivision);
+            //});
+        }
+
         function SubmitCount()
         {
             var count = $("#maxcount").val();
@@ -1277,6 +1296,25 @@
             var eduenddate = $("#eduenddate").val();
 
             AddEducationalInfo(eduschool, edulevelid, eduqualid, educourse, edugradeid, edustartdate, eduenddate);
+        }
+
+        function SubmitTransferRequest()
+        {
+            var transferdivision = $("#transferdivision").val();
+            var transferdepartment = $("#transferdepartment").val();
+            var transferunit = $("#transferunit").val();
+            var transfersection = $("#transfersection").val();
+
+            RequestTransfer(transferdivision, transferdepartment, transfersection, transferunit);
+        }
+
+        function SubmitNameChnageRequest()
+        {
+            var namechangelastname = $("#namechangelastname").val();
+            var namechangefirstname = $("#namechangefirstname").val();
+            var namechangeemail = $("#namechangeemail").val();
+
+            RequestNameChange(namechangelastname, namechangefirstname, namechangeemail);
         }
 
         function sendApprovalCount(count) {
@@ -1369,6 +1407,46 @@
                     if (response.status) {
                     }
                     else {
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function RequestTransfer(newDivision, newDepartment, newSection, newUnit ) {
+            $.ajax({
+                url: '@Url.Action("RequestTransfer", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: {newDivision: newDivision, newDepartment: newDepartment, newSection: newSection, newUnit: newUnit },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function RequestNameChange(lastName, firstName, email ) {
+            $.ajax({
+                url: '@Url.Action("RequestNameChange", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: {lastName: lastName, firstName: firstName, email: email },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                    }
+                    else {
+                        toastr.error(response?.message)
                     }
                     return;
                 }, error: function () {

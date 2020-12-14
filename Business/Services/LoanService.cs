@@ -14,10 +14,14 @@ namespace Business.Services
     public class LoanService: ILoanService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
+        private readonly IApprovalBoardService _approvalBoardService;
 
-        public LoanService(IUnitOfWork unitOfWork)
+        public LoanService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService)
         {
             _unitOfWork = unitOfWork;
+            _employeeApprovalConfigService = employeeApprovalConfigService;
+            _approvalBoardService = approvalBoardService;
         }
 
         public async Task<LoanEligibilityResponseModel> CheckEligibility(string Emp_No)
@@ -32,6 +36,26 @@ namespace Business.Services
             {
                 _unitOfWork.GetRepository<Loan>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
+
+                //submit for approval
+                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("loan"));
+                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
+                var enlistBoard = new ApprovalBoard()
+                {
+                    EmployeeId = model.EmployeeId,
+                    ApprovalLevel = Level.FirstLevel,
+                    Emp_No = model.Emp_No,
+                    ApprovalWorkItemId = approvalWorkItem.Id,
+                    ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
+                    ApprovalProcessor = approvalProcessor.Processor,
+                    ServiceId = model.Id,
+                    Status = ApprovalStatus.Pending,
+                    CreatedDate = DateTime.Now,
+                    Id = Guid.NewGuid(),
+                    CreatedBy = model.Emp_No
+                };
+                await _approvalBoardService.Create(enlistBoard);
+
                 return new BaseResponse() { Status = true, Message = ResponseMessage.LoanCreatedSuccessfully };
             }         
             return new BaseResponse() { Status = false, Message = ResponseMessage.LoanTypeExist };

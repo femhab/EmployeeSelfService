@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model ViewModel.Model.AuthDataModel
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -274,8 +275,8 @@
                             </ul>
                         </li>
                         @*<li>
-                                <a href="@Url.Action("Profile", "Employee", new { id="default" })"><i class="la la-ticket"></i> <span>Transfer</span></a>
-                            </li>*@
+            <a href="@Url.Action("Profile", "Employee", new { id="default" })"><i class="la la-ticket"></i> <span>Transfer</span></a>
+        </li>*@
                         <li>
                             <a href="#"><i class="la la-briefcase"></i> <span>Disciplinary Action</span><span class="menu-arrow"></span></a>
                             <ul style="display: none;">
@@ -300,7 +301,7 @@
                             <a href="#"><i class="la la-graduation-cap"></i> <span> Appraisal </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
                                 <li><a asp-controller="Appraisal" asp-action="Index"> Self Appraisal </a></li>
-                                <li><a href="performance.html"> Performance Review </a></li>
+                                <li><a asp-controller="Appraisal" asp-action="PerformanceReview"> Performance Review </a></li>
                             </ul>
                         </li>
 
@@ -312,20 +313,26 @@
                                 <li><a href="training-type.html"> Training Type </a></li>
                             </ul>
                         </li>
+                        @if (Model != null && Model.AccessType != ViewModel.Enumeration.AccessTypeEnum.Employee)
+                        {
+                            <li class="menu-title">
+                                <span>Administration</span>
+                            </li>
 
-                        <li class="menu-title">
-                            <span>Administration</span>
-                        </li>
+                            <li>
+                                <a asp-controller="Employee" asp-action="Enroll"><i class="la la-briefcase"></i> <span>Manage Employee </span> </a>
+                            </li>
+                            <li class="submenu">
+                                <a href="#"><i class="la la-mail-forward"></i> <span> Add Role </span></a>
+                            </li>
+                            <li class="submenu">
+                                <a href="#"><i class="la la-mail-forward"></i> <span> Set Appraisal Period </span></a>
+                            </li>
+                            <li class="submenu">
+                                <a href="#"><i class="la la-mail-forward"></i> <span> Leave Settings </span></a>
+                            </li>
+                        }
 
-                        <li>
-                            <a asp-controller="Employee" asp-action="Enroll"><i class="la la-briefcase"></i> <span>Manage Employee </span> </a>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="la la-mail-forward"></i> <span> Add Role </span></a>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="la la-mail-forward"></i> <span> Leave Settings </span></a>
-                        </li>
                     </ul>
                 </div>
             </div>

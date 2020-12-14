@@ -2,7 +2,8 @@
 {
     public enum QueryAction
     {
-        Pending,
+        Pending = 1,
+        Replied,
         Dropped,
         Reffered,
         Justified

@@ -18,7 +18,9 @@ namespace Web.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly IApprovalWorkItemService _approvalWorkItemService;
         private readonly IAuthService _authService;
+        private readonly IDivisionService _divisionService;
         private readonly IDepartmentService _departmentService;
+        //private readonly IDepartmentService _departmentService;
         private readonly IEmployeeNOKDetailService _employeeNOKDetailService;
         private readonly IEmployeeFamilyDependentService _employeeFamilyDependentService;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
@@ -30,14 +32,16 @@ namespace Web.Controllers
         private readonly IRoleService _roleService;
         private readonly IUserRoleService _userRoleService;
         private readonly IRelationshipService _relationshipService;
+        private readonly ISectionService _sectionService;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService)
+        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService, IDivisionService divisionService,ISectionService sectionService)
         {
             _employeeService = employeeService;
             _approvalWorkItemService = approvalWorkItemService;
             _authService = authService;
             _departmentService = departmentService;
+            _divisionService = divisionService;
             _employeeNOKDetailService = employeeNOKDetailService;
             _employeeFamilyDependentService = employeeFamilyDependentService;
             _employeeAddressService = employeeAddressService;
@@ -48,6 +52,7 @@ namespace Web.Controllers
             _educationalQualificationService = educationalQualificationService;
             _roleService = roleService;
             _userRoleService = userRoleService;
+            _sectionService = sectionService;
             _relationshipService = relationshipService;
             _mapper = mapper;
         }
@@ -74,6 +79,8 @@ namespace Web.Controllers
                 var roleList = await _roleService.GetAll();
                 var employeeList = await _employeeService.GetAll();
                 var employeeListResponse = await _employeeService.GetUnregisteredBaseEmployee();
+
+                employeeViewModel = _mapper.Map<EmployeeViewModel>(authData);
                 employeeViewModel.Employeee = _mapper.Map<IEnumerable<HRUserModel>>(employeeListResponse);
                 employeeViewModel.Roles = _mapper.Map<IEnumerable<RoleModel>>(roleList);
                 employeeViewModel.Departments = _mapper.Map<IEnumerable<DepartmentModel>>(deptList);
@@ -100,6 +107,7 @@ namespace Web.Controllers
                 if(id.ToLower() == "default")
                 {
                     id = authData.Id.ToString();
+                    authData.AccessType = ViewModel.Enumeration.AccessTypeEnum.Employee;
                 }
 
                 EmployeeProfileViewModel profileViewModel = new EmployeeProfileViewModel();
@@ -115,7 +123,12 @@ namespace Web.Controllers
                 var eduQual = await _educationalQualificationService.GetAll();
                 var eduDetail = await _employeeEducationalDetailService.GetByEmployee(authData.Id);
                 var approvalList = await _employeeApprovalConfigService.GetByEmployee(authData.Id);
+                var division = await _divisionService.GetAll();
+                var department = await _departmentService.GetAll();
+                var section = await _sectionService.GetAll();
+                //var unit = await _employeeApprovalConfigService.GetByEmployee(authData.Id);
 
+                profileViewModel = _mapper.Map<EmployeeProfileViewModel>(authData);
                 profileViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
                 profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(approvalWorkItem);
                 profileViewModel.Relationshiop = _mapper.Map<IEnumerable<RelationshipModel>>(relationshipList);
@@ -128,6 +141,9 @@ namespace Web.Controllers
                 profileViewModel.EducationalQualification = _mapper.Map<IEnumerable<EducationalQualificationModel>>(eduQual);
                 profileViewModel.EmployeeEducationDetail = _mapper.Map<IEnumerable<EmployeeEducationDetailModel>>(eduDetail);
                 profileViewModel.EmployeeApprovalconfig = _mapper.Map<IEnumerable<EmployeeApprovalconfigModel>>(approvalList);
+                profileViewModel.Division = _mapper.Map<IEnumerable<DivisionModel>>(division);
+                profileViewModel.Department = _mapper.Map<IEnumerable<DepartmentModel>>(department);
+                profileViewModel.Section = _mapper.Map<IEnumerable<SectionModel>>(section);
                 return View(profileViewModel);
             }
             catch(Exception ex)
@@ -347,6 +363,72 @@ namespace Web.Controllers
                         status = (approvalConfigResponse.Status && approvalCountResponse.Status) ? true : false,
                         message = (approvalConfigResponse.Status && approvalCountResponse.Status) ? approvalConfigResponse.Message : "Oops! Failed to create configuration. Please try again"
                     }) ;
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> RequestTransfer(Guid newDivision, Guid newDepartment, Guid newSection, Guid? newUnit)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var response = await _employeeService.RequestTransfer(authData.Id, newDivision, newDepartment, newSection, newUnit); //dependent service
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message ?? "Failed to create Next of Kin Detail."
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> RequestNameChange(string lastName, string firstName, string email)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var response = await _employeeService.RequestBasicInfoChange(authData.Id, lastName, firstName, email); //dependent service
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message ?? "Failed to create Next of Kin Detail."
+                    });
                 }
                 return Json(new
                 {

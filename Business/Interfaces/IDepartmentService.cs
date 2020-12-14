@@ -11,5 +11,6 @@ namespace Business.Interfaces
     {
         Task<BaseResponse> Refresh();
         Task<IEnumerable<Department>> GetAll();
+        Task<IEnumerable<Department>> GetByExitApproval();
     }
 }

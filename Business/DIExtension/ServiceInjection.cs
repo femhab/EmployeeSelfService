@@ -20,6 +20,8 @@ namespace Business.DIExtension
             services.AddTransient<IAppraisalRatingService, AppraisalRatingService>();
             services.AddTransient<IAppraisalCategoryService, AppraisalCategoryService>();
             services.AddTransient<IAppraisalCategoryItemService, AppraisalCategoryItemService>();
+            services.AddTransient<IAppraisalPeriodService, AppraisalPeriodService>();
+            services.AddTransient<IAppraisalItemService, AppraisalItemService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IEmployeeNOKDetailService, EmployeeNOKDetailService>();
             services.AddTransient<IEmployeeFamilyDependentService, EmployeeFamilyDependentService>();
@@ -28,13 +30,16 @@ namespace Business.DIExtension
             services.AddTransient<IEducationalGradeService, EducationalGradeService>();
             services.AddTransient<IEducationalLevelService, EducationalLevelService>();
             services.AddTransient<IEducationalQualificationService, EducationalQualificationService>();
+            services.AddTransient<IEmployeeAppraisalService, EmployeeAppraisalService>();
             services.AddTransient<IEmployeeApprovalConfigService, EmployeeApprovalConfigService>();
+            services.AddTransient<IApprovalBoardActiveLevelService, ApprovalBoardActiveLevelService>();
             services.AddTransient<IApprovalWorkItemService, ApprovalWorkItemService>();
             services.AddTransient<IApprovalBoardService, ApprovalBoardService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserRoleService, UserRoleService>();
             services.AddTransient<IDepartmentService, DepartmentService>();
             services.AddTransient<ILeaveService, LeaveService>();
+            services.AddTransient<ILeaveRecallService, LeaveRecallService>();
             services.AddTransient<ILeaveTypeService, LeaveTypeService>();
             services.AddTransient<IGradeLevelService, GradeLevelService>();
             services.AddTransient<IRelationshipService, RelationshipService>();
@@ -43,6 +48,17 @@ namespace Business.DIExtension
             services.AddTransient<IDisciplinaryActionService, DisciplinaryActionService>();
             services.AddTransient<IExitProcessService, ExitProcessService>();
             services.AddTransient<IExitProcessPriorityItemService, ExitProcessPriorityItemService>();
+            services.AddTransient<IDivisionService, DivisionService>();
+            services.AddTransient<ISectionService, SectionService>();
+            services.AddTransient<ILocationService, LocationService>();
+            services.AddTransient<IEmployeeTitleService, EmployeeTitleService>();
+            services.AddTransient<ICourtesyService, CourtesyService>();
+            services.AddTransient<ICountryService, CountryService>();
+            services.AddTransient<IStateService, StateService>();
+            services.AddTransient<ILGAService, LGAService>();
+            services.AddTransient<IAvailabilityStatusService, AvailabilityStatusService>();
+            services.AddTransient<IMaritalStatusService, MaritalStatusService>();
+            services.AddTransient<IRefreshingService, RefreshingService>();
 
 
             return services;

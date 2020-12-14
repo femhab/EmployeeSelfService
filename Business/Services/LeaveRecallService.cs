@@ -22,15 +22,16 @@ namespace Business.Services
         public async Task<BaseResponse> Create(LeaveRecall model)
         {
             var check = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == model.LeaveId);
+            var checkRecall = await _unitOfWork.GetRepository<LeaveRecall>().GetFirstOrDefaultAsync(predicate: x => x.LeaveId == model.LeaveId);
 
-            if(check != null)
+            if(check != null && checkRecall == null)
             {
                 _unitOfWork.GetRepository<LeaveRecall>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
-            return new BaseResponse() { Status = false, Message = ResponseMessage.LeaveExecuted };
+            return new BaseResponse() { Status = false, Message = ResponseMessage.LeaveRecallExecuted };
         }
     }
 }

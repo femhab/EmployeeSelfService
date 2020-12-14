@@ -22,16 +22,17 @@ namespace Business.Services
 
         public async Task<BaseResponse> CreateQuery(Guid employeeId, string empNo, string subject, string message, Guid targetEmployeeId, string targetEmployeeNo)
         {
-            if (string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(subject) || !string.IsNullOrEmpty(message))
             {
                 var model = new DisciplinaryAction()
                 {
                     EmployeeId = employeeId,
                     Emp_No = empNo,
                     QuerySubject = subject,
-                    QueryMessage = message,
+                    QueryMessage = message.Replace("<p>",string.Empty).Replace("</p>", string.Empty).Replace("<br>", string.Empty).Replace("</br>", string.Empty),
                     TargetEmployeeId = targetEmployeeId,
                     TargetEmployeeNo = targetEmployeeNo,
+                    Action = QueryAction.Pending,
                     QueryDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
                     Id = Guid.NewGuid()
@@ -61,7 +62,7 @@ namespace Business.Services
             var check = await _unitOfWork.GetRepository<DisciplinaryAction>().GetFirstOrDefaultAsync(predicate: x => x.Id == queryId);
             if (check != null)
             {
-                check.QueryActionComment = actionComment;
+                check.QueryActionComment = actionComment.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("<br>", string.Empty).Replace("</br>", string.Empty);
                 check.QueryActionDate = DateTime.Now;
                 check.Action = action;
                 check.UpdatedDate = DateTime.Now;
@@ -78,7 +79,8 @@ namespace Business.Services
             var check = await _unitOfWork.GetRepository<DisciplinaryAction>().GetFirstOrDefaultAsync(predicate: x => x.Id == queryId);
             if (check != null)
             {
-                check.QueryReply = reply;
+                check.QueryReply = reply.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("<br>", string.Empty).Replace("</br>", string.Empty);
+                check.Action = QueryAction.Replied;
                 check.QueryReplyDate = DateTime.Now;
                 check.UpdatedDate = DateTime.Now;
 

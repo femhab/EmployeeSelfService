@@ -12,6 +12,7 @@
         public const string LeaveExist = "You already enjoyed a leave or on a/pending leave request. If it is a recall case, please proceed to request leave recall instead";
         public const string MaximumLeaveReached = "Maximum allowed leave days reached";
         public const string LeaveExecuted = "No record found/ leave process already executed";
+        public const string LeaveRecallExecuted = "No record found/ leave recall already requested";
         public const string RecordExist = "Record already exist";
         public const string NoRecordExist = "No record exist";
         public const string MaximumReached = "Maximum record allowed reached! update/delete from the existing record";
@@ -21,6 +22,7 @@
         public const string LoanCreatedSuccessfully = "You loan request was submitted successfully";
         public const string LoanTypeExist = "You already have an ongoing/approved/pending loan of this type";
         public const string LoanProcessStarted = "You can not update a loan when process already started";
+        public const string AppraisalExist = "You already submitted an appraisal for this year";
     }
 
     public class HRDbConfig

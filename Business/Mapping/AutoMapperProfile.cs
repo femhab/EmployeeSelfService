@@ -17,6 +17,7 @@ namespace Business.Mapping
             CreateMap<HRUserModel, HRUsers>().ReverseMap();
             CreateMap<RoleModel, Role>().ReverseMap();
             CreateMap<DepartmentModel, Department>().ReverseMap();
+            CreateMap<UnitModel, Unit>().ReverseMap();
             CreateMap<Employee, HRUsers>().ReverseMap(); 
             CreateMap<Employee, EmployeeModel>().ReverseMap(); 
             CreateMap<AppraisalRating, AppraisalRatingModel>().ReverseMap(); 
@@ -28,6 +29,15 @@ namespace Business.Mapping
             CreateMap<ExitProcess, ExitProcessModel>().ReverseMap();
             CreateMap<ExitProcessModel, ExitProcess>().ReverseMap();
             CreateMap<ApprovalBoard, ApprovalBaordModel>().ReverseMap();
+            CreateMap<AuthDataModel, EmployeeViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, EmployeeProfileViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, LeaveViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, AppraisalViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, ApprovalBoardViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, DisciplinaryActionViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, ExitProcessViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, LoanViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, DashboardModel>().ReverseMap();
         }
     }
 }
