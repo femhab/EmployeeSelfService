@@ -39,15 +39,23 @@
                                         <h3 class="user-name m-t-0 mb-0">@Model.Employee.FirstName.ToLower() @Model.Employee.LastName</h3>
                                         @if (Model.Employee.Unit != null)
                                         {
-                                            <h6 class="text-muted">UI/UX Design Team</h6>
+                                            <h6 class="text-muted">@Model.Employee.Unit.Descc</h6>
                                         }
                                         else
                                         {
                                             <h6 class="text-muted">Unit: Unverified</h6>
                                         }
+                                        @if (Model.Employee.Section != null)
+                                        {
+                                            <div class="staff-id">Section: @Model.Employee.Section.Descc</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="staff-id">Section: Unverified</div>
+                                        }
                                         @if (Model.Employee.Department != null)
                                         {
-                                            <div class="staff-id">Department: Web Designer</div>
+                                            <div class="staff-id">Department: @Model.Employee.Department.Descc</div>
                                         }
                                         else
                                         {
@@ -56,7 +64,7 @@
 
                                         @if (Model.Employee.Division != null)
                                         {
-                                            <div class="staff-id">Division: Web Designer</div>
+                                            <div class="staff-id">Division: @Model.Employee.Division.Descc</div>
                                         }
                                         else
                                         {
@@ -66,7 +74,7 @@
                                         <div class="staff-id">Employee ID : @Model.Employee.Emp_No</div>
                                         @if (Model.Employee.EmploymentDate != null)
                                         {
-                                            <div class="small doj text-muted">Date of Join : @Model.Employee.EmploymentDate</div>
+                                    <div class="small doj text-muted">Date of Join : @Model.Employee.EmploymentDate?.ToString("dd MMMM yyyy")</div>
                                         }
                                         else
                                         {
@@ -90,12 +98,36 @@
 
                                         </li>
                                         <li>
+                                            <div class="title">Location</div>
+                                            @if (Model.Employee.Location != null)
+                                            {
+                                                <div class="text"><a href="">@Model.Employee.Location.Descc</a></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="text"><a href="">Unverified</a></div>
+                                            }
+
+                                        </li>
+                                        <li>
+                                            <div class="title">Staff Type</div>
+                                            @if (Model.Employee.StaffType != null)
+                                            {
+                                                <div class="text"><a href="">@Model.Employee.StaffType </a></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="text"><a href="">Unverified</a></div>
+                                            }
+
+                                        </li>
+                                        <li>
                                             <div class="title">Email:</div>
                                             <div class="text"><a href="">@Model.Employee.EmailAddress</a></div>
                                         </li>
                                         <li>
                                             <div class="title">Birthday:</div>
-                                            <div class="text">@Model.Employee.DOB</div>
+                                            <div class="text"> @Model.Employee.DOB?.ToString("dd MMMM yyyy")</div>
                                         </li>
                                     </ul>
                                 </div>
@@ -445,7 +477,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label class="col-form-label">Proposed Division <span class="text-danger">*</span></label>
-                                            <select class="select" id="transferdivision" onchange="GetDepartment()">
+                                            <select class="select" id="transferdivision">
                                                 <option value="">Select</option>
                                                 @foreach (var item in Model.Division)
                                                 {
@@ -474,7 +506,40 @@
                                             <label class="col-form-label">Proposed Department <span class="text-danger">*</span></label>
                                             <select class="select" id="transferdepartment">
                                                 <option value="">Select</option>
-                                                <option value="">Admin</option>
+                                                @foreach (var item in Model.Department)
+                                                {
+                                                    <option value="@item.Id">@item.Descc</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current Section <span class="text-danger">*</span></label>
+                                            <select class="select" disabled>
+                                                @if (Model.Employee.Section != null)
+                                                {
+                                                    <option value="@Model.Employee.SectionId" selected>@Model.Employee.Section.Descc</option>
+                                                }
+                                                else
+                                                {
+                                                    <option selected value="">Unverified</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Proposed Section<span class="text-danger">*</span></label>
+                                            <select class="select" id="transfersection">
+                                                <option value="">Select</option>
+                                                @if (Model.Section != null)
+                                                {
+                                                    @foreach (var item in Model.Section)
+                                                    {
+                                                        <option value="@item.Id">@item.Descc</option>
+                                                    }
+                                                }
                                             </select>
                                         </div>
                                     </div>
@@ -498,7 +563,13 @@
                                             <label class="col-form-label">Proposed Unit<span class="text-danger">*</span></label>
                                             <select class="select" id="transferunit">
                                                 <option value="">Select</option>
-                                                <option value="">Staff Welfare</option>
+                                                @if (Model.Unit != null)
+                                                {
+                                                    @foreach (var item in Model.Unit)
+                                                    {
+                                                        <option value="@item.Id">@item.Descc</option>
+                                                    }
+                                                }
                                             </select>
                                         </div>
                                     </div>
@@ -1136,7 +1207,7 @@
         var transferdivision = $("#transferdivision").val();
         var activeDivision;
         function GetDepartment() {
-            console.log(transferdivision);
+            console.log(transferdivision.toString());
             //divisionList.forEach(function (entry) {
             //   if (entry.id == transferdivision) {
             //       activeDivision = entry.divisionCode;
@@ -1232,8 +1303,9 @@
             var transferdivision = $("#transferdivision").val();
             var transferdepartment = $("#transferdepartment").val();
             var transferunit = $("#transferunit").val();
+            var transfersection = $("#transfersection").val();
 
-            RequestTransfer(transferdivision, transferdepartment, transferunit);
+            RequestTransfer(transferdivision, transferdepartment, transfersection, transferunit);
         }
 
         function SubmitNameChnageRequest()
@@ -1343,16 +1415,18 @@
             });
         }
 
-        function RequestTransfer(newDivision, newDepartment, newUnit ) {
+        function RequestTransfer(newDivision, newDepartment, newSection, newUnit ) {
             $.ajax({
                 url: '@Url.Action("RequestTransfer", "Employee")',
                 type: 'POST',
                 dataType: 'json',
-                data: {newDivision: newDivision, newDepartment: newDepartment, newUnit: newUnit },
+                data: {newDivision: newDivision, newDepartment: newDepartment, newSection: newSection, newUnit: newUnit },
                 success: function (response) {
                     if (response.status) {
+                        toastr.success(response?.message)
                     }
                     else {
+                        toastr.error(response?.message)
                     }
                     return;
                 }, error: function () {
@@ -1369,8 +1443,10 @@
                 data: {lastName: lastName, firstName: firstName, email: email },
                 success: function (response) {
                     if (response.status) {
+                        toastr.success(response?.message)
                     }
                     else {
+                        toastr.error(response?.message)
                     }
                     return;
                 }, error: function () {
@@ -1378,5 +1454,6 @@
                 }
             });
         }
+
     </script>
 }

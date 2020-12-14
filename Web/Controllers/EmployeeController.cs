@@ -32,9 +32,10 @@ namespace Web.Controllers
         private readonly IRoleService _roleService;
         private readonly IUserRoleService _userRoleService;
         private readonly IRelationshipService _relationshipService;
+        private readonly ISectionService _sectionService;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService, IDivisionService divisionService)
+        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService, IDivisionService divisionService,ISectionService sectionService)
         {
             _employeeService = employeeService;
             _approvalWorkItemService = approvalWorkItemService;
@@ -51,6 +52,7 @@ namespace Web.Controllers
             _educationalQualificationService = educationalQualificationService;
             _roleService = roleService;
             _userRoleService = userRoleService;
+            _sectionService = sectionService;
             _relationshipService = relationshipService;
             _mapper = mapper;
         }
@@ -123,6 +125,7 @@ namespace Web.Controllers
                 var approvalList = await _employeeApprovalConfigService.GetByEmployee(authData.Id);
                 var division = await _divisionService.GetAll();
                 var department = await _departmentService.GetAll();
+                var section = await _sectionService.GetAll();
                 //var unit = await _employeeApprovalConfigService.GetByEmployee(authData.Id);
 
                 profileViewModel = _mapper.Map<EmployeeProfileViewModel>(authData);
@@ -140,6 +143,7 @@ namespace Web.Controllers
                 profileViewModel.EmployeeApprovalconfig = _mapper.Map<IEnumerable<EmployeeApprovalconfigModel>>(approvalList);
                 profileViewModel.Division = _mapper.Map<IEnumerable<DivisionModel>>(division);
                 profileViewModel.Department = _mapper.Map<IEnumerable<DepartmentModel>>(department);
+                profileViewModel.Section = _mapper.Map<IEnumerable<SectionModel>>(section);
                 return View(profileViewModel);
             }
             catch(Exception ex)
@@ -374,7 +378,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> RequestTransfer(Guid newDivision, Guid newDepartment, Guid newUnit)
+        public async Task<ActionResult> RequestTransfer(Guid newDivision, Guid newDepartment, Guid newSection, Guid? newUnit)
         {
             try
             {
@@ -385,7 +389,7 @@ namespace Web.Controllers
                     {
                         return RedirectToAction("Signout", "Employee");
                     }
-                    var response = await _employeeService.RequestTransfer(authData.Id, newDivision, newDepartment, newUnit); //dependent service
+                    var response = await _employeeService.RequestTransfer(authData.Id, newDivision, newDepartment, newSection, newUnit); //dependent service
 
                     return Json(new
                     {

@@ -15,12 +15,12 @@ namespace Data.Entities
         public string LastRatingManagerName { get; set; }
         public string NextRatingManagerId { get; set; }
         public string NextRatingManagerName { get; set; }
-        public Level ActiveLevel { get; set; }
     }
 
     public class AppraisalItem: BaseObject
     {
         public Guid EmployeeAppraisalId { get; set; }
+        public EmployeeAppraisal EmployeeAppraisal { get; set; }
         public Guid AppraisalCategoryId { get; set; }
         public AppraisalCategory AppraisalCategory { get; set; }
         public Guid AppraisalCategoryItemId { get; set; }

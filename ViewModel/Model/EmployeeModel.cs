@@ -19,16 +19,37 @@ namespace ViewModel.Model
         public DivisionModel Division { get; set; }
         public Guid DepartmentId { get; set; }
         public DepartmentModel Department { get; set; }
-        public Guid UnitId { get; set; }
+        public Guid? SectionId { get; set; }
+        public SectionModel Section { get; set; }
+        public Guid? UnitId { get; set; }
         public UnitModel Unit { get; set; }
-        public string Location { get; set; }
+        public Guid? LocationId { get; set; }
+        public LocationModel Location { get; set; }
+        public Guid? CourtesyId { get; set; }
+        public CourtesyModel Courtesy { get; set; }
+        public Guid? EmployeeTitleId { get; set; }
+        public EmployeeTitleModel EmployeeTitle { get; set; }
+        public Guid? CountryId { get; set; }
+        public CountryModel Country { get; set; }
+        public Guid? StateId { get; set; }
+        public StateModel State { get; set; }
+        public Guid? LGAId { get; set; }
+        public LGAModel LGA { get; set; }
         public AccessTypeEnum AccessType { get; set; }
         public StatusEnum Status { get; set; }
+        public Guid? AvalaibilityStatusId { get; set; }
+        public AvalaibilityStatusModel AvalaibilityStatus { get; set; }
+        public Guid? MaritalStatusId { get; set; }
+        public MaritalStatusModel MaritalStatus { get; set; }
         public DateTime? DOB { get; set; }
         public GenderEnum Gender { get; set; }
         public byte[] ProfilePhoto { get; set; }
         public DateTime? EmploymentDate { get; set; }
         public string PensionNo { get; set; }
+        public DateTime? DateConf { get; set; }
+        public DateTime? EffectiveDate { get; set; }
+        public DateTime? PreAppDate { get; set; }
+        public DateTime? ProRetireDate { get; set; }
     }
 
     public class HRUserModel
@@ -66,5 +87,6 @@ namespace ViewModel.Model
         public IEnumerable<DivisionModel> Division { get; set; }
         public IEnumerable<DepartmentModel> Department { get; set; }
         public IEnumerable<UnitModel> Unit { get; set; }
+        public IEnumerable<SectionModel> Section { get; set; }
     }
 }

@@ -10,5 +10,6 @@ namespace Business.Interfaces
     {
         Task<BaseResponse> Create(List<AppraisalItem> model);
         Task<IEnumerable<AppraisalItem>> GetByEmployee(Guid employeeId);
+        Task<IEnumerable<AppraisalItem>> GetAll();
     }
 }

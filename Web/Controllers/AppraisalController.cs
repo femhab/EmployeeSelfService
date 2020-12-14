@@ -17,19 +17,23 @@ namespace Web.Controllers
         private readonly IAppraisalRatingService _appraisalRatingService;
         private readonly IAppraisalCategoryService _appraisalCategoryService;
         private readonly IAppraisalCategoryItemService _appraisalCategoryItemService;
+        private readonly IEmployeeAppraisalService _employeeAppraisalService;
+        private readonly IAppraisalItemService _appraisalItemService;
         private readonly IAppraisalPeriodService _appraisalPeriodService;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IEmployeeService _employeeService;
         private readonly IMapper _mapper;
 
-        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService)
+        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService, IEmployeeAppraisalService employeeAppraisalService, IAppraisalItemService appraisalItemService)
         {
             _appraisalRatingService = appraisalRatingService;
             _appraisalCategoryService = appraisalCategoryService;
             _appraisalCategoryItemService = appraisalCategoryItemService;
             _appraisalPeriodService = appraisalPeriodService;
+            _appraisalItemService = appraisalItemService;
             _employeeService = employeeService;
             _employeeApprovalConfigService = employeeApprovalConfigService;
+            _employeeAppraisalService = employeeAppraisalService;
             _mapper = mapper;
         }
 
@@ -49,6 +53,7 @@ namespace Web.Controllers
                 var categoryItemList = await _appraisalCategoryItemService.GetAll();
                 var employeeList = await _employeeService.GetAll();
                 var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
+                var employeeAppraisal =await _employeeAppraisalService.GetByEmployee(authData.Id);
 
                 appraisalViewModel = _mapper.Map<AppraisalViewModel>(authData);
                 appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
@@ -56,6 +61,7 @@ namespace Web.Controllers
                 appraisalViewModel.AppraisalCategoryItems = _mapper.Map<IEnumerable<AppraisalCategoryItemModel>>(categoryItemList);
                 appraisalViewModel.EmployeeList = _mapper.Map<IEnumerable<EmployeeModel>>(employeeList);
                 appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
+                appraisalViewModel.EmployeeAppraisal = _mapper.Map<IEnumerable<EmployeeAppraisalModel>>(employeeAppraisal);
 
                 return View(appraisalViewModel);
             }
@@ -81,11 +87,16 @@ namespace Web.Controllers
                 var categoryItemList = await _appraisalCategoryItemService.GetAll();
                 var employeeList = await _employeeService.GetAll();
                 var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
+                var employeeAppraisal = await _employeeAppraisalService.GetByProcessor(authData.Emp_No);
+                var appraisalItems = await _appraisalItemService.GetAll();
+
                 appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
                 appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(categoryList);
                 appraisalViewModel.AppraisalCategoryItems = _mapper.Map<IEnumerable<AppraisalCategoryItemModel>>(categoryItemList);
                 appraisalViewModel.EmployeeList = _mapper.Map<IEnumerable<EmployeeModel>>(employeeList);
                 appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
+                appraisalViewModel.EmployeeAppraisal = _mapper.Map<IEnumerable<EmployeeAppraisalModel>>(employeeAppraisal);
+                appraisalViewModel.AppraisalItem = _mapper.Map<IEnumerable<AppraisalItemModel>>(appraisalItems);
 
                 return View(appraisalViewModel);
             }
@@ -140,10 +151,16 @@ namespace Web.Controllers
                             appraisalItemList.Add(new AppraisalItem() { AppraisalCategoryId = category, AppraisalCategoryItemId = categoryItem, AppraisalRatingId = rating, EmployeeAppraisalId = employeeAppraisal.Id, Id = Guid.NewGuid(), CreatedDate = DateTime.Now });
                         }
 
+                        var appraisalCreate = await _employeeAppraisalService.Create(employeeAppraisal);
+                        if (appraisalCreate.Status)
+                        {
+                            await _appraisalItemService.Create(appraisalItemList);
+                        }
+
                         return Json(new
                         {
-                            status = true,
-                            message = "Appraisal created successfully"
+                            status = appraisalCreate.Status,
+                            message = appraisalCreate.Message
                         });
                     }
                     

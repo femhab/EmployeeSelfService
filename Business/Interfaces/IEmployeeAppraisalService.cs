@@ -10,6 +10,6 @@ namespace Business.Interfaces
     {
         Task<BaseResponse> Create(EmployeeAppraisal model);
         Task<IEnumerable<EmployeeAppraisal>> GetByEmployee(Guid employeeId);
-        Task<IEnumerable<EmployeeAppraisal>> GetByProcessor(Guid processorId);//to use activelevel for trace
+        Task<IEnumerable<EmployeeAppraisal>> GetByProcessor(string processorId);//to use activelevel for trace
     }
 }

@@ -17,6 +17,6 @@ namespace Business.Interfaces
         Task<IEnumerable<Employee>> GetAll();
         Task<IEnumerable<Employee>> GetByDepartment(Guid departmentId);
         Task<IEnumerable<Employee>> GetAllLowGradeEmployee(Guid employeeId);
-        Task<BaseResponse> RequestTransfer(Guid id, Guid divisionId, Guid departmentId, Guid unitId);
+        Task<BaseResponse> RequestTransfer(Guid id, Guid divisionId, Guid departmentId, Guid sectionId, Guid? unitId);
     }
 }

@@ -16,16 +16,18 @@ namespace Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
+        private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
         private readonly IEmployeeService _employeeService;
         private readonly ILeaveTypeService _leaveTypeService;
 
-        public LeaveService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, IEmployeeService employeeService, ILeaveTypeService leaveTypeService, IEmployeeApprovalConfigService employeeApprovalConfigService)
+        public LeaveService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, IEmployeeService employeeService, ILeaveTypeService leaveTypeService, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService)
         {
             _unitOfWork = unitOfWork;
             _approvalBoardService = approvalBoardService;
             _employeeService = employeeService;
             _leaveTypeService = leaveTypeService;
             _employeeApprovalConfigService = employeeApprovalConfigService;
+            _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
         }
 
         public async Task<BaseResponse> Create(Leave model)
@@ -39,7 +41,7 @@ namespace Business.Services
 
                 //submit for approval
                 var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("leave"));
-                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel);
+                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
                 var enlistBoard = new ApprovalBoard()
                 {
                     EmployeeId = model.EmployeeId,
@@ -56,6 +58,7 @@ namespace Business.Services
                 };
 
                 await _approvalBoardService.Create(enlistBoard);
+                await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -22,15 +23,17 @@ namespace Business.Services
         private readonly ServiceContext _dbContext;
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly IGradeLevelService _gradeLevelService;
+        private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
         private readonly SqlConnection _sqlConnection;
         private readonly IMapper _mapper;
 
-        public EmployeeService(IUnitOfWork unitOfWork, ServiceContext dbContext, IApprovalBoardService approvalBoardService, IMapper mapper, IGradeLevelService gradeLevelService)
+        public EmployeeService(IUnitOfWork unitOfWork, ServiceContext dbContext, IApprovalBoardService approvalBoardService, IMapper mapper, IGradeLevelService gradeLevelService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService)
         {
             _unitOfWork = unitOfWork;
             _dbContext = dbContext;
             _approvalBoardService = approvalBoardService;
             _gradeLevelService = gradeLevelService;
+            _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
             _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
             _mapper = mapper;
         }
@@ -50,34 +53,79 @@ namespace Business.Services
                 {
                     while (reader.Read())
                     {
-                        HREmpMst requester = new HREmpMst()
+                        try
                         {
-                            DepCode = reader["DepCode"].ToString(),
-                            DivisionCode = reader["DivisionCode"].ToString(),
-                            UnitCode = reader["UnitCode"].ToString(),
-                            GradeCode = reader["GradeCode"].ToString(),
-                            Emp_No = reader["Emp_No"].ToString(),
-                            TypeCode = reader["TypeCode"].ToString(),
-                        };
-                        hrData = requester;
+                            HREmpMst requester = new HREmpMst()
+                            {
+                                DepCode = reader["DepCode"].ToString(),
+                                DeptCode = reader["DeptCode"].ToString(),
+                                DivisionCode = reader["DivisionCode"].ToString(),
+                                UnitCode = reader["UnitCode"].ToString(),
+                                GradeCode = reader["GradeCode"].ToString(),
+                                Emp_No = reader["Emp_No"].ToString(),
+                                TypeCode = reader["TypeCode"].ToString(),
+                                SectionCode = reader["SectionCode"].ToString(),
+                                TitleCode = reader["TitleCode"].ToString(),
+                                MaritalCode = reader["MaritalCode"].ToString(),
+                                StatusCode = reader["StatusCode"].ToString(),
+                                CountryCode = reader["CountryCode"].ToString(),
+                                StateCode = reader["StateCode"].ToString(),
+                                LGACode = reader["LGACode"].ToString(),
+                                LocationCode = reader["LocationCode"].ToString(),
+                                CourtesyCode = reader["CourtesyCode"].ToString(),
+                                date_Emp = Convert.ToDateTime(reader["date_Emp"]).ToString("dd/MM/yyyy"),
+                                date_birth = Convert.ToDateTime(reader["date_birth"]).ToString("dd/MM/yyyy"),
+                                date_conf = Convert.ToDateTime(reader["date_conf"]).ToString("dd/MM/yyyy"),
+                                effectiveDate = Convert.ToDateTime(reader["effectiveDate"]).ToString("dd/MM/yyyy"),
+                                preAppDate = Convert.ToDateTime(reader["preAppDate"]).ToString("dd/MM/yyyy"),
+                                projRetireDate = Convert.ToDateTime(reader["projRetireDate"]).ToString("dd/MM/yyyy"),
+                            };
+                            hrData = requester;
+                        }
+                        catch(Exception ex)
+                        {
+                            throw ex;
+                        }
                     }
                     _sqlConnection.Close();
                 }
 
                 if (hrData.Emp_No != null)
                 {
-                    var department = await _unitOfWork.GetRepository<Department>().GetFirstOrDefaultAsync(predicate: x => x.DeptCode.ToLower() == hrData.DeptCode.ToLower());
-                    var division = await _unitOfWork.GetRepository<Division>().GetFirstOrDefaultAsync(predicate: x => x.DivisonCode.ToLower() == hrData.DivisionCode.ToLower());
-                    var unit = await _unitOfWork.GetRepository<Unit>().GetFirstOrDefaultAsync(predicate: x => x.UnitCode.ToLower() == hrData.UnitCode.ToLower());
-                    var gradeLevel = await _unitOfWork.GetRepository<GradeLevel>().GetFirstOrDefaultAsync(predicate: x => x.GradeCode.ToLower() == hrData.GradeCode.ToLower());
+                    var department = await _unitOfWork.GetRepository<Department>().GetFirstOrDefaultAsync(predicate: x => x.DeptCode.ToLower() == hrData.DeptCode.ToLower()) ?? null;
+                    var division = await _unitOfWork.GetRepository<Division>().GetFirstOrDefaultAsync(predicate: x => x.DivisonCode.ToLower() == hrData.DivisionCode.ToLower()) ?? null;
+                    var unit = await _unitOfWork.GetRepository<Unit>().GetFirstOrDefaultAsync(predicate: x => x.UnitCode.ToLower() == hrData.UnitCode.ToLower()) ?? null;
+                    var gradeLevel = await _unitOfWork.GetRepository<GradeLevel>().GetFirstOrDefaultAsync(predicate: x => x.GradeCode.ToLower() == hrData.GradeCode.ToLower()) ?? null;
+                    var section = await _unitOfWork.GetRepository<Section>().GetFirstOrDefaultAsync(predicate: x => x.SectionCode.ToLower() == hrData.SectionCode.ToLower()) ?? null;
+                    var title = await _unitOfWork.GetRepository<EmployeeTitle>().GetFirstOrDefaultAsync(predicate: x => x.TitleCode.ToLower() == hrData.TitleCode.ToLower()) ?? null;
+                    var maritalStatus = await _unitOfWork.GetRepository<MaritalStatus>().GetFirstOrDefaultAsync(predicate: x => x.MaritalCode.ToLower() == hrData.MaritalCode.ToLower())?? null;
+                    var availability = await _unitOfWork.GetRepository<AvalaibilityStatus>().GetFirstOrDefaultAsync(predicate: x => x.StatusCode.ToLower() == hrData.StatusCode.ToLower()) ?? null;
+                    var country = await _unitOfWork.GetRepository<Country>().GetFirstOrDefaultAsync(predicate: x => x.CountryCode.ToLower() == hrData.CountryCode.ToLower()) ?? null;
+                    var state = await _unitOfWork.GetRepository<State>().GetFirstOrDefaultAsync(predicate: x => x.StateCode.ToLower() == hrData.StateCode.ToLower()) ?? null;
+                    var lga = await _unitOfWork.GetRepository<LGA>().GetFirstOrDefaultAsync(predicate: x => x.LGACode.ToLower() == hrData.LGACode.ToLower()) ?? null;
+                    var location = await _unitOfWork.GetRepository<Location>().GetFirstOrDefaultAsync(predicate: x => x.LocationCode.ToLower() == hrData.LocationCode.ToLower()) ?? null;
+                    var courtesy = await _unitOfWork.GetRepository<Courtesy>().GetFirstOrDefaultAsync(predicate: x => x.CourtesyCode.ToLower() == hrData.CourtesyCode.ToLower()) ?? null;
 
-                    model.DepartmentId = department.Id;
-                    model.DivisionId = division.Id;
-                    model.UnitId = unit.Id;
-                    model.GradeLevelId = gradeLevel.Id; 
-                    model.DOB = hrData.date_birth;
-                    model.EmploymentDate = hrData.date_Emp;
+                    if (department != null) { model.DepartmentId = department.Id; }
+                    if (division != null) { model.DivisionId = division.Id; }
+                    if (unit != null) { model.UnitId = unit.Id; }
+                    if (gradeLevel != null) { model.GradeLevelId = gradeLevel.Id; } 
+                    model.DOB = DateTime.ParseExact(hrData.date_birth, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    model.EmploymentDate = DateTime.ParseExact(hrData.date_Emp, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    model.DateConf = DateTime.ParseExact(hrData.date_conf, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    model.EffectiveDate = DateTime.ParseExact(hrData.effectiveDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    model.PreAppDate = DateTime.ParseExact(hrData.preAppDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    model.ProRetireDate = DateTime.ParseExact(hrData.projRetireDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     model.StaffType = hrData.TypeCode;
+                    if (section != null) { model.SectionId = section.Id; }
+                    if (title != null) { model.EmployeeTitleId = title.Id; }
+                    if (maritalStatus != null) { model.MaritalStatusId = maritalStatus.Id; }
+                    if (availability != null) { model.AvalaibilityStatusId = availability.Id; }
+                    if (country != null) { model.CountryId = country.Id; }
+                    if (state != null) { model.StateId = state.Id; }
+                    if (lga != null) { model.LGAId = lga.Id; }
+                    if (location != null) { model.LocationId = location.Id; }
+                    if (courtesy != null) { model.CourtesyId = courtesy.Id; }
                 }
                 model.Status = Status.Active;
                 model.AccessType = AccessType.Employee;
@@ -132,7 +180,7 @@ namespace Business.Services
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
-        public async Task<BaseResponse> RequestTransfer(Guid id, Guid divisionId, Guid departmentId, Guid unitId)
+        public async Task<BaseResponse> RequestTransfer(Guid id, Guid divisionId, Guid departmentId, Guid sectionId, Guid? unitId)
         {
             var model = await GetById(id);
             if (model != null)
@@ -144,32 +192,36 @@ namespace Business.Services
                         EmployeeId = id,
                         DivisionId = divisionId,
                         DepartmentId = departmentId,
+                        SectionId = sectionId,
                         UnitId = unitId,
                         Emp_No = model.Emp_No,
                         ApprovalStatus = ApprovalStatus.Pending,
                         Id = Guid.NewGuid(),
                         CreatedDate = DateTime.Now
                     };
-                    _unitOfWork.GetRepository<AppliedTransfer>().Update(appliedTransfer);
+                    _unitOfWork.GetRepository<AppliedTransfer>().Insert(appliedTransfer);
                     await _unitOfWork.SaveChangesAsync();
 
                     //submit for approval
-                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("information"));
-                    var approvalProcessor = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.ApprovalLevel == Level.HR);
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("transfer"));
+                    var approvalProcessor = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.Id && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
 
                     await _approvalBoardService.Create(new ApprovalBoard()
                     {
                         EmployeeId = model.Id,
-                        ApprovalLevel = Level.HR,
+                        ApprovalLevel = Level.FirstLevel,
                         Emp_No = model.Emp_No,
                         ApprovalWorkItemId = approvalWorkItem.Id,
-                        ApprovalProcessorId = approvalProcessor.Id,
+                        ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
+                        ApprovalProcessor = approvalProcessor.Processor,
                         ServiceId = model.Id,
                         Status = ApprovalStatus.Pending,
                         CreatedDate = DateTime.Now,
                         Id = Guid.NewGuid(),
                         CreatedBy = model.Emp_No
                     });
+
+                    await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, appliedTransfer.Id, Level.FirstLevel);
 
                     return new BaseResponse() { Status = true, Message = ResponseMessage.AwaitingApproval };
                 }
@@ -188,25 +240,25 @@ namespace Business.Services
 
         public async Task<IEnumerable<Employee>> GetAll()
         {
-            var data = await GetAll(x => x.Status == Status.Active, "Department,Division,Unit,GradeLevel");
+            var data = await GetAll(x => x.Status == Status.Active, "Department,Division,Unit,GradeLevel,Section,Location,MaritalStatus,Courtesy,Country,State,LGA,AvalaibilityStatus,EmployeeTitle");
             return data;
         }
 
         public async Task<Employee> GetByEmployerIdOrEmail(string employeeIdOrEmail)
         {
-            var model = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: c => c.Emp_No == employeeIdOrEmail || c.EmailAddress == employeeIdOrEmail, null, include: c => c.Include(i => i.Department).Include(i => i.Unit).Include(i => i.GradeLevel).Include(i => i.Division));
+            var model = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: c => c.Emp_No == employeeIdOrEmail || c.EmailAddress == employeeIdOrEmail, null, include: c => c.Include(i => i.Department).Include(i => i.Unit).Include(i => i.GradeLevel).Include(i => i.Division).Include(i => i.Section).Include(i => i.Location).Include(i => i.MaritalStatus).Include(i => i.Courtesy).Include(i => i.Country).Include(i => i.State).Include(i => i.LGA).Include(i => i.AvalaibilityStatus).Include(i => i.EmployeeTitle));
             return model;
         }
 
         public async Task<IEnumerable<Employee>> GetByDepartment(Guid departmentId)
         {
-            var data = await GetAll(x => x.DepartmentId != departmentId, "Employee,Department,Division,Unit,GradeLevel");
+            var data = await GetAll(x => x.DepartmentId != departmentId, "Employee,Department,Division,Unit,GradeLevel,Section,Location,MaritalStatus,Courtesy,Country,State,LGA,AvalaibilityStatus,EmployeeTitle");
             return data;
         }
 
         public async Task<Employee> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: c => c.Id == id, include: c => c.Include(i => i.Department).Include(i => i.Unit).Include(i => i.GradeLevel).Include(i => i.Division));
+            var model = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: c => c.Id == id, include: c => c.Include(i => i.Department).Include(i => i.Unit).Include(i => i.GradeLevel).Include(i => i.Division).Include(i => i.Section).Include(i => i.Location).Include(i => i.MaritalStatus).Include(i => i.Courtesy).Include(i => i.Country).Include(i => i.State).Include(i => i.LGA).Include(i => i.AvalaibilityStatus).Include(i => i.EmployeeTitle));
             return model;
         }
 

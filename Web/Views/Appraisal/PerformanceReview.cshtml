@@ -27,7 +27,6 @@
                 <table class="table table-striped custom-table mb-0 datatable">
                     <thead>
                         <tr>
-                            <th style="width: 30px;">#</th>
                             <th>Employee</th>
                             <th>Designation</th>
                             <th>Department</th>
@@ -37,28 +36,32 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach (var item in Model.EmployeeAppraisal)
+                        {
                         <tr>
-                            <td>1</td>
                             <td>
                                 <h2 class="table-avatar">
                                     <a href="profile.html" class="avatar"><img alt="" src="assets/img/profiles/avatar-02.jpg"></a>
-                                    <a href="profile.html">John Doe </a>
+                                    <a href="profile.html">@item.Employee.LastName @item.Employee.FirstName </a>
                                 </h2>
                             </td>
-                            <td>Web Designer </td>
-                            <td>Designing</td>
+                            <td>Unverified</td>
+                            @if (@item.Employee.Department != null)
+                            {
+                                <td>@item.Employee.Department.Descc</td>
+                            }
+                            else
+                            {
+                                <td>Unverified</td>
+                            }
                             <td>
-                                7 May 2019
+                                @item.CreatedDate.ToString("dd MMMM yyyy")
                             </td>
                             <td>
                                 <div class="dropdown action-label">
                                     <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
                                         <i class="fa fa-dot-circle-o text-success"></i> Active
                                     </a>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-success"></i> Active</a>
-                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
-                                    </div>
                                 </div>
                             </td>
                             <td class="text-right">
@@ -70,6 +73,8 @@
                                 </div>
                             </td>
                         </tr>
+                        }
+
                     </tbody>
                 </table>
             </div>
@@ -77,7 +82,7 @@
     </div>
 </div>
 <!-- /Page Content -->
-<!-- Add Performance Appraisal Modal -->
+<!-- Review Performance Appraisal Modal -->
 <div id="add_appraisal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -90,46 +95,37 @@
             <div class="modal-body">
                 <form>
                     <div class="row">
-                        @foreach (var category in Model.AppraisalCategories)
-                        {
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-header" style="background-color:#daa520">
-                                        <h4 class="card-title mb-0">@category.Description</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table mb-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Indicator</th>
-                                                        <th>Employee Value</th>
-                                                        <th>Supervisor Value</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var categoryItem in Model.AppraisalCategoryItems.Where(x => x.AppraisalCategoryCode.ToLower() == category.AppraisalCategoryCode.ToLower() && x.StaffType.ToLower() == Model.Employee.StaffType.ToLower()))
-                                                    {
-                                                        <tr>
-                                                            <td>@categoryItem.Description</td>
-                                                            <td>Intermediate</td>
-                                                            <td>
-                                                                <select name="customer_experience" class="form-control">
-                                                                    @foreach (var item in Model.AppraisalRatings)
-                                                                    {
-                                                                        <option value="@item.Weight">@item.Description</option>
-                                                                    }
-                                                                </select>
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header" style="background-color:#daa520">
+                                    <h4 class="card-title mb-0" id="categorydescription">Category Description</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Indicator</th>
+                                                    <th>Employee Value</th>
+                                                    <th>Supervisor Value</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>CtegoryItem Name</td>
+                                                    <td>Initial Value</td>
+                                                    <td>
+                                                        <select name="customer_experience" class="form-control">
+                                                            <option value="">Select New</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                        }
+                        </div>
                     </div>
 
                     <div class="submit-section">
@@ -140,7 +136,7 @@
         </div>
     </div>
 </div>
-<!-- /Add Performance Appraisal Modal -->
+<!-- Review Performance Appraisal Modal -->
 <!-- Delete Performance Appraisal Modal -->
 <div class="modal custom-modal fade" id="delete_appraisal" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
