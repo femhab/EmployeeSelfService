@@ -359,5 +359,16 @@ namespace Business.Services
                 return null;
             }
         }
+
+        public async Task<BaseResponse> UpdateAccessType(Guid employeeId, AccessType accessType)
+        {
+            var employee = await GetById(employeeId);
+            employee.AccessType = accessType;
+
+            _unitOfWork.GetRepository<Employee>().Update(employee);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
+        }
     }
 }

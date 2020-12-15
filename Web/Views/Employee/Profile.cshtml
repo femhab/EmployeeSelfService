@@ -1347,7 +1347,9 @@
                 data: { noKFirstName: nokFirstName,  nokLastName: nokLastName, nokPhonenumber: nokPhoneNumber, nokEmail: nokEmail, nokRelationShipId: nokrelationshipId, nokAddress:  nokAddress, nokDOB: nokDob},
                 success: function (response) {
                     if (response.status) {
-                        window.location.href = redirectUrl;
+                        toastr.success(response.message)
+                        $('#employee_nok_modal').modal('hide');
+                        location.reload();
                     }
                     else {
                         toastr.error(response?.message);
@@ -1367,10 +1369,12 @@
                 data: { depFirstName: depFirstName,  depLastName: depLastName, depPhonenumber: depPhoneNumber, depRelationShipId: deprelationshipId, depAddress:  depAddress, depDOB: depDob},
                 success: function (response) {
                     if (response.status) {
+                        toastr.success(response?.message)
                         $('#family_info_modal').modal('hide');
+                        location.reload();
                     }
                     else {
-                        window.location.href = redirectUrl;
+                        toastr.error(response?.message)
                     }
                     return;
                 }, error: function () {
@@ -1387,8 +1391,12 @@
                 data: { workItem: workItem, employeeId: employeeId, empNo: empNo, levelApproval: levelApproval, maxcount: maxcount},
                 success: function (response) {
                     if (response.status) {
+                        toastr.success(response?.message)
+                        $('#manage_employee').modal('hide');
+                        location.reload();
                     }
                     else {
+                        toastr.error(response ?.message)
                     }
                     return;
                 }, error: function () {
@@ -1405,8 +1413,12 @@
                 data: {institution: institution, level: level, qualification: qualification, course: course, grade: grade, startDate: startdate, endDate: enddate },
                 success: function (response) {
                     if (response.status) {
+                        toastr.success(response?.message)
+                        $('#education_info').modal('hide');
+                        location.reload();
                     }
                     else {
+                        toastr.error(response ?.message)
                     }
                     return;
                 }, error: function () {
@@ -1424,6 +1436,7 @@
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)
+                        location.reload();
                     }
                     else {
                         toastr.error(response?.message)
@@ -1444,6 +1457,7 @@
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)
+                        location.reload();
                     }
                     else {
                         toastr.error(response?.message)

@@ -8,6 +8,8 @@ namespace ViewModel.ResponseModel
         public bool IsFiveYearsAnniversary { get; set; }
         public bool IsTenYearsAnniversary { get; set; }
         public IEnumerable<LeaveTypeAudit> LeaveTypeAudit { get; set; }
+        public bool IsLeaveEligible { get; set; }
+        public bool IsRecallEligible { get; set; }
     }
 
     public class LeaveTypeAudit

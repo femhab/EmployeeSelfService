@@ -19,38 +19,29 @@
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
-                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_leave"><i class="fa fa-plus"></i> Add Leave</a>
-                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#recall_leave"><i class="fa fa-plus"></i> Recall Leave</a>
+                @if (Model.Eligiblity.IsLeaveEligible)
+                {
+                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_leave"><i class="fa fa-plus"></i> Add Leave</a>
+                }
+                @if (Model.Eligiblity.IsRecallEligible)
+                {
+                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#recall_leave"><i class="fa fa-plus"></i> Recall Leave</a>
+                }
             </div>
         </div>
     </div>
     <!-- /Page Header -->
     <!-- Leave Statistics -->
     <div class="row">
-        <div class="col-md-3">
-            <div class="stats-info">
-                <h6>Annual Leave</h6>
-                <h4>20</h4>
+        @foreach (var item in Model.LeaveType.Where(x => x.GradeLevelId == Model.Employee.GradeLevelId))
+        {
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>@item.Class Leave</h6>
+                    <h4>@item.AvailableDays</h4>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-info">
-                <h6>Medical Leave</h6>
-                <h4>0</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-info">
-                <h6>Study Leave</h6>
-                <h4>0</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-info">
-                <h6>Exam Leave</h6>
-                <h4>0</h4>
-            </div>
-        </div>
+        }
     </div>
     <!-- /Leave Statistics -->
 
@@ -439,7 +430,9 @@
                 data: { leaveTypeId: leaveTypeId,dateFrom: dateFrom ,dateTo: dateTo,resumptionDate: resumptionDate,noOfDays: noOfDays,isAllowanceAdded: isAllowanceAdded },
                 success: function (response) {
                     if (response.status) {
-                        window.location.href = '@Url.Action("Index","Leave")';
+                        toastr.success(response?.message)
+                        $('#add_leave').modal('hide');
+                        location.reload();
                     }
                     else {
                         toastr.error(response ?.message);
@@ -460,7 +453,9 @@
                 data: { leaveId: leaveId, recallDate: recallDate, dateFrom: dateFrom ,dateTo: dateTo,resumptionDate: resumptionDate, recallNoOfDays: recallNoOfDays },
                 success: function (response) {
                     if (response.status) {
-                        window.location.href = '@Url.Action("Index","Leave")';
+                        toastr.success(response?.message)
+                        $('#recall_leave').modal('hide');
+                        location.reload();
                     }
                     else {
                         toastr.error(response ?.message);

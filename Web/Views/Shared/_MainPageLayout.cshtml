@@ -322,14 +322,17 @@
                             <li>
                                 <a asp-controller="Employee" asp-action="Enroll"><i class="la la-briefcase"></i> <span>Manage Employee </span> </a>
                             </li>
-                            <li class="submenu">
-                                <a href="#"><i class="la la-mail-forward"></i> <span> Add Role </span></a>
+                            @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.SuperAdmin)
+                            {
+                                <li>
+                                    <a asp-controller="Admin" asp-action="AddAdmin"><i class="la la-mail-forward"></i> <span> Add Admin </span></a>
+                                </li>
+                            }
+                            <li>
+                                <a asp-controller="Admin" asp-action="AddRole"><i class="la la-mail-forward"></i> <span> Add Role </span></a>
                             </li>
                             <li class="submenu">
                                 <a href="#"><i class="la la-mail-forward"></i> <span> Set Appraisal Period </span></a>
-                            </li>
-                            <li class="submenu">
-                                <a href="#"><i class="la la-mail-forward"></i> <span> Leave Settings </span></a>
                             </li>
                         }
 
