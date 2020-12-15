@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using ViewModel.Model;
+using ViewModel.ResponseModel;
 using Web.Helper.JWT;
 
 namespace Web.Controllers
@@ -44,11 +45,14 @@ namespace Web.Controllers
             var leaveType = await _leaveTypeService.GetAll();
             var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
             var leaveTaken = await _leaveService.GetByEmployee(authData.Id);
+            var eligibility = await _leaveService.CheckEligibility(authData.Id);
 
             leaveViewModel = _mapper.Map<LeaveViewModel>(authData);
             leaveViewModel.LeaveType = _mapper.Map<IEnumerable<LeaveTypeModel>>(leaveType);
             leaveViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
             leaveViewModel.LeaveTaken = _mapper.Map<IEnumerable<LeaveModel>>(leaveTaken);
+            leaveViewModel.Eligiblity = _mapper.Map<LeaveResponseModel>(eligibility);
+
 
             return View(leaveViewModel);
         }

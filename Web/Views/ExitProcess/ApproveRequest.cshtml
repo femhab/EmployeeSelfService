@@ -180,7 +180,9 @@
                 data: { exitId: selectedId, departmentId: clearingdepartment, exitComment: exitcomment },
                 success: function (response) {
                     if (response.status) {
-                        toastr.success(response?.message);
+                        toastr.success(response?.message)
+                        $('#add_resignation').modal('hide');
+                        location.reload();
                     }
                     else {
                         toastr.warning(response ?.message);

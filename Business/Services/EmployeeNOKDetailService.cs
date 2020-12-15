@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -15,11 +17,13 @@ namespace Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly SqlConnection _sqlConnection;
 
         public EmployeeNOKDetailService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService)
         {
             _unitOfWork = unitOfWork;
             _approvalBoardService = approvalBoardService;
+            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<BaseResponse> Create(EmployeeNOKDetail model)
@@ -31,22 +35,37 @@ namespace Business.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 //submit for approval
-                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("nextofkin"));
-                var approvalProcessor = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.ApprovalLevel == Level.HR);
+                var insert = await _unitOfWork.GetRepository<EmployeeNOKDetail>().GetFirstOrDefaultAsync(predicate: x => x.Id == model.Id, null, include: c => c.Include(i => i.Employee).Include(i => i.Relationship));
 
-                await _approvalBoardService.Create(new ApprovalBoard()
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    EmployeeId = model.EmployeeId,
-                    ApprovalLevel = Level.HR,
-                    Emp_No = model.Emp_No,
-                    ApprovalWorkItemId = approvalWorkItem.Id,
-                    ApprovalProcessorId = approvalProcessor.Id,
-                    ServiceId = model.Id,
-                    Status = ApprovalStatus.Pending,
-                    CreatedDate = DateTime.Now,
-                    Id = Guid.NewGuid(),
-                    CreatedBy = model.Emp_No
-                });
+                    try
+                    {
+                        cmd.Connection = _sqlConnection;
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandText = @"INSERT INTO HREmpNextOfKin(NOKName,NOKPhone,NOKAddress,NOKEmail,emp_no,DepCode,Insertusername,InsertTransacDate,InsertTransacType) 
+                                VALUES(@param2,@param3,@param4,@param5,@param6,@param8,@param9,@param10,@param11)";
+                        cmd.Parameters.AddWithValue("@param2", insert.LastName + " " + insert.FirstName);
+                        cmd.Parameters.AddWithValue("@param3", insert.PhoneNumber);
+                        cmd.Parameters.AddWithValue("@param4", insert.Address);
+                        cmd.Parameters.AddWithValue("@param5", insert.Email);
+                        cmd.Parameters.AddWithValue("@param6", insert.Emp_No);
+                        //cmd.Parameters.AddWithValue("@param7", null);
+                        cmd.Parameters.AddWithValue("@param8", insert.Relationship.Code);
+                        cmd.Parameters.AddWithValue("@param9", "Employee");
+                        cmd.Parameters.AddWithValue("@param10", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@param11", "Insert");
+
+
+                        _sqlConnection.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                }
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }

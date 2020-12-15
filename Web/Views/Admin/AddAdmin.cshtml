@@ -1,0 +1,91 @@
+﻿@model ViewModel.Model.AdminViewModel
+
+@{
+    ViewData["Title"] = "AddAdmin";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Add Admin</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Super Admin</a></li>
+                    <li class="breadcrumb-item active">Add Admin</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Select Employee </label>
+                            <select class="select" id="employeeid">
+                                <option value="">Select Employee</option>
+                                @foreach (var item in Model.EmployeeList.Where(x => x.FirstName.ToLower() != "superadmin"))
+                                {
+                            <option value="@item.Id">  @item.Emp_No @item.LastName @item.FirstName - @item.AccessType Access</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Action </label>
+                            <select class="select" id="accesstype">
+                                <option value="">Select Action</option>
+                                <option value="@ViewModel.Enumeration.AccessTypeEnum.Admin">Make Admin</option>
+                                <option value="@ViewModel.Enumeration.AccessTypeEnum.Employee">Remove as Admin</option>
+                            </select>
+                        </div>
+                        <div class="submit-section" onclick="SubmitAdminDetail()">
+                            <div class="btn btn-primary submit-btn">Submit Request</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function SubmitAdminDetail()
+        {
+            var employeeid = $("#employeeid").val();
+            var accesstype = $("#accesstype").val();
+
+            sendAddAdminForm(employeeid, accesstype);
+        }
+
+        function sendAddAdminForm(employeeId, accessType) {
+            $.ajax({
+                url: '@Url.Action("ManageAdmin", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { employeeId: employeeId, accessType: accessType },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message);
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}

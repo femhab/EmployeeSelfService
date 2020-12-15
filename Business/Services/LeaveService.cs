@@ -68,12 +68,14 @@ namespace Business.Services
         public async Task<LeaveResponseModel> CheckEligibility(Guid employeeId)
         {
             var employee = await _employeeService.GetById(employeeId);
-            bool IsFiveYearsAnn = false;
-            bool IsTenYearsAnn = false;
+            bool isFiveYearsAnn = false;
+            bool isTenYearsAnn = false;
+            bool isLeaveEligible = false;
+            bool isRecallEligible = false;
             if (employee != null && employee.EmploymentDate != null)
             {
-                IsFiveYearsAnn = (employee.EmploymentDate.Value.AddYears(5).Year == DateTime.Now.Year) ? true : false;
-                IsTenYearsAnn = (employee.EmploymentDate.Value.AddYears(10).Year == DateTime.Now.Year) ? true : false;
+                isFiveYearsAnn = (employee.EmploymentDate.Value.AddYears(5).Year == DateTime.Now.Year) ? true : false;
+                isTenYearsAnn = (employee.EmploymentDate.Value.AddYears(10).Year == DateTime.Now.Year) ? true : false;
             }
             var employeeLeaveAudit = await GetAllEmployeeLeave(x => x.EmployeeId == employeeId);
             List<LeaveTypeAudit> eligibleDays = new List<LeaveTypeAudit>();
@@ -82,7 +84,19 @@ namespace Business.Services
                 var leaveAudit = new LeaveTypeAudit() { LeaveType = item.LeaveTypeId, NoDaysRemaining = item.NoOfEligibleDays + item.AnnivessaryLeaveBonus - item.NoOfDaysUsed };
                 eligibleDays.Add(leaveAudit);
             }
-            return new LeaveResponseModel() { Status = true, Message = ResponseMessage.OperationSuccessful, IsFiveYearsAnniversary = IsFiveYearsAnn, IsTenYearsAnniversary = IsTenYearsAnn, LeaveTypeAudit = eligibleDays };
+            var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("leave"));
+            var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == employeeId && x.ApprovalWorkItemId == approvalWorkItem.Id);
+            var leaveCheck = await GetAll(x => x.EmployeeId == employeeId && x.CreatedDate.Year == DateTime.Now.Year && x.Status != ApprovalStatus.Rejected);
+            var leaveRecallCheck = await GetAll(x => x.EmployeeId == employeeId && x.CreatedDate.Year == DateTime.Now.Year && x.Status != ApprovalStatus.Approved && x.LeaveStatus == LeaveStatus.Completed);
+            if (leaveCheck.Count() == 0 && approvalProcessor != null)
+            {
+                isLeaveEligible = true;
+            }
+            if(approvalProcessor != null && leaveRecallCheck.Count() != 0)
+            {
+                isRecallEligible = true;
+            }
+            return new LeaveResponseModel() { Status = true, Message = ResponseMessage.OperationSuccessful, IsFiveYearsAnniversary = isFiveYearsAnn, IsTenYearsAnniversary = isTenYearsAnn, LeaveTypeAudit = eligibleDays, IsLeaveEligible = isLeaveEligible, IsRecallEligible = isRecallEligible };
         }
 
         //To be run on employee creation

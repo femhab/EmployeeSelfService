@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using ViewModel.Model;
+using ViewModel.ResponseModel;
 using Web.Helper.JWT;
 
 namespace Web.Controllers
@@ -108,6 +109,10 @@ namespace Web.Controllers
                 {
                     id = authData.Id.ToString();
                     authData.AccessType = ViewModel.Enumeration.AccessTypeEnum.Employee;
+                }
+                else
+                {
+                    authData.Id = Guid.Parse(id);
                 }
 
                 EmployeeProfileViewModel profileViewModel = new EmployeeProfileViewModel();
@@ -239,7 +244,7 @@ namespace Web.Controllers
                         CreatedDate = DateTime.Now
                     };
 
-                    var response = await _employeeNOKDetailService.Create(nokDetail);
+                    BaseResponse response = await _employeeNOKDetailService.Create(nokDetail);
                    
                     return Json(new
                     {
@@ -296,7 +301,7 @@ namespace Web.Controllers
                     return Json(new
                     {
                         status = response.Status,
-                        message = response.Message ?? "Failed to create Next of Kin Detail."
+                        message = response.Message ?? "Failed to add dependent detail Detail."
                     });
                 }
                 return Json(new

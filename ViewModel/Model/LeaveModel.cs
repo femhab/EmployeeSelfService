@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ViewModel.Enumeration;
+using ViewModel.ResponseModel;
 
 namespace ViewModel.Model
 {
@@ -30,5 +31,6 @@ namespace ViewModel.Model
         public EmployeeModel Employee { get; set; }
         public IEnumerable<LeaveTypeModel> LeaveType { get; set; }
         public IEnumerable<LeaveModel> LeaveTaken { get; set; }
+        public LeaveResponseModel Eligiblity { get; set; }
     }
 }

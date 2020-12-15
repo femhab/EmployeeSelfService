@@ -40,7 +40,7 @@
                         <div class="form-group">
                             <label>Date of Employment<span class="text-danger">*</span></label>
                             <div class="cal-icon">
-                                <input type="text" class="form-control" value="" readonly>
+                                <input type="text" class="form-control" value="@Model.Employee.EmploymentDate?.ToString("dd MMMM yyyy")" readonly>
                             </div>
                         </div>
                         <div class="form-group">
@@ -57,11 +57,11 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Designation/Unit<span class="text-danger">*</span></label>
+                            <label>Section/Unit<span class="text-danger">*</span></label>
                             <select class="select" disabled>
                                 @if (Model.Employee != null && Model.Employee.Unit != null)
                                 {
-                                    <option value="@Model.Employee.UnitId">@Model.Employee.Unit.Descc</option>
+                                    <option value="@Model.Employee.SectionId">@Model.Employee.Section.Descc</option>
                                 }
                                 else
                                 {
@@ -103,7 +103,8 @@
                 data: { exitDate: exitdate, reason: exitreason },
                 success: function (response) {
                     if (response.status) {
-                        toastr.success(response?.message);
+                        toastr.success(response ?.message);
+                        location.reload();
                     }
                     else {
                         toastr.warning(response ?.message);

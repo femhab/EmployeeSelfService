@@ -1,0 +1,125 @@
+﻿@model ViewModel.Model.AdminViewModel
+
+@{
+    ViewData["Title"] = "AddRole";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Add Admin</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Super Admin</a></li>
+                    <li class="breadcrumb-item active">Add Admin</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Add Role </label>
+                            <input class="form-control" type="text" id="roledescription">
+                        </div>
+                        <div class="submit-section" onclick="SubmitAddRoleDetail()">
+                            <div class="btn btn-primary submit-btn">Add Role</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Select Role </label>
+                            <select class="select" id="roleid">
+                                <option value="">Select Role</option>
+                                @foreach (var item in Model.Roles)
+                                {
+                                    <option value="@item.Id">@item.Description</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="submit-section" onclick="SubmitDeleteRoleRequest()">
+                            <div class="btn btn-primary submit-btn">Remove</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function SubmitAddRoleDetail()
+        {
+            var roledescription = $("#roledescription").val();
+
+            sendRoleForm(roledescription);
+        }
+
+        function SubmitDeleteRoleRequest()
+        {
+            var roleid = $("#roleid").val();
+
+            DeleteRoleForm(roleid);
+        }
+
+        function sendRoleForm(name) {
+            $.ajax({
+                url: '@Url.Action("ManageRole", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { name: name},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message);
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function DeleteRoleForm(roleId) {
+            $.ajax({
+                url: '@Url.Action("DeleteRole", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { roleId: roleId},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message);
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}
