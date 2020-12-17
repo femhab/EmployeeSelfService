@@ -104,13 +104,13 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="addEmployeeForm">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Select Employee <span class="text-danger">*</span></label>
-                                <select class="select" id="pendinguser" onchange="OnSelect()">
-                                    <option>Select Employee </option>
+                                <select name="pendinguser" class="select" id="pendinguser" onchange="OnSelect()">
+                                    <option value="">Select Employee </option>
                                     @foreach (var item in Model.Employeee)
                                     {
 
@@ -122,19 +122,19 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" readonly id="empno" value="">
+                                <input name="empno" type="text" class="form-control" readonly id="empno" value="">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text" readonly id="firstname">
+                                <input name="firstname" class="form-control" type="text" readonly id="firstname">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Last Name</label>
-                                <input class="form-control" type="text" readonly id="lastname">
+                                <input name="lastname" class="form-control" type="text" readonly id="lastname">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -146,19 +146,19 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Email <span class="text-danger">*</span></label>
-                                <input class="form-control" type="email" readonly id="email">
+                                <input name="email" class="form-control" type="email" readonly id="email">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Password</label>
-                                <input class="form-control" type="password" id="password">
+                                <input  name="password"  class="form-control" type="password" id="password">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Confirm Password</label>
-                                <input class="form-control" type="password" id="confirmpassword">
+                                <input name="confirmpassword" class="form-control" type="password" id="confirmpassword">
                             </div>
                         </div>
                         @foreach (var item in Model.Roles)
@@ -172,8 +172,8 @@
                             </div>
                         }
                     </div>
-                    <div class="submit-section" onclick="SubmitRegisterDetail()">
-                        <div class="btn btn-primary submit-btn">Submit</div>
+                    <div class="submit-section">
+                        <button type ="submit" class="btn btn-primary submit-btn">Submit</button>
                     </div>
                 </form>
             </div>
@@ -289,8 +289,93 @@
         //on select of unregisterd nam action
         var unregisteredList = JSON.parse('@Json.Serialize(@Model.Employeee)');
 
+        //validation
+
+
+        $("#addEmployeeForm").validate({
+            // Specify validation rules
+            rules: {
+                pendinguser: "required",
+                empno: "required",
+                firstname: {
+                    required: true,
+                },
+                lastname: {
+                    required: true,
+                },
+                email: {
+                    required: true,
+                    email:true
+                },
+                password: {
+                    required: true,
+                },
+                confirmpassword: {
+                    required: true,
+                    equalTo: "#password"
+                },
+
+            },
+            // Specify validation error messages
+            messages: {
+                pendinguser: "Select an Employee",
+                empno: "Employee Number required",
+                firstname: {
+                    required: "Employee First name required"
+                },
+                firstname: {
+                    required: "Employee First name required"
+                },
+                lastname: {
+                    required: "Employee Last name required"
+                },
+                email: {
+                    required: "Employee First name required",
+                    email: "Valid email required"
+                },
+                password: {
+                    required: "Password field required",
+                },
+                confirmpassword: {
+                    required: "Confirm password field required",
+                    equalTo: "Passwords do not match"
+                },
+            },
+            // Make sure the form is submitted to the destination defined
+            // in the "action" attribute of the form when valid
+            submitHandler: function (form)
+            {
+                event.preventDefault();
+                SubmitRegisterDetail();
+            }
+        });
+        function handleNonEmptyInput()
+        {
+            $('#addEmployeeForm input, #addEmployeeForm select').each(function (index, elem)
+            {
+                let element = $(elem);
+                if (element.val() != "")
+                {
+                    let elementName = element.attr('name');
+                    element.removeClass('error');
+                    element.siblings(`#${elementName}-error`).hide();
+                }
+            });
+
+        }
+        
+
         function OnSelect() {
             let pendingUser = $("#pendinguser option:selected").val();
+            if (pendingUser == "")
+            {
+                $("#empno").val("");
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#username").val("");
+                $("#email").val("");
+                return;
+            }
             unregisteredList.forEach(function (entry) {
                if (entry.emp_No == pendingUser) {
                     $("#empno").val(entry.emp_No);
@@ -300,6 +385,7 @@
                     $("#email").val(entry.emailAddress);
                 }
             });
+            handleNonEmptyInput();
         }
 
         //submit button action
@@ -319,7 +405,6 @@
             $('input[type=checkbox]').each(function () {
                 if (this.checked) {
                     roleidlist.push(this.value);
-
                 }
             });
 
@@ -328,7 +413,6 @@
         }
 
         function sendRegisterForm(email, password, confirmPassword, firstName, lastName, userName, empNo, roleId) {
-
 
             $.ajax({
                 url: '@Url.Action("Register", "Employee")',

@@ -11,3 +11,6 @@
     right: 0px;
     z-index: 100;
 }
+.error{
+    color:darkred;
+}
