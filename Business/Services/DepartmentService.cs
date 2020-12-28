@@ -84,5 +84,15 @@ namespace Business.Services
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
+
+        public async Task<BaseResponse> ChangeClearanceRole(Guid departmentId, bool canClear)
+        {
+            var department = await _unitOfWork.GetRepository<Department>().GetFirstOrDefaultAsync(predicate: x => x.Id == departmentId);
+            department.CanClearEmployeeOnExit = canClear;
+
+            _unitOfWork.GetRepository<Department>().Update(department);
+            await _unitOfWork.SaveChangesAsync();
+            return new BaseResponse() { Status = true, Message = ResponseMessage.OperationSuccessful };
+        }
     }
 }

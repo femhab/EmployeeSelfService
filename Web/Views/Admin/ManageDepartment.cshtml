@@ -1,0 +1,108 @@
+﻿@model ViewModel.Model.AdminViewModel
+
+@{
+    ViewData["Title"] = "ManageDepartment";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Manage Department</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Admin</a></li>
+                    <li class="breadcrumb-item active">Manage Department</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Select Department </label>
+                            <select class="select" id="targetdepartmentid">
+                                <option value="">Select Department</option>
+                                @foreach (var item in Model.DepartmentList)
+                                {
+                                    <option value="@item.Id">@item.Descc</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="submit-section" onclick="AddDepartmentAuth()">
+                            <div class="btn btn-primary submit-btn">Grant Clearance Authority</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Select Department </label>
+                            <select class="select" id="departmentid">
+                                <option value="">Select Department</option>
+                                @foreach (var item in Model.ClearingDepartment)
+                                {
+                                    <option value="@item.Id">@item.Descc</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="submit-section" onclick="RemoveDepartmentAuth()">
+                            <div class="btn btn-primary submit-btn">Remove Clearance Authority</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function AddDepartmentAuth()
+        {
+            var targetdepartmentid = $("#targetdepartmentid").val();
+            ChangeDepartmentAuth(targetdepartmentid, true);
+        }
+
+        function RemoveDepartmentAuth()
+        {
+            var departmentid = $("#departmentid").val();
+            ChangeDepartmentAuth(departmentid, false);
+        }
+
+        function ChangeDepartmentAuth(departmentId, canClear) {
+            $.ajax({
+                url: '@Url.Action("ManageDepartmentAuth", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { departmentId: departmentId, canClear: canClear},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message);
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}

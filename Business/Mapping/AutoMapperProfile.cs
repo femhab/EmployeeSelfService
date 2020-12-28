@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Entities;
 using ViewModel.Model;
+using ViewModel.ResponseModel;
 using ViewModel.ServiceModel;
 
 namespace Business.Mapping
@@ -38,6 +39,7 @@ namespace Business.Mapping
             CreateMap<AuthDataModel, ExitProcessViewModel>().ReverseMap();
             CreateMap<AuthDataModel, LoanViewModel>().ReverseMap();
             CreateMap<AuthDataModel, DashboardModel>().ReverseMap();
+            CreateMap<DashboardResponseModel, DashboardModel>().ReverseMap();
         }
     }
 }

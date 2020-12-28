@@ -17,13 +17,15 @@ namespace Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly INotificationService _notificationService;
         private readonly SqlConnection _sqlConnection;
 
-        public EmployeeFamilyDependentService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService)
+        public EmployeeFamilyDependentService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _approvalBoardService = approvalBoardService;
             _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse> Create(EmployeeFamilyDependent model)
@@ -69,6 +71,8 @@ namespace Business.Services
                     }
 
                 }
+
+                await _notificationService.CreateNotification(NotificationAction.DependentCreateTitle, NotificationAction.DependentCreateMessage, model.EmployeeId, false, false);
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }

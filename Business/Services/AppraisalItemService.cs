@@ -33,6 +33,12 @@ namespace Business.Services
             return data;
         }
 
+        public async Task<IEnumerable<AppraisalItem>> GetByAppraisal(Guid appraisalId)
+        {
+            var data = await _unitOfWork.GetRepository<AppraisalItem>().GetAllAsync(predicate: x => x.EmployeeAppraisalId == appraisalId, null, "EmployeeAppraisal.Employee,AppraisalCategory,AppraisalCategoryItem,AppraisalRating");
+            return data;
+        }
+
         public async Task<IEnumerable<AppraisalItem>> GetAll()
         {
 

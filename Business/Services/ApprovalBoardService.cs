@@ -15,10 +15,14 @@ namespace Business.Services
     public class ApprovalBoardService: IApprovalBoardService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
+        private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
 
-        public ApprovalBoardService(IUnitOfWork unitOfWork)
+        public ApprovalBoardService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService)
         {
             _unitOfWork = unitOfWork;
+            _employeeApprovalConfigService = employeeApprovalConfigService;
+            _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
         }
 
         public async Task<BaseResponse> ApprovalAction(Guid ProcessorId, ApprovalStatus status, Level approvalLevel, Guid serviceId, Guid approvalWorkItemId)
@@ -28,11 +32,41 @@ namespace Business.Services
             if(data != null && data.ApprovalProcessorId == ProcessorId)
             {
                 if (data.Status != status)
-                    data.Status = status;
+                {
+                    data.Status = status;                
+                }
                 else
-                    return new BaseResponse() { Status = false, Message = ResponseMessage.AlreadyApproved};
+                {
+                    return new BaseResponse() { Status = false, Message = ResponseMessage.AlreadyApproved };
+                }
 
                 _unitOfWork.GetRepository<ApprovalBoard>().Update(data);
+
+                if (status == ApprovalStatus.Approved)
+                {
+                    //look for new approver for next level and assign the neccessary
+                   var newApprovalLevel = approvalLevel + 1;
+                    var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == data.EmployeeId && x.ApprovalLevel == newApprovalLevel && x.ApprovalWorkItemId == data.ApprovalWorkItemId);
+
+                    var enlistBoard = new ApprovalBoard()
+                    {
+                        EmployeeId = data.EmployeeId,
+                        ApprovalLevel = (approvalProcessor != null) ? newApprovalLevel: Level.HR,
+                        Emp_No = data.Emp_No,
+                        ApprovalWorkItemId = data.ApprovalWorkItemId,
+                        ApprovalProcessorId = (approvalProcessor != null) ? approvalProcessor.ProcessorIId.Value: Guid.Empty,
+                        ApprovalProcessor = (approvalProcessor != null) ? approvalProcessor.Processor : null,
+                        ServiceId = data.ServiceId,
+                        Status = ApprovalStatus.Pending,
+                        CreatedDate = DateTime.Now,
+                        Id = Guid.NewGuid(),
+                        CreatedBy = data.Emp_No
+                    };
+
+                    await Create(enlistBoard);
+                    await _approvalBoardActiveLevelService.CreateOrUpdate(data.ApprovalWorkItemId, data.ServiceId, (approvalProcessor != null) ? newApprovalLevel : Level.HR);
+                }
+
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.ApprovedSuccessful };
             }

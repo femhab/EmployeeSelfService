@@ -11,6 +11,7 @@ namespace Business.Interfaces
         Task<BaseResponse> Create(UserRole model);
         Task<BaseResponse> Edit(Guid id, Guid roleId);
         Task<IEnumerable<UserRole>> GetAll();
+        Task<UserRole> GetByClearanceRole(Guid employeeId);
         Task<BaseResponse> Delete(Guid id);
     }
 }

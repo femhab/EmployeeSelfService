@@ -18,6 +18,7 @@ namespace Data.Entities
         public DateTime? ResumptionDate { get; set; }
         public int NoOfDays { get; set; }
         public int? DaysUsed { get; set; }
+        public int? RemainingDays { get; set; }
         public ApprovalStatus Status { get; set; } //new, pending
         public LeaveStatus LeaveStatus { get; set; }
         public bool IsAllowanceRequested { get; set; }

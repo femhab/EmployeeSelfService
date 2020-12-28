@@ -29,12 +29,14 @@ namespace Business.Services
                     var check = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.ApprovalLevel == item.ApprovalLevel && x.EmployeeId == item.EmployeeId && x.ApprovalWorkItemId == item.ApprovalWorkItemId);
                     if (check == null)
                     {
-                        _unitOfWork.GetRepository<EmployeeApprovalConfig>().Insert(model);
+                        _unitOfWork.GetRepository<EmployeeApprovalConfig>().Insert(item);
                     }
                     else
                     {
+                        check.Id = check.Id;
                         check.ProcessorIId = item.ProcessorIId;
                         check.UpdatedDate = DateTime.Now;
+                        check.Processor = item.Processor;
 
                         _unitOfWork.GetRepository<EmployeeApprovalConfig>().Update(check);
                     }

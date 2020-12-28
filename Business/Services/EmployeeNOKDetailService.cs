@@ -17,13 +17,15 @@ namespace Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly INotificationService _notificationService;
         private readonly SqlConnection _sqlConnection;
 
-        public EmployeeNOKDetailService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService)
+        public EmployeeNOKDetailService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _approvalBoardService = approvalBoardService;
             _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse> Create(EmployeeNOKDetail model)
@@ -66,6 +68,8 @@ namespace Business.Services
                     }
 
                 }
+
+                await _notificationService.CreateNotification(NotificationAction.NOKCreateTitle, NotificationAction.NOKCreateMessage, model.EmployeeId, false, false);
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }

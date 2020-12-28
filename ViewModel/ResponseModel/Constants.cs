@@ -25,6 +25,22 @@
         public const string AppraisalExist = "You already submitted an appraisal for this year";
     }
 
+    public class NotificationAction
+    {
+        public const string RoleCreateTitle = "New Role Added";
+        public const string DisciplinaryCreateTitle = "New query";
+        public const string LeaveCreateTitle = "New Leave";
+        public const string NOKCreateTitle = "New Next of Kin";
+        public const string DependentCreateTitle = "New Dependent";
+        public const string RoleCreateMessage = "A new role is just added, confirm from profile if you have been assigned to this role";
+        public const string DisciplinaryCreateMessage = "You just issued a query to a lower grade staff.";
+        public const string LeaveCreateMessage = "Your leave request was recieved successfully";
+        public const string NOKCreateMessage = "You just added a next of kin. Wait while it is reviewed for approval";
+        public const string DependentCreateMessage = "You just added a dependent. Wait while it is reviewed for approval";
+        public const string RoleDeletedTitle = "A Role Deleted";
+        public const string RoleDeleteMessage = "A role is just deleted, if you have this role before, you no longer have this role";
+    }
+
     public class HRDbConfig
     {
         public const string ConnectionStringUrl = "Server=localhost\\SQLEXPRESS;Database=PEERSHR;Integrated Security=true;";

@@ -86,7 +86,23 @@
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="edit-estimate.html"><i class="fa fa-list m-r-5"></i> Detail</a>
+                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("leave"))
+                                            {
+                                                <a class="dropdown-item" id="@item.ServiceId" onclick="OnLeaveSelect(this.id)" data-toggle="modal" data-target="#leave_review"><i class="fa fa-list m-r-5"></i>Leave Detail</a>
+                                            }
+                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("loan"))
+                                            {
+                                                <a class="dropdown-item" id="@item.ServiceId" onclick="" data-toggle="modal" data-target="#"><i class="fa fa-list m-r-5"></i>Loan Detail</a>
+                                            }
+                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("appraisal"))
+                                            {
+                                                <a class="dropdown-item" id="@item.ServiceId" onclick="OnAppraisalSelect(this.id)" data-toggle="modal" data-target="#review_appraisal"><i class="fa fa-list m-r-5"></i>Appraisal Detail</a>
+                                            }
+                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("transfer"))
+                                            {
+                                                <a class="dropdown-item" href="#"><i class="fa fa-list m-r-5"></i>Transfer Detail</a>
+                                            }
+
                                         </div>
                                     </div>
                                 </td>
@@ -99,27 +115,247 @@
     </div>
 </div>
 <!-- /Page Content -->
-<!-- Delete Estimate Modal -->
-<div class="modal custom-modal fade" id="delete_estimate" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Review Leave Modal -->
+<div id="leave_review" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Leave Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             <div class="modal-body">
-                <div class="form-header">
-                    <h3>Delete Estimate</h3>
-                    <p>Are you sure want to delete?</p>
-                </div>
-                <div class="modal-btn delete-action">
-                    <div class="row">
-                        <div class="col-6">
-                            <a href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                <form>
+                    <div class="form-group">
+                        <label>Leave Type <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="leavetypeid">
                         </div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label>From <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="datefrom">
+                        </div>
+                    </div>
+                    <div class="form-group" id="datetodiv">
+                        <label>To <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="dateto">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of days <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" readonly id="noofdays">
+                    </div>
+                    <div class="form-group" id="resumptiondatediv">
+                        <label>Resumption Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="resumptiondate">
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            Leave Allowance? <input type="text" disabled readonly id="isallowanceadded">
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
+                        </div>
+                        <div class="col-6">
+                            <a class="btn btn-primary continue-btn">Approve <i class="fa fa-check text-success"></i></a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
-<!-- /Delete Estimate Modal -->
+<!-- /Review Leave Modal -->
+
+<!-- Review Performance Appraisal Modal -->
+<div id="review_appraisal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Give Performance Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row" id="appendAppraisal">
+                        @*@foreach (var item in Model.AppraisalCategories)
+                        {
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-header" style="background-color:#daa520">
+                                        <h4 class="card-title mb-0" id="categorydescription">@item.Description</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Indicator</th>
+                                                        <th>Employee Value</th>
+                                                        <th>Supervisor Value</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>CategoryItem Name</td>
+                                                        <td>Initial Value</td>
+                                                        <td>
+                                                            <select name="customer_experience" class="form-control">
+                                                                <option value="">Select New</option>
+                                                                @foreach (var rating in Model.AppraisalRatings)
+                                                                {
+                                                                    <option value="@rating.Id">@rating.Description</option>
+                                                                }
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }*@
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
+                        </div>
+                        <div class="col-6">
+                            <a class="btn btn-primary continue-btn">Approve <i class="fa fa-check text-success"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Review Performance Appraisal Modal -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var appraisalList = JSON.parse('@Json.Serialize(@Model.AppraisalCategories)');
+        var ratingList = JSON.parse('@Json.Serialize(@Model.AppraisalRatings)');
+        let appraisalView = "";
+
+        function OnAppraisalSelect(appraisalId) {
+            getAppraisalById(appraisalId);
+        }
+
+        function OnLeaveSelect(leaveId) {
+            getLeaveById(leaveId);
+        }
+
+        function PrintSelect(items, empAppraisalId, categoryItemId) {
+            var str = "";
+            for (var i = 0; i < items.length; i++) {
+                str += '<option value="'+ empAppraisalId/categoryItemId/items[i].id +'">' + items[i].description + '</option >'
+            }
+            return str;
+        }
+
+        function PrintCategoryItem(items, categoryId) {
+            var str;
+            var newItemList = items.filter(x => x.appraisalCategoryId == categoryId);
+            console.log(newItemList);
+            for (var i = 0; i < newItemList.length; i++) {
+                str += `<tr>
+                        <td>${newItemList[i].appraisalCategoryItem.description}</td>
+                        <td>${newItemList[i].appraisalRating.description}</td>
+                        <td>
+                            <select name="customer_experience" class="form-control" id="appraisalrating">
+                                <option value="">Select Rating</option>
+                                ${PrintSelect(ratingList, newItemList[i].id, newItemList[i].appraisalCategoryItemId)}
+                            </select>
+                        </td>
+                    </tr>`;
+            }
+            return str;
+        }
+
+        function getAppraisalById(appraisalId) {
+            $.ajax({
+                url: '@Url.Action("getAppraisalById", "Appraisal")',
+                type: 'POST',
+                dataType: 'json',
+                data: { appraisalId: appraisalId },
+                success: function (response) {
+                    if (response.status) {
+                        //$("#resumptiondate").val(response?.data?.resumptionDate);
+                        for (var i = 0; i < appraisalList.length; i++) {
+                            appraisalView = `
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header" style="background-color:#daa520">
+                                            <h4 class="card-title mb-0" id="categorydescription">${appraisalList[i].description}</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Indicator</th>
+                                                            <th>Employee Value</th>
+                                                            <th>Supervisor Rating</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${PrintCategoryItem(response?.data, appraisalList[i].id)}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                `;
+                            $("#appendAppraisal").append(appraisalView);
+                        }
+                    }
+                    else {
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function getLeaveById(leaveId) {
+            $.ajax({
+                url: '@Url.Action("GetLeaveById", "Leave")',
+                type: 'POST',
+                dataType: 'json',
+                data: { leaveId: leaveId },
+                success: function (response) {
+                    if (response.status) {
+                        $("#resumptiondate").val(response?.data?.resumptionDate);
+                        $("#leavetypeid").val(response?.data?.leaveType?.class);
+                        $("#datefrom").val(response?.data?.dateFrom);
+                        $("#dateto").val(response?.data?.dateTo);
+                        $("#noofdays").val(response?.data?.noOfDays);
+                        $("#isallowanceadded").val(response?.data?.isAllowance);
+                    }
+                    else {
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+    </script>
+}

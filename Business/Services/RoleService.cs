@@ -16,10 +16,12 @@ namespace Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SqlConnection _sqlConnection;
+        private readonly INotificationService _notificationService;
 
-        public RoleService(IUnitOfWork unitOfWork)
+        public RoleService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
             _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
@@ -27,6 +29,9 @@ namespace Business.Services
         {
             _unitOfWork.GetRepository<Role>().Insert(model);
             await _unitOfWork.SaveChangesAsync();
+
+            await _notificationService.CreateNotification(NotificationAction.RoleCreateTitle, NotificationAction.RoleCreateMessage, null, true, false);
+
             return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
         }
 
@@ -37,6 +42,7 @@ namespace Business.Services
             {
                 _unitOfWork.GetRepository<Role>().Delete(model);
                 await _unitOfWork.SaveChangesAsync();
+                await _notificationService.CreateNotification(NotificationAction.RoleDeletedTitle, NotificationAction.RoleDeleteMessage, null, true, false);
                 return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };

@@ -1,0 +1,53 @@
+﻿@model ViewModel.Model.NotificationViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Notifications</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Notification</a></li>
+                    <li class="breadcrumb-item active">Messages</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="activity">
+                <div class="activity-box">
+                    <ul class="activity-list">
+                        @foreach (var item in Model.Notification)
+                        {
+                            <li>
+                                <div class="activity-user">
+                                    <a  title="@item.Title" data-toggle="tooltip" class="avatar">
+                                        <img src="assets/img/profiles/avatar-01.jpg" alt="">
+                                    </a>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="timeline-content">
+                                        <a  class="name">@item.Message</a>
+                                        <span class="time">@item.CreatedDate.ToString("dd MMMM yyyy")</span>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->

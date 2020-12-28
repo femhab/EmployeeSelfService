@@ -17,10 +17,11 @@ namespace Business.Services
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
+        private readonly INotificationService _notificationService;
         private readonly IEmployeeService _employeeService;
         private readonly ILeaveTypeService _leaveTypeService;
 
-        public LeaveService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, IEmployeeService employeeService, ILeaveTypeService leaveTypeService, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService)
+        public LeaveService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, IEmployeeService employeeService, ILeaveTypeService leaveTypeService, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _approvalBoardService = approvalBoardService;
@@ -28,6 +29,7 @@ namespace Business.Services
             _leaveTypeService = leaveTypeService;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse> Create(Leave model)
@@ -42,23 +44,31 @@ namespace Business.Services
                 //submit for approval
                 var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("leave"));
                 var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
-                var enlistBoard = new ApprovalBoard()
+                try
                 {
-                    EmployeeId = model.EmployeeId,
-                    ApprovalLevel = Level.FirstLevel,
-                    Emp_No = model.Emp_No,
-                    ApprovalWorkItemId = approvalWorkItem.Id,
-                    ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
-                    ApprovalProcessor = approvalProcessor.Processor,
-                    ServiceId = model.Id,
-                    Status = ApprovalStatus.Pending,
-                    CreatedDate = DateTime.Now,
-                    Id = Guid.NewGuid(),
-                    CreatedBy = model.Emp_No
-                };
+                    var enlistBoard = new ApprovalBoard()
+                    {
+                        EmployeeId = model.EmployeeId,
+                        ApprovalLevel = Level.FirstLevel,
+                        Emp_No = model.Emp_No,
+                        ApprovalWorkItemId = approvalWorkItem.Id,
+                        ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
+                        ApprovalProcessor = approvalProcessor.Processor,
+                        ServiceId = model.Id,
+                        Status = ApprovalStatus.Pending,
+                        CreatedDate = DateTime.Now,
+                        Id = Guid.NewGuid(),
+                        CreatedBy = model.Emp_No
+                    };
+                    await _approvalBoardService.Create(enlistBoard);
+                    await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
 
-                await _approvalBoardService.Create(enlistBoard);
-                await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
+                await _notificationService.CreateNotification(NotificationAction.LeaveCreateTitle, NotificationAction.LeaveCreateMessage, model.EmployeeId, false, false);
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
@@ -92,7 +102,7 @@ namespace Business.Services
             {
                 isLeaveEligible = true;
             }
-            if(approvalProcessor != null && leaveRecallCheck.Count() != 0)
+            if (approvalProcessor != null && leaveRecallCheck.Count() != 0)
             {
                 isRecallEligible = true;
             }
@@ -223,7 +233,7 @@ namespace Business.Services
 
         public async Task<Leave> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            var model = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: c => c.Id == id, null, include: e => e.Include(i => i.LeaveType));
             return model;
         }
     }

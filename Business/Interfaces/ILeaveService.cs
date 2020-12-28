@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ViewModel.ResponseModel;
 
@@ -19,5 +20,7 @@ namespace Business.Interfaces
         Task<LeaveResponseModel> CheckEligibility(Guid employeeId);
         Task EmployeeLeavePreset(Guid employeeId, string empNo, Guid gradeLevelId);
         Task ResetEmployeeLeave();
+        Task<IEnumerable<Leave>> GetAll(Expression<Func<Leave, bool>> predicate, string include = null, bool includeDeleted = false);
+        Task<Leave> GetById(Guid id);
     }
 }

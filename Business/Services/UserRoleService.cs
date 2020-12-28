@@ -71,6 +71,12 @@ namespace Business.Services
             return data;
         }
 
+        public async Task<UserRole> GetByClearanceRole(Guid employeeId)
+        {
+            var data = (await GetAll(x => x.EmployeeId == employeeId && x.Role.Description.Contains("clearance"), "Employee,Role")).FirstOrDefault();
+            return data;
+        }
+
         public async Task<IEnumerable<UserRole>> GetAll(Expression<Func<UserRole, bool>> predicate, string include = null, bool includeDeleted = false)
         {
             var model = await _unitOfWork.GetRepository<UserRole>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);

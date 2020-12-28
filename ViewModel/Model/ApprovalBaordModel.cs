@@ -21,5 +21,7 @@ namespace ViewModel.Model
     public class ApprovalBoardViewModel: AuthDataModel
     {
         public IEnumerable<ApprovalBaordModel> ApprovalBoard { get; set; }
+        public IEnumerable<AppraisalCategoryModel> AppraisalCategories { get; set; }
+        public IEnumerable<AppraisalRatingModel> AppraisalRatings { get; set; }
     }
 }

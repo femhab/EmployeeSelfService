@@ -59,6 +59,8 @@ namespace Business.DIExtension
             services.AddTransient<IAvailabilityStatusService, AvailabilityStatusService>();
             services.AddTransient<IMaritalStatusService, MaritalStatusService>();
             services.AddTransient<IRefreshingService, RefreshingService>();
+            services.AddTransient<INotificationService, NotificationService>();
+            services.AddTransient<IDashboardService, DashboardService>();
 
 
             return services;

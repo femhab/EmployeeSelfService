@@ -20,14 +20,16 @@ namespace Web.Controllers
         private readonly IExitProcessService _exitProcessService;
         private readonly IExitProcessPriorityItemService _exitProcessPriorityItemService;
         private readonly IDepartmentService _departmentService;
+        private readonly IUserRoleService _userRoleService;
         private readonly IMapper _mapper;
 
-        public ExitProcessController(IEmployeeService employeeService, IExitProcessService exitProcessService, IExitProcessPriorityItemService exitProcessPriorityItemService, IMapper mapper, IDepartmentService departmentService)
+        public ExitProcessController(IEmployeeService employeeService, IExitProcessService exitProcessService, IExitProcessPriorityItemService exitProcessPriorityItemService, IMapper mapper, IDepartmentService departmentService, IUserRoleService userRoleService)
         {
             _employeeService = employeeService;
             _exitProcessService = exitProcessService;
             _exitProcessPriorityItemService = exitProcessPriorityItemService;
             _departmentService = departmentService;
+            _userRoleService = userRoleService;
             _mapper = mapper;
         }
 
@@ -60,8 +62,12 @@ namespace Web.Controllers
             var exitApplication =await _exitProcessService.GetUnapprovedApplication();
             var clearingDepartment = await _departmentService.GetByExitApproval();
 
+            var userRole = await _userRoleService.GetByClearanceRole(authData.Id);
+            if(userRole != null)
+            {
+                exitProcessViewModel.ExitProcessList = _mapper.Map<IEnumerable<ExitProcessModel>>(exitApplication);
+            }
             exitProcessViewModel = _mapper.Map<ExitProcessViewModel>(authData);
-            exitProcessViewModel.ExitProcessList = _mapper.Map<IEnumerable<ExitProcessModel>>(exitApplication);
             exitProcessViewModel.ClearanceDepartment = _mapper.Map<IEnumerable<DepartmentModel>>(clearingDepartment);
 
             return View(exitProcessViewModel);

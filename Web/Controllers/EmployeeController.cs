@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using ViewModel.Model;
 using ViewModel.ResponseModel;
@@ -331,6 +332,43 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
+                    List<EmployeeApprovalConfig> approvalConfigList = new List<EmployeeApprovalConfig>();
+                    foreach (var item in levelApproval)
+                    {
+                        if(item.Value == employeeId)
+                        {
+                            return Json(new
+                            {
+                                status = false,
+                                message = "A user can not approve his/her own request"
+                            });
+                        }
+                        if (approvalConfigList.Where(x => x.ProcessorIId == item.Value).Count() == 0)
+                        {
+                            var employee = await _employeeService.GetById(item.Value);
+                            var approvalConfig = new EmployeeApprovalConfig()
+                            {
+                                Emp_No = empNo,
+                                EmployeeId = employeeId,
+                                ApprovalWorkItemId = workItem,
+                                ProcessorIId = item.Value,
+                                Processor = employee.LastName + "-" + employee.FirstName,
+                                ApprovalLevel = (Level)item.Key,
+                                Id = Guid.NewGuid(),
+                                CreatedDate = DateTime.Now
+                            };
+                            approvalConfigList.Add(approvalConfig);
+                        }
+                        else if ((approvalConfigList.Where(x => x.ProcessorIId == item.Value).Count() > 0))
+                        {
+                            return Json(new
+                            {
+                                status = false,
+                                message = "A Manager can only approve a level(e.g only first level etc)"
+                            });
+                        }
+                    }
+
                     var approvalCount = new EmployeeApprovalCount()
                     {
                         ApprovalWorkItemId = workItem,
@@ -341,25 +379,6 @@ namespace Web.Controllers
                         CreatedDate = DateTime.Now
                     };
 
-                    List<EmployeeApprovalConfig> approvalConfigList = new List<EmployeeApprovalConfig>();
-
-                    foreach (var item in levelApproval)
-                    {
-                        var employee = await _employeeService.GetById(item.Value);
-                        var approvalConfig = new EmployeeApprovalConfig()
-                        {
-                            Emp_No = empNo,
-                            EmployeeId = employeeId,
-                            ApprovalWorkItemId = workItem,
-                            ProcessorIId = item.Value,
-                            Processor = employee.LastName + "-" + employee.FirstName,
-                            ApprovalLevel = (Level)item.Key,
-                            Id = Guid.NewGuid(),
-                            CreatedDate = DateTime.Now
-                        };
-                        approvalConfigList.Add(approvalConfig);
-                    }
-
                     var approvalCountResponse = await _employeeApprovalConfigService.SetApprovalCount(approvalCount);
                     var approvalConfigResponse = await _employeeApprovalConfigService.CreateUpdate(approvalConfigList);
 
@@ -367,7 +386,7 @@ namespace Web.Controllers
                     {
                         status = (approvalConfigResponse.Status && approvalCountResponse.Status) ? true : false,
                         message = (approvalConfigResponse.Status && approvalCountResponse.Status) ? approvalConfigResponse.Message : "Oops! Failed to create configuration. Please try again"
-                    }) ;
+                    });
                 }
                 return Json(new
                 {

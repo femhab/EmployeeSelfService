@@ -60,7 +60,7 @@ namespace Web.Controllers
         [Route("ApplyLeave")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyLeave(Guid leaveTypeId, string dateFrom, string dateTo, string resumptionDate, int noOfDays, bool isAllowanceAdded )
+        public async Task<ActionResult> ApplyLeave(Guid leaveTypeId, string dateFrom, string dateTo, string resumptionDate, int noOfDays, bool isAllowanceAdded, int remainingDays)
         {
             try
             {
@@ -88,6 +88,7 @@ namespace Web.Controllers
                         CreatedDate = DateTime.Now,
                         NoOfDays = noOfDays,
                         DaysUsed = 0,
+                        RemainingDays = remainingDays,
                         ResumptionDate = resumeDate,
                         LeaveStatus = LeaveStatus.Pending,
                         Status = ApprovalStatus.Pending,
@@ -150,6 +151,40 @@ namespace Web.Controllers
                     {
                         status = response.Status,
                         message = response.Message
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> getLeaveById(Guid leaveId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var response = await _leaveService.GetById(leaveId);
+                    return Json(new
+                    {
+                        status = (response != null) ? true : false,
+                        data = new { resumptionDate = response.ResumptionDate.ToString(), dateFrom = response.DateFrom.ToString(), dateTo = response.DateTo.ToString(), noOfDays = response.NoOfDays, leaveType = response.LeaveType, isAllowance = response.IsAllowanceRequested? "Yes":"No", }
                     });
 
                 }

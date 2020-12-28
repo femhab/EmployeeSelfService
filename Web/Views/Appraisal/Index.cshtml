@@ -41,34 +41,34 @@
                     <tbody>
                         @foreach (var item in Model.EmployeeAppraisal)
                         {
-                        <tr>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar"><img alt="" src="assets/img/profiles/avatar-02.jpg"></a>
-                                    <a href="profile.html">@item.CreatedDate.ToString("dd MMMM yyyy")</a>
-                                </h2>
-                            </td>
-                            <td>@item.LastRatingManagerName</td>
-                            @if (item.UpdatedDate != null)
-                            {
-                                <td>@item.UpdatedDate?.ToString("dd MMMM yyyy")</td>
-                            }
-                            else
-                            {
-                                 <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
-                            }
+                            <tr>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/profiles/avatar-02.jpg"></a>
+                                        <a href="profile.html">@item.CreatedDate.ToString("dd MMMM yyyy")</a>
+                                    </h2>
+                                </td>
+                                <td>@item.LastRatingManagerName</td>
+                                @if (item.UpdatedDate != null)
+                                {
+                                    <td>@item.UpdatedDate?.ToString("dd MMMM yyyy")</td>
+                                }
+                                else
+                                {
+                                     <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
+                                }
 
-                            <td> @item.NextRatingManagerName </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_appraisal"><i class="fa fa-pencil m-r-5"></i> View</a>
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#"><i class="fa fa-address-book-o m-r-5"></i> Sign Off</a>
+                                <td> @item.NextRatingManagerName </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_appraisal"><i class="fa fa-pencil m-r-5"></i> View</a>
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#"><i class="fa fa-address-book-o m-r-5"></i> Sign Off</a>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                         }
 
                     </tbody>
@@ -161,7 +161,9 @@
                 data: { catItemWeight: catItemWeight},
                 success: function (response) {
                     if (response.status) {
-                        toastr.success(response?.message)
+                        toastr.success(response ?.message)
+                        $('#add_appraisal').modal('hide');
+                        location.reload();
                     }
                     else {
                         toastr.error(response ?.message)

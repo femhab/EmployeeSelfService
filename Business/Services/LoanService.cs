@@ -55,6 +55,7 @@ namespace Business.Services
                     CreatedBy = model.Emp_No
                 };
                 await _approvalBoardService.Create(enlistBoard);
+                //boardactivelevel
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.LoanCreatedSuccessfully };
             }         

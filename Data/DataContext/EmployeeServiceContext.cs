@@ -48,6 +48,7 @@ namespace Data.DataContext
         public DbSet<LoanType> LoanTypes { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<MaritalStatus> MaritalStatus { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Relationship> Relationships { get; set; }
         public DbSet<Role> RoleType { get; set; }
         // public DbSet<Training>  Trainings { get; set; }

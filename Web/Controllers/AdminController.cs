@@ -19,11 +19,13 @@ namespace Web.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
+        private readonly IDepartmentService _departmentService;
 
-        public AdminController(IEmployeeService employeeService, IRoleService roleService, IMapper mapper)
+        public AdminController(IEmployeeService employeeService, IRoleService roleService, IMapper mapper, IDepartmentService departmentService)
         {
             _employeeService = employeeService;
             _roleService = roleService;
+            _departmentService = departmentService;
             _mapper = mapper;
         }
 
@@ -73,9 +75,28 @@ namespace Web.Controllers
             }
         }
 
-        public IActionResult ManageDepartment()
+        public async Task<ActionResult> ManageDepartment()
         {
-            return View();
+            try
+            {
+                var authData = JwtHelper.GetAuthData(Request);
+                if (authData == null)
+                {
+                    return RedirectToAction("Signout", "Employee");
+                }
+
+                AdminViewModel adminViewModel = new AdminViewModel();
+                var departmentList = await _departmentService.GetAll();
+                var clearingDepartment = await _departmentService.GetByExitApproval();
+
+                adminViewModel.DepartmentList = _mapper.Map<IEnumerable<DepartmentModel>>(departmentList);
+                adminViewModel.ClearingDepartment = _mapper.Map<IEnumerable<DepartmentModel>>(clearingDepartment);
+                return View(adminViewModel);
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
         }
 
         public IActionResult SetApprovalPeriod()
@@ -176,6 +197,39 @@ namespace Web.Controllers
                     {
                         status = response.Status,
                         message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ManageDepartmentAuth(Guid departmentId, bool canClear)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var response = await _departmentService.ChangeClearanceRole(departmentId, canClear);
+                    return Json(new
+                    {
+                       status = response.Status,
+                       message = response.Message
                     });
                 }
                 return Json(new

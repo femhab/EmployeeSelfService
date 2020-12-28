@@ -158,7 +158,7 @@
                         <label>Remaining Leave Days <span class="text-danger">*</span></label>
                         <input class="form-control" readonly type="text" id="remainingdays">
                     </div>
-                    <div class="checkbox">
+                    <div class="checkbox" id="allowancecheck" hidden>
                         <label>
                             <input type="checkbox" name="checkbox" id="isallowanceadded"> Request Leave Allowance
                         </label>
@@ -313,7 +313,6 @@
                 }
 
                 remainingdays = leavetype.availableDays - parseInt(noofdays);
-
                 resumptiondate = getNextBusinessDay(dateto);
 
                 $("#dateto").val(dateToString(dateto));
@@ -345,20 +344,33 @@
             $("#recallresumptiondate").val(dateToString(recallresumptiondate));
         }
 
+        function AllowanceValidation(leavetypeid) {
+            var leavetype = query.find(x => x.id == leavetypeid);
+            console.log(leavetype);
+            //if (leavetype.class == "annual") {
+            //    document.getElementById('allowancecheck').removeAttribute("hidden");
+            //}
+            //else {
+            //    document.getElementById('allowancecheck').setAttribute("hidden", true);
+            //}
+        }
+
         function RunLeaveValidation() {
             leavetypeid = $("#leavetypeid").val();
             var leavetype = query.find(x => x.id == leavetypeid);
             noofdays = $("#noofdays").val();
-            if (leavetype.availableDays > 0 && leavetype.availableDays >= noofdays) {
+            //AllowanceValidation(leavetypeid);
+            if (leavetype.availableDays > 0 && leavetype.availableDays >= noofdays && noofdays > 0) {
                 OnDaysEntered();
                 document.getElementById('datetodiv').removeAttribute("hidden");
                 document.getElementById('resumptiondatediv').removeAttribute("hidden");
                 document.getElementById('remainingdaysdiv').removeAttribute("hidden");
                 document.getElementById('submitleave').removeAttribute("hidden");
+                if (leavetype.class == "annual") { document.getElementById('allowancecheck').removeAttribute("hidden"); }
                 document.getElementById('validateleave').setAttribute("hidden", true);
             }
             else {
-                toastr.warning("Your input is greater than available days");
+                toastr.warning("Your input is greater than available days or you entered 0 day");
             }       
         }
 
@@ -405,9 +417,10 @@
             datefrom = $("#datefrom").val();
             dateto = $("#dateto").val();
             resumptiondate = $("#resumptiondate").val();
+            remainingdays = $("#remainingdays").val();
             if (document.getElementById('isallowanceadded').checked) { isallowanceadded = true }
             else { isallowanceadded = false }
-            sendLeaveForm(leavetypeid, datefrom, dateto, resumptiondate, noofdays, isallowanceadded);
+            sendLeaveForm(leavetypeid, datefrom, dateto, resumptiondate, noofdays, isallowanceadded, remainingdays);
         }
 
         function SubmitRecallLeaveApplication()
@@ -422,12 +435,12 @@
             sendRecallLeaveForm(selectedleave, recalldate, recalldatefrom, recalldateto, recallresumptiondate, recallnoofdays);
         }
 
-        function sendLeaveForm(leaveTypeId,dateFrom,dateTo,resumptionDate,noOfDays,isAllowanceAdded ) {
+        function sendLeaveForm(leaveTypeId,dateFrom,dateTo,resumptionDate,noOfDays,isAllowanceAdded, remainingDays ) {
             $.ajax({
                 url: '@Url.Action("ApplyLeave", "Leave")',
                 type: 'POST',
                 dataType: 'json',
-                data: { leaveTypeId: leaveTypeId,dateFrom: dateFrom ,dateTo: dateTo,resumptionDate: resumptionDate,noOfDays: noOfDays,isAllowanceAdded: isAllowanceAdded },
+                data: { leaveTypeId: leaveTypeId,dateFrom: dateFrom ,dateTo: dateTo,resumptionDate: resumptionDate,noOfDays: noOfDays,isAllowanceAdded: isAllowanceAdded, remainingDays:remainingDays },
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)

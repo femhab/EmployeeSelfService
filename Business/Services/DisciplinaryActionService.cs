@@ -17,11 +17,13 @@ namespace Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SqlConnection _sqlConnection;
+        private readonly INotificationService _notificationService;
 
-        public DisciplinaryActionService(IUnitOfWork unitOfWork)
+        public DisciplinaryActionService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse> CreateQuery(Guid employeeId, string empNo, string subject, string message, Guid targetEmployeeId, string targetEmployeeNo)
@@ -44,6 +46,9 @@ namespace Business.Services
 
                 _unitOfWork.GetRepository<DisciplinaryAction>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
+
+                await _notificationService.CreateNotification(NotificationAction.DisciplinaryCreateTitle, NotificationAction.DisciplinaryCreateMessage, model.EmployeeId, false, false);
+
                 return new BaseResponse() { Status = true, Message = ResponseMessage.QueryCreatedSuccessfully };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
