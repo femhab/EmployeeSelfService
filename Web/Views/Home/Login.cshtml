@@ -60,7 +60,11 @@
         {
             email = $("#email").val();
             password = $("#password").val();
-
+            if (email.length < 2 || password.length < 1)
+            {
+                toastr.warning("Email field or password field required");
+                return;
+            }
             sendForm(email, password);
         }
 
@@ -72,16 +76,16 @@
                 data: { email: email, password: password },
                 success: function (response) {
                     if (response.status) {     
-                        //toastr.success(response?.message);
                         window.location.href = redirectUrl;
                     }
-                    else {
+                    else
+                    {
                         toastr.error(response ?.message);
                     }
 
                     return;
                 }, error: function () {
-                    alerty("danger", "Opps", "request Failed");
+                    toastr.error("request Failed");
                 }
             });
         }
