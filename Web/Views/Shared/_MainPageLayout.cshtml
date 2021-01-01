@@ -192,8 +192,8 @@
                         <li>
                             <a href="#"><i class="la la-money"></i> <span> Payroll </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
-                                <li><a href="salary.html">Payroll History </a></li>
-                                <li><a href="salary-view.html"> Payslip </a></li>
+                                <li><a asp-controller="Payroll" asp-action="PaymentAdvance">Payment Advance</a></li>
+                                <li><a asp-controller="Payroll" asp-action="Payslip"> Payslip </a></li>
                             </ul>
                         </li>
                         @*<li>
@@ -223,16 +223,15 @@
                             <a href="#"><i class="la la-graduation-cap"></i> <span> Appraisal </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
                                 <li><a asp-controller="Appraisal" asp-action="Index"> Self Appraisal </a></li>
-                                <li><a asp-controller="Appraisal" asp-action="PerformanceReview"> Performance Review </a></li>
+                                //<li><a asp-controller="Appraisal" asp-action="PerformanceReview"> Performance Review </a></li>
                             </ul>
                         </li>
 
                         <li class="submenu">
                             <a href="#"><i class="la la-edit"></i> <span> Training </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
-                                <li><a href="training.html"> Training List </a></li>
-                                <li><a href="trainers.html"> Trainers</a></li>
-                                <li><a href="training-type.html"> Training Type </a></li>
+                                <li><a asp-controller="Training" asp-action="Apply"> Apply </a></li>
+                                <li><a href="trainers.html"> View  Trainings</a></li>
                             </ul>
                         </li>
                         @if (Model != null && Model.AccessType != ViewModel.Enumeration.AccessTypeEnum.Employee)

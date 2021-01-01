@@ -14,8 +14,11 @@ namespace Business.Services
         private readonly IMaritalStatusService _maritalStatusService;
         private readonly IEmployeeTitleService _employeeTitleService;
         private readonly IAvailabilityStatusService _availabilityStatusService;
+        private readonly ITrainingService _trainingService;
+        private readonly IDepartmentService _departmentService;
+        private readonly IGradeLevelService _gradeLevelService;
 
-        public RefreshingService(ICountryService countryService, IStateService stateService, ILGAService lgaService, ISectionService sectionService, ILocationService locationService, ICourtesyService courtesyService, IMaritalStatusService maritalStatusService, IEmployeeTitleService employeeTitleService, IAvailabilityStatusService availabilityStatusService)
+        public RefreshingService(ICountryService countryService, IStateService stateService, ILGAService lgaService, ISectionService sectionService, ILocationService locationService, ICourtesyService courtesyService, IMaritalStatusService maritalStatusService, IEmployeeTitleService employeeTitleService, IAvailabilityStatusService availabilityStatusService, ITrainingService trainingService, IDepartmentService departmentService, IGradeLevelService gradeLevelService)
         {
             _countryService = countryService;
             _stateService = stateService;
@@ -26,6 +29,9 @@ namespace Business.Services
             _maritalStatusService = maritalStatusService;
             _employeeTitleService = employeeTitleService;
             _availabilityStatusService = availabilityStatusService;
+            _trainingService = trainingService;
+            _departmentService = departmentService;
+            _gradeLevelService = gradeLevelService;
         }
 
         public async Task Refresh()
@@ -39,6 +45,8 @@ namespace Business.Services
             await _employeeTitleService.Refresh();
             await _courtesyService.Refresh();
             await _maritalStatusService.Refresh();
+            await _trainingService.RefreshTopics();
+            await _gradeLevelService.Refresh();
         }
     }
 }

@@ -4,14 +4,16 @@ using Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(EmployeeServiceContext))]
-    partial class EmployeeServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20201231191344_trainingMigration")]
+    partial class trainingMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1496,66 +1498,6 @@ namespace Data.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("Data.Entities.PaymentAdvance", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("Emp_No");
-
-                    b.Property<Guid>("EmployeeId");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("ModifiedBy");
-
-                    b.Property<int>("Status");
-
-                    b.Property<DateTime>("TargetDate");
-
-                    b.Property<DateTime?>("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("PaymentAdvances");
-                });
-
-            modelBuilder.Entity("Data.Entities.PaymentAdvanceTrack", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("Count");
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("Emp_No");
-
-                    b.Property<Guid>("EmployeeId");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("ModifiedBy");
-
-                    b.Property<DateTime?>("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("PaymentAdvanceTracks");
-                });
-
             modelBuilder.Entity("Data.Entities.Relationship", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2268,22 +2210,6 @@ namespace Data.Migrations
                     b.HasOne("Data.Entities.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId");
-                });
-
-            modelBuilder.Entity("Data.Entities.PaymentAdvance", b =>
-                {
-                    b.HasOne("Data.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Data.Entities.PaymentAdvanceTrack", b =>
-                {
-                    b.HasOne("Data.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Data.Entities.Training", b =>

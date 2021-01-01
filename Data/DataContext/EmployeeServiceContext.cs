@@ -49,12 +49,15 @@ namespace Data.DataContext
         public DbSet<Location> Locations { get; set; }
         public DbSet<MaritalStatus> MaritalStatus { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<PaymentAdvance> PaymentAdvances { get; set; }
+        public DbSet<PaymentAdvanceTrack> PaymentAdvanceTracks { get; set; }
         public DbSet<Relationship> Relationships { get; set; }
         public DbSet<Role> RoleType { get; set; }
-        // public DbSet<Training>  Trainings { get; set; }
         public DbSet<Section>  Sections { get; set; }
         public DbSet<State>  States { get; set; }
         public DbSet<Transfer>  Transfers { get; set; }
+        public DbSet<Training> Trainings { get; set; }
+        public DbSet<TrainingTopics> TrainingTopics { get; set; }
         public DbSet<Unit>  Units { get; set; }
         public DbSet<UserRole> EmployeeRoles { get; set; }
 

@@ -1,6 +1,17 @@
-﻿namespace Data.Entities
+﻿using Data.Entities.Common;
+using System;
+
+namespace Data.Entities
 {
-    public class Training
+    public class Training: BaseObject
     {
+        public Guid EmployeeId { get; set; } 
+        public Employee Employee { get; set; } 
+        public string Emp_No { get; set; }
+        public string TrainingTopic { get; set; }
+        public int TrainingYear { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public bool IsScheduled { get; set; }
     }
 }

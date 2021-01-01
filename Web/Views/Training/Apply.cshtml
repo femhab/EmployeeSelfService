@@ -1,0 +1,153 @@
+﻿@model ViewModel.Model.TrainingViewModel
+
+@{
+    ViewData["Title"] = "Apply";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Diciplinary Action</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Services</a></li>
+                    <li class="breadcrumb-item active">Issue Query</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6" onclick="onSelectSchedule()">
+                                <div class="form-group">
+                                    <input type="radio" id="scheduledid" name="scheduled"> Sheduled Training
+                                </div>
+                            </div>
+                            <div class="col-md-6" onclick="onSelectSchedule()">
+                                <div class="form-group">
+                                    <input type="radio" id="unscheduledid" name="unscheduled"> Unscheduled Training
+                                    T
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="schedulediv" >
+                            <label>Training Topic <span class="text-danger">*</span></label>
+                            <select class="select" id="scheduledtopicid">
+                                <option value="">Select Topic</option>
+                                @foreach (var item in Model.TrainingTopics)
+                                {
+                                    <option value="@item.Id">@item.Title</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group" id="unschedulediv" hidden>
+                            <label>Training Topic <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" id="unscheduledtopicid">
+                        </div>
+                        <div class="form-group" >
+                            <label>Training Year <span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control" type="text" id="trainingyear"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Start Date<span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control datetimepicker" type="text" id="startdate"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>End Date<span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control datetimepicker" type="text" id="enddate"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Other Details <span class="text-danger">*</span></label>
+                            <textarea rows="5" class="form-control" placeholder="Enter your other details here" id="otherdetails"></textarea>
+                        </div>
+                        <div class="submit-section" id="schedulesubmitdiv" onclick="SubmitScheduledTopic()">
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                        <div class="submit-section" id="unschedulesubmitdiv" onclick="SubmitUnScheduledTopic()" hidden>
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function onSelectSchedule() {
+            console.log("see ehn");
+            if (document.getElementById('scheduled').checked) {
+                document.getElementById('schedulediv').removeAttribute("hidden");
+                document.getElementById('unschedulediv').setAttribute("hidden", true);
+                document.getElementById('schedulesubmitdiv').removeAttribute("hidden");
+                document.getElementById('unschedulesubmitdiv').setAttribute("hidden", true);
+            }
+            else if (document.getElementById('unscheduled').checked){
+                document.getElementById('schedulediv').setAttribute("hidden");
+                document.getElementById('unschedulediv').removeAttribute("hidden", true);
+                document.getElementById('schedulesubmitdiv').setAttribute("hidden");
+                document.getElementById('unschedulesubmitdiv').removeAttribute("hidden", true);
+            }
+            //sendLeaveForm(leavetypeid, datefrom, dateto, resumptiondate, noofdays, isallowanceadded, remainingdays);
+        }
+
+        function onSelectUnSchedule() {
+            document.getElementById('schedulediv').setAttribute("hidden");
+            document.getElementById('unschedulediv').removeAttribute("hidden", true);
+            document.getElementById('schedulesubmitdiv').setAttribute("hidden");
+            document.getElementById('unschedulesubmitdiv').removeAttribute("hidden", true);
+        }
+
+        function SubmitScheduledTopic() {
+            var scheduledtopic = $("#scheduledtopicid").val();
+            var trainingyear = $("#trainingyear").val();
+            var startdate = $("#startdate").val();
+            var enddate = $("#enddate").val();
+            var otherdetails = $("#otherdetails").val();
+            ApplyTraining(true, scheduledtopic, trainingyear, startdate, enddate, otherdetails);
+        }
+
+        function SubmitUnScheduledTopic() {
+            var scheduledtopic = $("#scheduledtopicid").val();
+            var trainingyear = $("#trainingyear").val();
+            var startdate = $("#startdate").val();
+            var enddate = $("#enddate").val();
+            var otherdetails = $("#otherdetails").val();
+            ApplyTraining(false, scheduledtopic, trainingyear, startdate, enddate, otherdetails);
+        }
+
+        function ApplyTraining(isSchedule, trainingTopic, year, startDate, EndDate, otherDetails) {
+            $.ajax({
+                url: '@Url.Action("ApplyTraining", "Training")',
+                type: 'POST',
+                dataType: 'json',
+                data: { isSchedule: isSchedule, trainingTopic: trainingTopic, year: year, startDate: startDate, EndDate: EndDate, otherDetails: otherDetails},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message)
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response ?.message)
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}

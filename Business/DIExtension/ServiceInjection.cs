@@ -61,6 +61,8 @@ namespace Business.DIExtension
             services.AddTransient<IRefreshingService, RefreshingService>();
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IDashboardService, DashboardService>();
+            services.AddTransient<ITrainingService, TrainingService>();
+            services.AddTransient<IPaymentAdvanceService, PaymentAdvanceService>();
 
 
             return services;
