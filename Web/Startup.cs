@@ -116,6 +116,7 @@ namespace Web
             //========= DbContext starts =============
             services.AddDbContext<EmployeeServiceContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ESSServerConnection"))).AddUnitOfWork<EmployeeServiceContext>();
             services.AddDbContext<ServiceContext>(options => options.UseSqlServer(Configuration.GetConnectionString("HRServerConnection")));
+            services.AddDbContext<PayrollContext>(options => options.UseSqlServer(Configuration.GetConnectionString("PRServerConnection")));
 
             //========= Auto validation =============
             services.Configure<ApiBehaviorOptions>(options =>

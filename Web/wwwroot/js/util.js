@@ -130,6 +130,74 @@ function ProcessTransferField(valueInput) {
     }
 }
 
+function ProcessTrainingField(valueInput) {
+    if (valueInput == 2) {
+        ShowTrainingSecondLevelApproval();
+    }
+    if (valueInput == 3) {
+        ShowTrainingThirdLevelApproval();
+    }
+    if (valueInput == 4) {
+        ShowTrainingFourthLevelApproval();
+    }
+    if (valueInput == 5) {
+        ShowTrainingFifthLevelApproval();
+    }
+    if (valueInput == 6) {
+        ShowTrainingSixthLevelApproval();
+    }
+    if (valueInput == 7) {
+        ShowTrainingSeventhLevelApproval();
+    }
+    if (valueInput == 8) {
+        ShowTrainingEightLevelApproval();
+    }
+    if (valueInput == 9) {
+        ShowTrainingNinethLevelApproval();
+    }
+    if (valueInput == 10) {
+        ShowTrainingTenthLevelApproval();
+    }
+    if (valueInput > 10) {
+        ShowTrainingSecondLevelApproval();
+    }
+}
+
+function ProcessAdvanceField(valueInput) {
+    if (valueInput == 2) {
+        ShowAdvanceSecondLevelApproval();
+    }
+    if (valueInput == 3) {
+        ShowAdvanceThirdLevelApproval();
+    }
+    if (valueInput == 4) {
+        ShowAdvanceFourthLevelApproval();
+    }
+    if (valueInput == 5) {
+        ShowAdvanceFifthLevelApproval();
+    }
+    if (valueInput == 6) {
+        ShowAdvanceSixthLevelApproval();
+    }
+    if (valueInput == 7) {
+        ShowAdvanceSeventhLevelApproval();
+    }
+    if (valueInput == 8) {
+        ShowAdvanceEightLevelApproval();
+    }
+    if (valueInput == 9) {
+        ShowAdvanceNinethLevelApproval();
+    }
+    if (valueInput == 10) {
+        ShowAdvanceTenthLevelApproval();
+    }
+    if (valueInput > 10) {
+        ShowAdvanceSecondLevelApproval();
+    }
+}
+
+
+
 
 function ShowSecondLevelApproval() {
     document.getElementById('table2').removeAttribute("hidden");
@@ -174,6 +242,28 @@ function ShowAppraisalSecondLevelApproval() {
     document.getElementById('tableappraisal8').setAttribute("hidden", true);
     document.getElementById('tableappraisal9').setAttribute("hidden", true);
     document.getElementById('tableappraisal10').setAttribute("hidden", true);
+}
+function ShowTrainingSecondLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').setAttribute("hidden", true);
+    document.getElementById('tabletraining4').setAttribute("hidden", true);
+    document.getElementById('tabletraining5').setAttribute("hidden", true);
+    document.getElementById('tabletraining6').setAttribute("hidden", true);
+    document.getElementById('tabletraining7').setAttribute("hidden", true);
+    document.getElementById('tabletraining8').setAttribute("hidden", true);
+    document.getElementById('tabletraining9').setAttribute("hidden", true);
+    document.getElementById('tabletraining10').setAttribute("hidden", true);
+}
+function ShowAdvanceSecondLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').setAttribute("hidden", true);
+    document.getElementById('tableadvance4').setAttribute("hidden", true);
+    document.getElementById('tableadvance5').setAttribute("hidden", true);
+    document.getElementById('tableadvance6').setAttribute("hidden", true);
+    document.getElementById('tableadvance7').setAttribute("hidden", true);
+    document.getElementById('tableadvance8').setAttribute("hidden", true);
+    document.getElementById('tableadvance9').setAttribute("hidden", true);
+    document.getElementById('tableadvance10').setAttribute("hidden", true);
 }
 
 
@@ -221,6 +311,28 @@ function ShowAppraisalThirdLevelApproval() {
     document.getElementById('tableappraisal9').setAttribute("hidden", true);
     document.getElementById('tableappraisal10').setAttribute("hidden", true);
 }
+function ShowTrainingThirdLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').removeAttribute("hidden");
+    document.getElementById('tabletraining4').setAttribute("hidden", true);
+    document.getElementById('tabletraining5').setAttribute("hidden", true);
+    document.getElementById('tabletraining6').setAttribute("hidden", true);
+    document.getElementById('tabletraining7').setAttribute("hidden", true);
+    document.getElementById('tabletraining8').setAttribute("hidden", true);
+    document.getElementById('tabletraining9').setAttribute("hidden", true);
+    document.getElementById('tabletraining10').setAttribute("hidden", true);
+}
+function ShowAdvanceThirdLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').removeAttribute("hidden");
+    document.getElementById('tableadvance4').setAttribute("hidden", true);
+    document.getElementById('tableadvance5').setAttribute("hidden", true);
+    document.getElementById('tableadvance6').setAttribute("hidden", true);
+    document.getElementById('tableadvance7').setAttribute("hidden", true);
+    document.getElementById('tableadvance8').setAttribute("hidden", true);
+    document.getElementById('tableadvance9').setAttribute("hidden", true);
+    document.getElementById('tableadvance10').setAttribute("hidden", true);
+}
 
 
 function ShowFourthLevelApproval() {
@@ -266,6 +378,28 @@ function ShowTransferFourthLevelApproval() {
     document.getElementById('tabletransfer8').setAttribute("hidden", true);
     document.getElementById('tabletransfer9').setAttribute("hidden", true);
     document.getElementById('tabletransfer10').setAttribute("hidden", true);
+}
+function ShowTrainingFourthLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').removeAttribute("hidden");
+    document.getElementById('tabletraining4').removeAttribute("hidden");
+    document.getElementById('tabletraining5').setAttribute("hidden", true);
+    document.getElementById('tabletraining6').setAttribute("hidden", true);
+    document.getElementById('tabletraining7').setAttribute("hidden", true);
+    document.getElementById('tabletraining8').setAttribute("hidden", true);
+    document.getElementById('tabletraining9').setAttribute("hidden", true);
+    document.getElementById('tabletraining10').setAttribute("hidden", true);
+}
+function ShowAdvanceFourthLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').removeAttribute("hidden");
+    document.getElementById('tableadvance4').removeAttribute("hidden");
+    document.getElementById('tableadvance5').setAttribute("hidden", true);
+    document.getElementById('tableadvance6').setAttribute("hidden", true);
+    document.getElementById('tableadvance7').setAttribute("hidden", true);
+    document.getElementById('tableadvance8').setAttribute("hidden", true);
+    document.getElementById('tableadvance9').setAttribute("hidden", true);
+    document.getElementById('tableadvance10').setAttribute("hidden", true);
 }
 
 
@@ -313,6 +447,28 @@ function ShowTransferFifthLevelApproval() {
     document.getElementById('tabletransfer9').setAttribute("hidden", true);
     document.getElementById('tabletransfer10').setAttribute("hidden", true);
 }
+function ShowTrainingFifthLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').removeAttribute("hidden");
+    document.getElementById('tabletraining4').removeAttribute("hidden");
+    document.getElementById('tabletraining5').removeAttribute("hidden");
+    document.getElementById('tabletraining6').setAttribute("hidden", true);
+    document.getElementById('tabletraining7').setAttribute("hidden", true);
+    document.getElementById('tabletraining8').setAttribute("hidden", true);
+    document.getElementById('tabletraining9').setAttribute("hidden", true);
+    document.getElementById('tabletraining10').setAttribute("hidden", true);
+}
+function ShowAdvanceFifthLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').removeAttribute("hidden");
+    document.getElementById('tableadvance4').removeAttribute("hidden");
+    document.getElementById('tableadvance5').removeAttribute("hidden");
+    document.getElementById('tableadvance6').setAttribute("hidden", true);
+    document.getElementById('tableadvance7').setAttribute("hidden", true);
+    document.getElementById('tableadvance8').setAttribute("hidden", true);
+    document.getElementById('tableadvance9').setAttribute("hidden", true);
+    document.getElementById('tableadvance10').setAttribute("hidden", true);
+}
 
 
 function ShowSixthLevelApproval() {
@@ -358,6 +514,28 @@ function ShowTransferSixthLevelApproval() {
     document.getElementById('tabletransfer8').setAttribute("hidden", true);
     document.getElementById('tabletransfer9').setAttribute("hidden", true);
     document.getElementById('tabletransfer10').setAttribute("hidden", true);
+}
+function ShowTrainingSixthLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').removeAttribute("hidden");
+    document.getElementById('tabletraining4').removeAttribute("hidden");
+    document.getElementById('tabletraining5').removeAttribute("hidden");
+    document.getElementById('tabletraining6').removeAttribute("hidden");
+    document.getElementById('tabletraining7').setAttribute("hidden", true);
+    document.getElementById('tabletraining8').setAttribute("hidden", true);
+    document.getElementById('tabletraining9').setAttribute("hidden", true);
+    document.getElementById('tabletraining10').setAttribute("hidden", true);
+}
+function ShowAdvanceSixthLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').removeAttribute("hidden");
+    document.getElementById('tableadvance4').removeAttribute("hidden");
+    document.getElementById('tableadvance5').removeAttribute("hidden");
+    document.getElementById('tableadvance6').removeAttribute("hidden");
+    document.getElementById('tableadvance7').setAttribute("hidden", true);
+    document.getElementById('tableadvance8').setAttribute("hidden", true);
+    document.getElementById('tableadvance9').setAttribute("hidden", true);
+    document.getElementById('tableadvance10').setAttribute("hidden", true);
 }
 
 
@@ -405,6 +583,28 @@ function ShowTransferSeventhLevelApproval() {
     document.getElementById('tabletransfer9').setAttribute("hidden", true);
     document.getElementById('tabletransfer10').setAttribute("hidden", true);
 }
+function ShowTrainingSeventhLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').removeAttribute("hidden");
+    document.getElementById('tabletraining4').removeAttribute("hidden");
+    document.getElementById('tabletraining5').removeAttribute("hidden");
+    document.getElementById('tabletraining6').removeAttribute("hidden");
+    document.getElementById('tabletraining7').removeAttribute("hidden");
+    document.getElementById('tabletraining8').setAttribute("hidden", true);
+    document.getElementById('tabletraining9').setAttribute("hidden", true);
+    document.getElementById('tabletraining10').setAttribute("hidden", true);
+}
+function ShowAdvanceSeventhLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').removeAttribute("hidden");
+    document.getElementById('tableadvance4').removeAttribute("hidden");
+    document.getElementById('tableadvance5').removeAttribute("hidden");
+    document.getElementById('tableadvance6').removeAttribute("hidden");
+    document.getElementById('tableadvance7').removeAttribute("hidden");
+    document.getElementById('tableadvance8').setAttribute("hidden", true);
+    document.getElementById('tableadvance9').setAttribute("hidden", true);
+    document.getElementById('tableadvance10').setAttribute("hidden", true);
+}
 
 
 function ShowEightLevelApproval() {
@@ -450,6 +650,28 @@ function ShowTransferEightLevelApproval() {
     document.getElementById('tabletransfer8').removeAttribute("hidden");
     document.getElementById('tabletransfer9').setAttribute("hidden", true);
     document.getElementById('tabletransfer10').setAttribute("hidden", true);
+}
+function ShowTrainingEightLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').removeAttribute("hidden");
+    document.getElementById('tabletraining4').removeAttribute("hidden");
+    document.getElementById('tabletraining5').removeAttribute("hidden");
+    document.getElementById('tabletraining6').removeAttribute("hidden");
+    document.getElementById('tabletraining7').removeAttribute("hidden");
+    document.getElementById('tabletraining8').removeAttribute("hidden");
+    document.getElementById('tabletraining9').setAttribute("hidden", true);
+    document.getElementById('tabletraining10').setAttribute("hidden", true);
+}
+function ShowAdvanceEightLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').removeAttribute("hidden");
+    document.getElementById('tableadvance4').removeAttribute("hidden");
+    document.getElementById('tableadvance5').removeAttribute("hidden");
+    document.getElementById('tableadvance6').removeAttribute("hidden");
+    document.getElementById('tableadvance7').removeAttribute("hidden");
+    document.getElementById('tableadvance8').removeAttribute("hidden");
+    document.getElementById('tableadvance9').setAttribute("hidden", true);
+    document.getElementById('tableadvance10').setAttribute("hidden", true);
 }
 
 
@@ -497,6 +719,28 @@ function ShowTransferNinethLevelApproval() {
     document.getElementById('tabletransfer9').removeAttribute("hidden");
     document.getElementById('tabletransfer10').setAttribute("hidden", true);
 }
+function ShowTrainingNinethLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').removeAttribute("hidden");
+    document.getElementById('tabletraining4').removeAttribute("hidden");
+    document.getElementById('tabletraining5').removeAttribute("hidden");
+    document.getElementById('tabletraining6').removeAttribute("hidden");
+    document.getElementById('tabletraining7').removeAttribute("hidden");
+    document.getElementById('tabletraining8').removeAttribute("hidden");
+    document.getElementById('tabletraining9').removeAttribute("hidden");
+    document.getElementById('tabletraining10').setAttribute("hidden", true);
+}
+function ShowAdvancerNinethLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').removeAttribute("hidden");
+    document.getElementById('tableadvance4').removeAttribute("hidden");
+    document.getElementById('tableadvance5').removeAttribute("hidden");
+    document.getElementById('tableadvance6').removeAttribute("hidden");
+    document.getElementById('tableadvance7').removeAttribute("hidden");
+    document.getElementById('tableadvance8').removeAttribute("hidden");
+    document.getElementById('tableadvance9').removeAttribute("hidden");
+    document.getElementById('tableadvance10').setAttribute("hidden", true);
+}
 
 
 function ShowTenthLevelApproval() {
@@ -542,6 +786,28 @@ function ShowTransferTenthLevelApproval() {
     document.getElementById('tabletransfer8').removeAttribute("hidden");
     document.getElementById('tabletransfer9').removeAttribute("hidden");
     document.getElementById('tabletransfer10').removeAttribute("hidden");
+}
+function ShowTrainingTenthLevelApproval() {
+    document.getElementById('tabletraining2').removeAttribute("hidden");
+    document.getElementById('tabletraining3').removeAttribute("hidden");
+    document.getElementById('tabletraining4').removeAttribute("hidden");
+    document.getElementById('tabletraining5').removeAttribute("hidden");
+    document.getElementById('tabletraining6').removeAttribute("hidden");
+    document.getElementById('tabletraining7').removeAttribute("hidden");
+    document.getElementById('tabletraining8').removeAttribute("hidden");
+    document.getElementById('tabletraining9').removeAttribute("hidden");
+    document.getElementById('tabletraining10').removeAttribute("hidden");
+}
+function ShowAdvanceTenthLevelApproval() {
+    document.getElementById('tableadvance2').removeAttribute("hidden");
+    document.getElementById('tableadvance3').removeAttribute("hidden");
+    document.getElementById('tableadvance4').removeAttribute("hidden");
+    document.getElementById('tableadvance5').removeAttribute("hidden");
+    document.getElementById('tableadvance6').removeAttribute("hidden");
+    document.getElementById('tableadvance7').removeAttribute("hidden");
+    document.getElementById('tableadvance8').removeAttribute("hidden");
+    document.getElementById('tableadvance9').removeAttribute("hidden");
+    document.getElementById('tableadvance10').removeAttribute("hidden");
 }
 
 function stringToDate(str) {

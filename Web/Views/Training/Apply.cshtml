@@ -12,10 +12,10 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="page-title">Diciplinary Action</h3>
+                <h3 class="page-title">Training</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Services</a></li>
-                    <li class="breadcrumb-item active">Issue Query</li>
+                    <li class="breadcrumb-item active">Apply</li>
                 </ul>
             </div>
         </div>
@@ -27,21 +27,27 @@
             <div class="card">
                 <div class="card-body">
                     <form>
-                        <div class="row">
-                            <div class="col-md-6" onclick="onSelectSchedule()">
-                                <div class="form-group">
-                                    <input type="radio" id="scheduledid" name="scheduled"> Sheduled Training
-                                </div>
-                            </div>
-                            <div class="col-md-6" onclick="onSelectSchedule()">
-                                <div class="form-group">
-                                    <input type="radio" id="unscheduledid" name="unscheduled"> Unscheduled Training
-                                    T
-                                </div>
-                            </div>
+                        <div class="form-group" id="select">
+                            <label>Select Training Type <span class="text-danger">*</span></label>
+                            <select class="select" id="selecttype" onchange="ShowScheduledDiv()">
+                                <option value="" >Select Type</option>
+                                <option value="1">Schedule Training</option>
+                                <option value="2">Unscheduled Training</option>
+                            </select>
                         </div>
-                        <div class="form-group" id="schedulediv" >
-                            <label>Training Topic <span class="text-danger">*</span></label>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" hidden id="showscheduleddivid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group" id="schedulediv">
+                            <label>Scheduled Training Topic <span class="text-danger">*</span></label>
                             <select class="select" id="scheduledtopicid">
                                 <option value="">Select Topic</option>
                                 @foreach (var item in Model.TrainingTopics)
@@ -50,11 +56,7 @@
                                 }
                             </select>
                         </div>
-                        <div class="form-group" id="unschedulediv" hidden>
-                            <label>Training Topic <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" id="unscheduledtopicid">
-                        </div>
-                        <div class="form-group" >
+                        <div class="form-group">
                             <label>Training Year <span class="text-danger">*</span></label>
                             <div class="cal-icon"><input class="form-control" type="text" id="trainingyear"></div>
                         </div>
@@ -73,7 +75,38 @@
                         <div class="submit-section" id="schedulesubmitdiv" onclick="SubmitScheduledTopic()">
                             <button class="btn btn-primary submit-btn">Submit</button>
                         </div>
-                        <div class="submit-section" id="unschedulesubmitdiv" onclick="SubmitUnScheduledTopic()" hidden>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" hidden id="showunscheduleddivid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group" id="unschedulediv">
+                            <label>Unscheduled Training Topic <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" id="unscheduledtopicid">
+                        </div>
+                        <div class="form-group">
+                            <label>Training Year <span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control" type="text" id="trainingyearun"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Start Date<span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control datetimepicker" type="text" id="startdateun"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>End Date<span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control datetimepicker" type="text" id="enddateun"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Other Details <span class="text-danger">*</span></label>
+                            <textarea rows="5" class="form-control" placeholder="Enter your other details here" id="otherdetailsun"></textarea>
+                        </div>
+                        <div class="submit-section" id="unschedulesubmitdiv" onclick="SubmitUnScheduledTopic()">
                             <button class="btn btn-primary submit-btn">Submit</button>
                         </div>
                     </form>
@@ -86,29 +119,16 @@
 
 @section Scripts{
     <script type="text/javascript">
-
-        function onSelectSchedule() {
-            console.log("see ehn");
-            if (document.getElementById('scheduled').checked) {
-                document.getElementById('schedulediv').removeAttribute("hidden");
-                document.getElementById('unschedulediv').setAttribute("hidden", true);
-                document.getElementById('schedulesubmitdiv').removeAttribute("hidden");
-                document.getElementById('unschedulesubmitdiv').setAttribute("hidden", true);
+        function ShowScheduledDiv() {
+            if ($("#selecttype").val() == "1") {
+                document.getElementById('showscheduleddivid').removeAttribute("hidden");
+                document.getElementById('showunscheduleddivid').setAttribute("hidden", true);
             }
-            else if (document.getElementById('unscheduled').checked){
-                document.getElementById('schedulediv').setAttribute("hidden");
-                document.getElementById('unschedulediv').removeAttribute("hidden", true);
-                document.getElementById('schedulesubmitdiv').setAttribute("hidden");
-                document.getElementById('unschedulesubmitdiv').removeAttribute("hidden", true);
+            else {
+                console.log("I just no wan work");
+                document.getElementById('showunscheduleddivid').removeAttribute("hidden");
+                document.getElementById('showscheduleddivid').setAttribute("hidden", true);
             }
-            //sendLeaveForm(leavetypeid, datefrom, dateto, resumptiondate, noofdays, isallowanceadded, remainingdays);
-        }
-
-        function onSelectUnSchedule() {
-            document.getElementById('schedulediv').setAttribute("hidden");
-            document.getElementById('unschedulediv').removeAttribute("hidden", true);
-            document.getElementById('schedulesubmitdiv').setAttribute("hidden");
-            document.getElementById('unschedulesubmitdiv').removeAttribute("hidden", true);
         }
 
         function SubmitScheduledTopic() {
@@ -121,12 +141,12 @@
         }
 
         function SubmitUnScheduledTopic() {
-            var scheduledtopic = $("#scheduledtopicid").val();
-            var trainingyear = $("#trainingyear").val();
-            var startdate = $("#startdate").val();
-            var enddate = $("#enddate").val();
-            var otherdetails = $("#otherdetails").val();
-            ApplyTraining(false, scheduledtopic, trainingyear, startdate, enddate, otherdetails);
+            var unscheduledtopic = $("#unscheduledtopicid").val();
+            var trainingyear = $("#trainingyearun").val();
+            var startdate = $("#startdateun").val();
+            var enddate = $("#enddateun").val();
+            var otherdetails = $("#otherdetailsun").val();
+            ApplyTraining(false, unscheduledtopic, trainingyear, startdate, enddate, otherdetails);
         }
 
         function ApplyTraining(isSchedule, trainingTopic, year, startDate, EndDate, otherDetails) {

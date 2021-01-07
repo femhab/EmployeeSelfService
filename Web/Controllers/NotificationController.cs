@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Business.Interfaces;
@@ -31,7 +30,7 @@ namespace Web.Controllers
                 {
                     return RedirectToAction("Signout", "Employee");
                 }
-
+                //await GeneratePayslipData();
                 NotificationViewModel notificationViewModel = new NotificationViewModel();
                 var notification = await _notificationService.GetByEmployee(authData.Id);
 

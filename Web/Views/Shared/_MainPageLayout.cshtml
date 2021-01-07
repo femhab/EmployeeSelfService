@@ -193,7 +193,7 @@
                             <a href="#"><i class="la la-money"></i> <span> Payroll </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
                                 <li><a asp-controller="Payroll" asp-action="PaymentAdvance">Payment Advance</a></li>
-                                <li><a asp-controller="Payroll" asp-action="Payslip"> Payslip </a></li>
+                                <li><a asp-controller="Payroll" asp-action="GeneratePayslip"> Payslip </a></li>
                             </ul>
                         </li>
                         @*<li>
@@ -223,7 +223,7 @@
                             <a href="#"><i class="la la-graduation-cap"></i> <span> Appraisal </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
                                 <li><a asp-controller="Appraisal" asp-action="Index"> Self Appraisal </a></li>
-                                //<li><a asp-controller="Appraisal" asp-action="PerformanceReview"> Performance Review </a></li>
+                                @*<li><a asp-controller="Appraisal" asp-action="PerformanceReview"> Performance Review </a></li>*@
                             </ul>
                         </li>
 
@@ -254,6 +254,9 @@
                             </li>
                             <li>
                                 <a asp-controller="Admin" asp-action="ManageDepartment"><i class="la la-mail-forward"></i> <span> Manage Department </span></a>
+                            </li>
+                            <li>
+                                <a asp-controller="Admin" asp-action="AddWorkItem"><i class="la la-mail-forward"></i> <span> Manage Work Item </span></a>
                             </li>
                             <li class="submenu">
                                 <a href="#"><i class="la la-mail-forward"></i> <span> Set Appraisal Period </span></a>

@@ -277,7 +277,10 @@
                 <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "leave").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Leave Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}</h3>
+                            <h3 class="card-title">
+                                Leave Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#manage_employee"><i class="fa fa-pencil"></i></a>}
+                            </h3>
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -304,11 +307,15 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "loan").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Loan Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manageloan_employee"><i class="fa fa-pencil"></i></a>}</h3>
-                           
+                            <h3 class="card-title">
+                                Loan Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#manageloan_employee"><i class="fa fa-pencil"></i></a>}
+                            </h3>
+
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -335,11 +342,15 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "transfer").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Transfer Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#managetransfer_employee"><i class="fa fa-pencil"></i></a>}</h3>
-                            
+                            <h3 class="card-title">
+                                Transfer Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#managetransfer_employee"><i class="fa fa-pencil"></i></a>}
+                            </h3>
+
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -366,11 +377,15 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "appraisal").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Appraisal Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin){<a href="#" class="edit-icon" data-toggle="modal" data-target="#manageappraisal_employee"><i class="fa fa-pencil"></i></a>}</h3>
-                           
+                            <h3 class="card-title">
+                                Appraisal Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#manageappraisal_employee"><i class="fa fa-pencil"></i></a>}
+                            </h3>
+
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
                                     <thead>
@@ -397,9 +412,78 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "training").FirstOrDefault().Id">
+                    <div class="card profile-box flex-fill">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                Training Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#managetraining_employee"><i class="fa fa-pencil"></i></a>}
+                            </h3>
+
+                            <div class="table-responsive m-t-15">
+                                <table class="table table-striped custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Approval Work Level</th>
+                                            <th class="text-center">Approval Supervisor/Manager</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "training").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        {
+                                            <tr>
+                                                <td>@item.ApprovalLevel.ToString()</td>
+                                                <td class="text-center">
+                                                    <select class="select" disabled>
+                                                        <option value="" selected>@item.Processor</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "payment advance").FirstOrDefault().Id">
+                    <div class="card profile-box flex-fill">
+                        <div class="card-body">
+                            <h3 class="card-title">Salary Advance Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                            {<a href="#" class="edit-icon" data-toggle="modal" data-target="#manageadvance_employee"><i class="fa fa-pencil"></i></a>}</h3>
+
+                            <div class="table-responsive m-t-15">
+                                <table class="table table-striped custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Approval Work Level</th>
+                                            <th class="text-center">Approval Supervisor/Manager</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "advance").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        {
+                                            <tr>
+                                                <td>@item.ApprovalLevel.ToString()</td>
+                                                <td class="text-center">
+                                                    <select class="select" disabled>
+                                                        <option value="" selected>@item.Processor</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- /Profile Info Tab -->
+
         <!-- Employee Update Tab -->
         <div class="tab-pane fade" id="emp_update">
             <div class="row">
@@ -443,6 +527,7 @@
             </div>       
         </div>
         <!-- /Employee Update Tab -->
+
         <!-- Transfer Tab -->
         <div class="tab-pane fade" id="emp_transfer">
             <div class="row">
@@ -761,6 +846,7 @@
         </div>
     </div>
 </div>
+
 <div id="manageloan_employee" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -928,6 +1014,7 @@
         </div>
     </div>
 </div>
+
 <div id="manageappraisal_employee" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -1095,6 +1182,7 @@
         </div>
     </div>
 </div>
+
 <div id="managetransfer_employee" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -1138,7 +1226,7 @@
                                             <option value="">Select</option>
                                             @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("transfer")))
                                             {
-                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.FirstName</option>
                                             }
                                         </select>
                                     </td>
@@ -1255,6 +1343,342 @@
                         </table>
                     </div>
                     <div class="submit-section" onclick="SubmitTransferApprovalConfig()">
+                        <div class="btn btn-primary submit-btn">Submit</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="managetraining_employee" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Training Approval</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Employee Name <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="@Model.Employee.FirstName @Model.Employee.LastName" class="form-control">
+                                <input type="text" readonly hidden id="empno" value="@Model.Employee.Emp_No" class="form-control">
+                                <input type="text" readonly hidden id="empid" value="@Model.Employee.Id" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
+                                <a onclick="SubmitTrainingCount()"><input class="form-control" type="number" id="maxtrainingcount"><i class="fa fa-search-plus"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive m-t-15">
+                        <table class="table table-striped custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Approval Work Level</th>
+                                    <th class="text-center">Approval Supervisor/Manager</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hideElement">
+                                    <td>First Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining1select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.FirstName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining2" hidden>
+                                    <td>Second Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining2select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining3" hidden>
+                                    <td>Third Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining3select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining4" hidden>
+                                    <td>Fourth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining4select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining5" hidden>
+                                    <td>Fifth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining5select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining6" hidden>
+                                    <td>Sixth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining6select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining7" hidden>
+                                    <td>Seventh Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining7select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining8" hidden>
+                                    <td>Eight Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining8select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining9" hidden>
+                                    <td>Nineth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining9select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tabletraining10" hidden>
+                                    <td>Tenth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tabletraining10select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("training")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="submit-section" onclick="SubmitTrainingApprovalConfig()">
+                        <div class="btn btn-primary submit-btn">Submit</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="manageadvance_employee" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Payment Advance Approval</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Employee Name <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="@Model.Employee.FirstName @Model.Employee.LastName" class="form-control">
+                                <input type="text" readonly hidden id="empno" value="@Model.Employee.Emp_No" class="form-control">
+                                <input type="text" readonly hidden id="empid" value="@Model.Employee.Id" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Maximum Approval Count <span class="text-danger">*</span></label>
+                                <a onclick="SubmitAdvanceCount()"><input class="form-control" type="number" id="maxadvancecount"><i class="fa fa-search-plus"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive m-t-15">
+                        <table class="table table-striped custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Approval Work Level</th>
+                                    <th class="text-center">Approval Supervisor/Manager</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hideElement">
+                                    <td>First Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance1select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.FirstName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance2" hidden>
+                                    <td>Second Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance2select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance3" hidden>
+                                    <td>Third Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance3select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance4" hidden>
+                                    <td>Fourth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance4select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance5" hidden>
+                                    <td>Fifth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance5select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance6" hidden>
+                                    <td>Sixth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance6select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance7" hidden>
+                                    <td>Seventh Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance7select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance8" hidden>
+                                    <td>Eight Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance8select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance9" hidden>
+                                    <td>Nineth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance9select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="hideElement" id="tableadvance10" hidden>
+                                    <td>Tenth Level</td>
+                                    <td class="text-center">
+                                        <select class="select" id="tableadvance10select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.UserRoles.Where(x => x.Role.Description.ToLower().Contains("advance")))
+                                            {
+                                                <option value="@item.Employee.Id">@item.Employee.LastName @item.Employee.LastName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="submit-section" onclick="SubmitAdvanceApprovalConfig()">
                         <div class="btn btn-primary submit-btn">Submit</div>
                     </div>
                 </form>
@@ -1741,6 +2165,15 @@
             var count = $("#maxtransfercount").val();
             sendTransferApprovalCount(count);
         }
+        function SubmitTrainingCount() {
+            var count = $("#maxtrainingcount").val();
+            sendTrainingApprovalCount(count);
+        }
+
+        function SubmitAdvanceCount() {
+            var count = $("#maxadvancecount").val();
+            sendAdvanceApprovalCount(count);
+        }
 
         function SubmitNextOfKin()
         {
@@ -1976,6 +2409,46 @@
                 success: function (response) {
                     if (response.status) {
                         ProcessLoanField(response?.data)
+                    }
+                    else {
+                        countApproval = 0;
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function sendTrainingApprovalCount(count) {
+            $.ajax({
+                url: '@Url.Action("CountProcessor", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: { approvalCount: count},
+                success: function (response) {
+                    if (response.status) {
+                        ProcessTrainingField(response?.data)
+                    }
+                    else {
+                        countApproval = 0;
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function sendAdvanceApprovalCount(count) {
+            $.ajax({
+                url: '@Url.Action("CountProcessor", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: { approvalCount: count},
+                success: function (response) {
+                    if (response.status) {
+                        ProcessAdvanceField(response?.data)
                     }
                     else {
                         countApproval = 0;

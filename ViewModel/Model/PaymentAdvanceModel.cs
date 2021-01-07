@@ -19,5 +19,7 @@ namespace ViewModel.Model
     {
         public PaymentAdvanceResponseModel Eligibility { get; set; }
         public IEnumerable<PaymentAdvanceModel> PaymentAdvance { get; set; }
+        public PayslipResponseModel PayslipResponse { get; set; }
+        public EmployeeModel Employee { get; set; }
     }
 }

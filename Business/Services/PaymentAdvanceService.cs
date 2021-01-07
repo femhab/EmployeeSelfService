@@ -35,11 +35,28 @@ namespace Business.Services
         {
             //check if he has applied during the year
             var check = await GetAll(x => x.CreatedDate.Year == DateTime.Now.Year);
-            if(check.Count() <= 3)
+            var checkMonth = (await GetAll(x => x.TargetDate.Month == model.TargetDate.Month && x.TargetDate.Year == model.TargetDate.Year)).FirstOrDefault();
+            if (checkMonth != null)
+            {
+                return new BaseResponse() { Status = false, Message = ResponseMessage.PaymentAdvanceExist };
+            }
+            if (check.Count() <= 3)
             {
                 _unitOfWork.GetRepository<PaymentAdvance>().Insert(model);
-                await _unitOfWork.SaveChangesAsync();
+                //await _unitOfWork.SaveChangesAsync();
 
+                var checkTracking = await _unitOfWork.GetRepository<PaymentAdvanceTrack>().GetFirstOrDefaultAsync(predicate: x => x.Year == model.TargetDate.Year && x.EmployeeId == model.EmployeeId);
+                if(checkTracking != null)
+                {
+                    checkTracking.Count += 1;
+                    _unitOfWork.GetRepository<PaymentAdvanceTrack>().Update(checkTracking);
+                }
+                else
+                {
+                    var tracking = new PaymentAdvanceTrack() { Count = 1, EmployeeId = model.EmployeeId, Emp_No = model.Emp_No, Id = Guid.NewGuid(), CreatedDate = DateTime.Now, Year = model.TargetDate.Year};
+                    _unitOfWork.GetRepository<PaymentAdvanceTrack>().Insert(tracking);
+                }
+                await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.MaximumPaymentAdvanceApplied };

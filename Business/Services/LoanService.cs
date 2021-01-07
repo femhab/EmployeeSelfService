@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -16,17 +18,32 @@ namespace Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly SqlConnection _sqlConnection;
 
         public LoanService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService)
         {
             _unitOfWork = unitOfWork;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _approvalBoardService = approvalBoardService;
+            _sqlConnection = new SqlConnection(PayrollDbConfig.ConnectionStringUrl);
         }
 
-        public async Task<LoanEligibilityResponseModel> CheckEligibility(string Emp_No)
+        public async Task<LoanEligibilityResponseModel> CheckEligibility(string emp_No)
         {
-            throw new NotImplementedException();
+            decimal basicAmount = 0;
+
+            using (_sqlConnection)
+            {
+                _sqlConnection.Open();
+
+                SqlCommand cmd = new SqlCommand("Select dbo.rpt_getNetPayHis(@EmpNo,  @Entity)", _sqlConnection);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add(new SqlParameter("@EmpNo", emp_No));
+                cmd.Parameters.Add(new SqlParameter("@Entity", emp_No));
+
+                basicAmount = cmd.ExecuteNonQuery();
+            }
+            return new LoanEligibilityResponseModel() { Status = true, Message = ResponseMessage.OperationSuccessful, Loanlimit = (30 / 100) * basicAmount, OutstandingAmount = 0};
         }
 
         public async Task<BaseResponse> Create(Loan model)

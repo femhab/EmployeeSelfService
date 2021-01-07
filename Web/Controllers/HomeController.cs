@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Business.Interfaces;
+using Business.Providers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +18,15 @@ namespace Web.Controllers
     {
         private readonly IAuthService _authService;
         private readonly ICookieHelper _cookieHelper;
+        private readonly ISendGridProvider _sendGridProvider;
+        private readonly IBulkSmsProvider _bulkSmsProvider;
 
-        public HomeController(IAuthService authService, ICookieHelper cookieHelper)
+        public HomeController(IAuthService authService, ICookieHelper cookieHelper, ISendGridProvider sendGridProvider, IBulkSmsProvider bulkSmsProvider)
         {
             _authService = authService;
             _cookieHelper = cookieHelper;
+            _sendGridProvider = sendGridProvider;
+            _bulkSmsProvider = bulkSmsProvider;
         }
 
         public IActionResult Login()
@@ -63,7 +67,8 @@ namespace Web.Controllers
                         var auth = new ApiTokenModel() { Status = result.status, Message = result.message, Token = result.token, RefreshToken = result.refreshToken };
                         await SignIn(auth);
                         ViewData["Message"] = auth.Message;
-                        //await _emailHelper.SendQuickMail(email, "Login Successful", "You just logged in to your account. Contact the support if this is a breach");
+                        //await _sendGridProvider.SendEmail("asbusari@gmail.com", "Login Successful", "You just logged in to your account. Contact the support if this is a breach");
+                        //await _bulkSmsProvider.SendSms("2348033338540", "You just logged in to your account. Contact the support if this is a breach");
                         if (!string.IsNullOrEmpty(returnUrl))
                         {
                             return LocalRedirect(returnUrl ?? "/");

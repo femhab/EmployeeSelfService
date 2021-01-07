@@ -20,12 +20,14 @@ namespace Web.Controllers
         private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
         private readonly IDepartmentService _departmentService;
+        private readonly IApprovalWorkItemService _approvalWorkItemService;
 
-        public AdminController(IEmployeeService employeeService, IRoleService roleService, IMapper mapper, IDepartmentService departmentService)
+        public AdminController(IEmployeeService employeeService, IRoleService roleService, IMapper mapper, IDepartmentService departmentService, IApprovalWorkItemService approvalWorkItemService)
         {
             _employeeService = employeeService;
             _roleService = roleService;
             _departmentService = departmentService;
+            _approvalWorkItemService = approvalWorkItemService;
             _mapper = mapper;
         }
 
@@ -67,6 +69,29 @@ namespace Web.Controllers
                 var roleList = await _roleService.GetAll();
 
                 adminViewModel.Roles = _mapper.Map<IEnumerable<RoleModel>>(roleList);
+                return View(adminViewModel);
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [Route("AddWorkItem")]
+        public async Task<ActionResult> AddWorkItem()
+        {
+            try
+            {
+                var authData = JwtHelper.GetAuthData(Request);
+                if (authData == null)
+                {
+                    return RedirectToAction("Signout", "Employee");
+                }
+
+                AdminViewModel adminViewModel = new AdminViewModel();
+                var workItemList = await _approvalWorkItemService.GetAll();
+
+                adminViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(workItemList);
                 return View(adminViewModel);
             }
             catch (Exception ex)
@@ -180,6 +205,46 @@ namespace Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public async Task<ActionResult> ManageWorkItem(string name)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    ApprovalWorkItem workItem = new ApprovalWorkItem()
+                    {
+                        Name = name,
+                        Description = name + " Service",
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now
+                    };
+                    var response = await _approvalWorkItemService.Create(workItem);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult> DeleteRole(Guid roleId)
         {
             try
@@ -193,6 +258,39 @@ namespace Web.Controllers
                     }
 
                     var response = await _roleService.Delete(roleId);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> DeleteWorkItem(Guid workItemId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var response = await _approvalWorkItemService.Delete(workItemId);
                     return Json(new
                     {
                         status = response.Status,

@@ -15,14 +15,12 @@ namespace Business.Services
     public class RoleService: IRoleService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly SqlConnection _sqlConnection;
         private readonly INotificationService _notificationService;
 
         public RoleService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
         }
 
         public async Task<BaseResponse> Create(Role model)

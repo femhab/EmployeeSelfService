@@ -1,14 +1,10 @@
-﻿using Data.Entities.Common;
-using System;
-
-namespace Data.Entities
+﻿namespace ViewModel.Model
 {
-    public class TrainingCalender: BaseObject
+    public class TrainingCalenderModel: BaseModel
     {
         public int HRTrainingCalenderID { get; set; }
         public int TrainingYear { get; set; }
-        public Guid TopicId { get; set; }
-        public TrainingTopics Topic { get; set; }
+        public string Topic { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string Organiser { get; set; }

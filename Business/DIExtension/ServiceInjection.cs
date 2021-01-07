@@ -4,6 +4,7 @@ using Business.Mapping;
 using Business.Interfaces;
 using Business.Services;
 using Business.Providers.JWT;
+using Business.Providers;
 
 namespace Business.DIExtension
 {
@@ -63,6 +64,11 @@ namespace Business.DIExtension
             services.AddTransient<IDashboardService, DashboardService>();
             services.AddTransient<ITrainingService, TrainingService>();
             services.AddTransient<IPaymentAdvanceService, PaymentAdvanceService>();
+            services.AddTransient<ITrainingCalenderService, TrainingCalenderService>();
+            services.AddTransient<ITrainingFeedbackService, TrainingFeedbackService>();
+            services.AddTransient<IPayslipService, PayslipService>();
+            services.AddTransient<ISendGridProvider, SendGridProvider>();
+            services.AddTransient<IBulkSmsProvider, BulkSmsProvider>();
 
 
             return services;

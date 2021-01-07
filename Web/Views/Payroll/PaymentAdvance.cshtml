@@ -45,7 +45,7 @@
                         @foreach (var item in Model.PaymentAdvance)
                         {
                             <tr class="holiday-upcoming">
-                                <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
+                                <td>@item.TargetDate.ToString("dd MMMM yyyy")</td>
                                 <td>₦@String.Format("{0:#,###0.00}", item.Amount)</td>
                                 <td>@item.Status</td>
                                 <td>Adeeyo</td>
@@ -82,14 +82,14 @@
                 <form>
                     <div class="form-group">
                         <label>Amount <span class="text-danger">*</span></label>
-                        <input class="form-control" type="text">
+                        <input class="form-control" type="text" id="amount">
                     </div>
                     <div class="form-group">
                         <label>Target Period<span class="text-danger">*</span></label>
-                        <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
+                        <div class="cal-icon"><input class="form-control datetimepicker" type="text" id="date"></div>
                     </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
+                    <div class="submit-section" onclick="SubmitPaymentAdvanceDetail()">
+                        <div class="btn btn-primary submit-btn">Submit</div>
                     </div>
                 </form>
             </div>
@@ -121,3 +121,37 @@
     </div>
 </div>
 <!-- /Delete Holiday Modal -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function SubmitPaymentAdvanceDetail()
+        {
+            var amount = $("#amount").val();
+            var date = $("#date").val();
+            sendPaymentAdvanceForm(amount, date);
+        }
+
+        function sendPaymentAdvanceForm(amount, date) {
+            $.ajax({
+                url: '@Url.Action("RequestPaymentAdvance", "Payroll")',
+                type: 'POST',
+                dataType: 'json',
+                data: { amount: amount, date: date },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#add_paymentadvance').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}

@@ -8,5 +8,6 @@ namespace ViewModel.Model
         public IEnumerable<RoleModel> Roles { get; set; }
         public IEnumerable<DepartmentModel> DepartmentList { get; set; }
         public IEnumerable<DepartmentModel> ClearingDepartment { get; set; }
+        public IEnumerable<ApprovalWorkItemModel> ApprovalWorkItem { get; set; }
     }
 }

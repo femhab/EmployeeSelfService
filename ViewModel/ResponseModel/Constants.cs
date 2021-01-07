@@ -12,6 +12,7 @@
         public const string LeaveExist = "You already enjoyed a leave or on a/pending leave request. If it is a recall case, please proceed to request leave recall instead";
         public const string MaximumLeaveReached = "Maximum allowed leave days reached";
         public const string MaximumPaymentAdvanceApplied = "Maximum application in a year is reahed";
+        public const string PaymentAdvanceExist = "You already requested an advance for the month";
         public const string LeaveExecuted = "No record found/ leave process already executed";
         public const string LeaveRecallExecuted = "No record found/ leave recall already requested";
         public const string RecordExist = "Record already exist";
@@ -29,6 +30,7 @@
     public class NotificationAction
     {
         public const string RoleCreateTitle = "New Role Added";
+        public const string FeedbackCreateTitle = "New Feedback";
         public const string DisciplinaryCreateTitle = "New query";
         public const string LeaveCreateTitle = "New Leave";
         public const string NOKCreateTitle = "New Next of Kin";

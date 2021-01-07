@@ -1,0 +1,219 @@
+﻿@model ViewModel.Model.PayrollViewModel
+
+@{
+    ViewData["Title"] = "Payslip";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Payslip</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Payslip</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-white">CSV</button>
+                    <button class="btn btn-white">PDF</button>
+                    <button class="btn btn-white"><i class="fa fa-print fa-lg"></i> Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Select Month <span class="text-danger">*</span></label>
+                            <select class="select">
+                                <option value="">Select Month</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select year<span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <select class="select">
+                                    <option value="">Select Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="payslip-title"> PEERS CONSULTING LTD Staff Payslip for the month of Feb 2019</h4>
+                    <div class="row">
+                        <div class="col-sm-6 m-b-20">
+                            <img src="assets/img/logo2.png" class="inv-logo" alt="">
+                            <ul class="list-unstyled mb-0">
+                                <li><strong>Employee Information</strong></li>
+                                <li>Company Address: </li>
+                                <li>Employee ID: @Model.PayslipResponse.BasicReport.emp_no</li>
+                                <li>Full Name: @Model.PayslipResponse.BasicReport.emp_name</li>
+                                <li>Birth Date:  @Model.Employee.DOB?.ToString("dd MMMM yyyy")</li>
+                                <li>Engagement Date: @Model.Employee.EmploymentDate?.ToString("dd MMMM yyyy")</li>
+                                <li>Grade Level/ Step: @Model.Employee.GradeLevel.Descc/  @Model.PayslipResponse.BasicReport.payGroup</li>
+                                <li>Department:  @Model.Employee.Department.Descc</li>
+                                <li>Position: </li>
+                                <li>Cost Center: </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-6 m-b-20">
+                            <div class="invoice-details">
+                                @*<h3 class="text-uppercase">Payslip #49029</h3>*@
+                                <ul class="list-unstyled">
+                                    <li><strong>Other Details</strong></li>
+                                    <li>PhoneNumber:  </li>
+                                    <li>Tax Status: </li>
+                                    <li>Pay Period:</li>
+                                    <li>Account Number: </li>
+                                    <li>Pension Number: </li>
+                                    <li>Location: @Model.Employee.Location.Descc</li>
+                                    <li>Termination Date: </li>
+                                    <li>Pay Rate: </li>
+                                    <li>Hourly Rate: </li>
+                                    <li>Ordinary Hours: </li>
+                                    <li>Ordinary Days: </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div>
+                                <h4 class="m-b-10"><strong>Earnings</strong></h4>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Pay Item </th>
+                                            <th>Amount</th>
+                                            <th>YTD Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.PayslipResponse.EarningReport)
+                                        {
+                                            <tr>
+                                                <td><strong>@item.earnings</strong> </td>
+                                                <td><span class="float-right">₦@String.Format("{0:#,###0.00}", item.amount)</span></td>
+                                                <td><span class="float-right">₦@String.Format("{0:#,###0.00}", item.ytd_amount)</span></td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td><strong>Total Earnings</strong></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div>
+                                <h4 class="m-b-10"><strong>Deductions</strong></h4>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Pay Item </th>
+                                            <th>Amount</th>
+                                            <th>YTD Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.PayslipResponse.DeductionReport)
+                                        {
+                                            <tr>
+                                                <td><strong>@item.deductions</strong> </td>
+                                                <td><span class="float-right">₦@String.Format("{0:#,###0.00}", item.amount)</span></td>
+                                                <td><span class="float-right">₦@String.Format("{0:#,###0.00}", item.YTD_Amount)</span></td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td><strong>Total Deduction</strong></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <p><strong>Net Salary: ₦@String.Format("{0:#,###0.00}", 0)</strong></p>
+                        </div>
+                        <hr />
+                        <div class="col-sm-6">
+                            <div>
+                                <h4 class="m-b-10"><strong>Employer Contributions</strong></h4>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Contribution </th>
+                                            <th>Amount</th>
+                                            <th>YTD Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Industrial Training Fund</strong> </td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>National Pension Fund</strong> </td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>NHF</strong> </td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>NSITF</strong> </td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Gratuity</strong> </td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Group Life</strong> </td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Company Contribution</strong></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->

@@ -1,0 +1,127 @@
+﻿@model ViewModel.Model.AdminViewModel
+
+@{
+    ViewData["Title"] = "AddWorkItem";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Manage WorkItem</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Admin</a></li>
+                    <li class="breadcrumb-item active">Manage WorkItem</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Add Work Item </label>
+                            <input class="form-control" type="text" id="workitemdescription">
+                        </div>
+                        <div class="submit-section" onclick="SubmitAddWorkItemDetail()">
+                            <div class="btn btn-primary submit-btn">Add WorkItem</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Select WorkItem </label>
+                            <select class="select" id="workitemid">
+                                <option value="">Select Work Item</option>
+                                @foreach (var item in Model.ApprovalWorkItem)
+                                {
+                                    <option value="@item.Id">@item.Description</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="submit-section" onclick="SubmitDeleteWorkItemRequest()">
+                            <div class="btn btn-primary submit-btn">Remove</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function SubmitAddWorkItemDetail()
+        {
+            var workitemdescription = $("#workitemdescription").val();
+
+            sendWorkItemForm(workitemdescription);
+        }
+
+        function SubmitDeleteWorkItemRequest()
+        {
+            var workitemid = $("#workitemid").val();
+
+            DeleteWorkItemForm(workitemid);
+        }
+
+        function sendWorkItemForm(name) {
+            $.ajax({
+                url: '@Url.Action("ManageWorkItem", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { name: name},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message);
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function DeleteWorkItemForm(workItemId) {
+            $.ajax({
+                url: '@Url.Action("DeleteWorkItem", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { workItemId: workItemId},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message);
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}
+
+

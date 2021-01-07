@@ -8,16 +8,13 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.UnitOfWork" Version="2.1.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
+    <PackageReference Include="SendGrid" Version="9.22.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Providers\" />
   </ItemGroup>
 
 </Project>
