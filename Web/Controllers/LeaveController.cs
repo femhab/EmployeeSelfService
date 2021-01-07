@@ -21,15 +21,17 @@ namespace Web.Controllers
         private readonly ILeaveRecallService _leaveRecallService;
         private readonly ILeaveTypeService _leaveTypeService;
         private readonly IEmployeeService _employeeService;
+        private readonly IApprovalBoardService _approvalBoardService;
         private readonly IMapper _mapper;
 
-        public LeaveController(IGradeLevelService gradeLevelService, ILeaveService leaveService, ILeaveTypeService leaveTypeService, IEmployeeService employeeService, IMapper mapper, ILeaveRecallService leaveRecallService)
+        public LeaveController(IGradeLevelService gradeLevelService, ILeaveService leaveService, ILeaveTypeService leaveTypeService, IEmployeeService employeeService, IMapper mapper, ILeaveRecallService leaveRecallService, IApprovalBoardService approvalBoardService)
         {
             _leaveService = leaveService;
             _leaveRecallService = leaveRecallService;
             _gradeLevelService = gradeLevelService;
             _leaveTypeService = leaveTypeService;
             _employeeService = employeeService;
+            _approvalBoardService = approvalBoardService;
             _mapper = mapper;
         }
 
@@ -180,11 +182,13 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
-                    var response = await _leaveService.GetById(leaveId);
+                    var board = await _approvalBoardService.GetById(leaveId);
+
+                    var response = await _leaveService.GetById(board.ServiceId);
                     return Json(new
                     {
                         status = (response != null) ? true : false,
-                        data = new { resumptionDate = response.ResumptionDate.ToString(), dateFrom = response.DateFrom.ToString(), dateTo = response.DateTo.ToString(), noOfDays = response.NoOfDays, leaveType = response.LeaveType, isAllowance = response.IsAllowanceRequested? "Yes":"No", }
+                        data = new { resumptionDate = response.ResumptionDate?.ToString("dddd, dd MMMM yyyy"), dateFrom = response.DateFrom.ToString("dddd, dd MMMM yyyy"), dateTo = response.DateTo.ToString("dddd, dd MMMM yyyy"), noOfDays = response.NoOfDays, leaveType = response.LeaveType, isAllowance = response.IsAllowanceRequested? "Yes":"No", serviceId = response.Id, level = board.ApprovalLevel }
                     });
 
                 }

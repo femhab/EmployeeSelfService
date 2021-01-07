@@ -33,7 +33,8 @@ namespace Business.Services
             {
                 if (data.Status != status)
                 {
-                    data.Status = status;                
+                    data.Status = status;
+                    data.UpdatedDate = DateTime.Now;
                 }
                 else
                 {
@@ -64,7 +65,15 @@ namespace Business.Services
                     };
 
                     await Create(enlistBoard);
-                    await _approvalBoardActiveLevelService.CreateOrUpdate(data.ApprovalWorkItemId, data.ServiceId, (approvalProcessor != null) ? newApprovalLevel : Level.HR);
+                    try
+                    {
+                        await _approvalBoardActiveLevelService.CreateOrUpdate(data.ApprovalWorkItemId, data.ServiceId, (approvalProcessor != null) ? newApprovalLevel : Level.HR);
+                    }
+                    catch(Exception ex)
+                    {
+                        throw ex;
+                    }
+                    
                 }
 
                 await _unitOfWork.SaveChangesAsync();
@@ -101,7 +110,7 @@ namespace Business.Services
          
         public async Task<IEnumerable<ApprovalBoard>> GetByProcessor(Guid processorId)
         {
-            var model = await GetAll(x => x.ApprovalProcessorId == processorId, "Employee,ApprovalWorkItem");
+            var model = await GetAll(x => x.ApprovalProcessorId == processorId && x.Status == ApprovalStatus.Pending, "Employee,ApprovalWorkItem");
             return model;
         }
 
@@ -115,6 +124,12 @@ namespace Business.Services
         {
 
             var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetPagedListAsync(predicate, source => source.OrderBy(c => c.CreatedDate), include: e => e.Include(i => i.Employee).Include(x => x.ApprovalWorkItem).Include(i => i.ApprovalProcessor), pageIndex: pageIndex, pageSize: pageSize);
+            return model;
+        }
+
+        public async Task<ApprovalBoard> GetById(Guid id)
+        {
+            var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
             return model;
         }
     }

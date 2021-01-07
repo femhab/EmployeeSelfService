@@ -61,7 +61,7 @@ namespace Business.Services
 
                     payslipResponseModel.BasicReport = _mapper.Map<BasicReportModel>(userBasic);
 
-                    var userEarn = _payrollContext.Set<EarningReportModel>().FromSql($"dbo.RPT_GETEMPEARN @prz_entityCode = {resource.prz_entityCode}, @startPayGroup = {resource.prz_paygrpCode}, @stopPayGroup = {resource.prz_paygrpCode}, @startDivision = {employee.Division.DivisonCode}, @stopDivision = {employee.Division.DivisonCode}, @stopDept = { employee.Department.DeptCode}, @startDept = { employee.Department.DeptCode}, @startNo = { employee.Emp_No}, @stopNo = { employee.Emp_No}, @pay_period = '2020 - 10 - 31 00:00:00.000', @EMP_NO = {employee.Emp_No}").ToList();
+                    var userEarn = _payrollContext.Set<EarningReportModel>().FromSql($"dbo.RPT_GETEMPEARNESS  @emp_no = {employee.Emp_No}, @pay_period = '2020-10-31'").ToList();
                     var earningItem = new List<EarningReportModel>();
                     foreach(var item in userEarn)
                     {
@@ -70,7 +70,7 @@ namespace Business.Services
                     }
                     payslipResponseModel.EarningReport = earningItem;
 
-                    var userDed = _payrollContext.Set<DeductionReportModel>().FromSql($"dbo.RPT_GETEMPDED @prz_entityCode = {resource.prz_entityCode}, @startPayGroup = {resource.prz_paygrpCode}, @stopPayGroup = {resource.prz_paygrpCode}, @startDivision = {employee.Division.DivisonCode}, @stopDivision = {employee.Division.DivisonCode}, @stopDept = { employee.Department.DeptCode}, @startDept = { employee.Department.DeptCode}, @startNo = { employee.Emp_No}, @stopNo = { employee.Emp_No}, @pay_period = '2020 - 10 - 31 00:00:00.000', @emp_no = {employee.Emp_No}").ToList();
+                    var userDed = _payrollContext.Set<DeductionReportModel>().FromSql($"dbo.RPT_GETEMPDEDESS @emp_no = {employee.Emp_No}, @pay_period = '2020-10-31'").ToList();
                     var deductionItem = new List<DeductionReportModel>();
                     foreach (var item in userDed)
                     {

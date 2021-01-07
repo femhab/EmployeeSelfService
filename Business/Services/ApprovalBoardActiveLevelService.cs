@@ -37,7 +37,7 @@ namespace Business.Services
             else
             {
                 check.ActiveLevel = activeLevel;
-                _unitOfWork.GetRepository<ApprovalBoardActiveLevel>().Insert(check);
+                _unitOfWork.GetRepository<ApprovalBoardActiveLevel>().Update(check);
 
                 await _unitOfWork.SaveChangesAsync();
                 return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };

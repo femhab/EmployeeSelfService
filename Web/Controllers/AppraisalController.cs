@@ -17,6 +17,7 @@ namespace Web.Controllers
         private readonly IAppraisalRatingService _appraisalRatingService;
         private readonly IAppraisalCategoryService _appraisalCategoryService;
         private readonly IAppraisalCategoryItemService _appraisalCategoryItemService;
+        private readonly IApprovalBoardService _approvalBoardService;
         private readonly IEmployeeAppraisalService _employeeAppraisalService;
         private readonly IAppraisalItemService _appraisalItemService;
         private readonly IAppraisalPeriodService _appraisalPeriodService;
@@ -24,7 +25,7 @@ namespace Web.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly IMapper _mapper;
 
-        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService, IEmployeeAppraisalService employeeAppraisalService, IAppraisalItemService appraisalItemService)
+        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService, IEmployeeAppraisalService employeeAppraisalService, IAppraisalItemService appraisalItemService, IApprovalBoardService approvalBoardService)
         {
             _appraisalRatingService = appraisalRatingService;
             _appraisalCategoryService = appraisalCategoryService;
@@ -32,6 +33,7 @@ namespace Web.Controllers
             _appraisalPeriodService = appraisalPeriodService;
             _appraisalItemService = appraisalItemService;
             _employeeService = employeeService;
+            _approvalBoardService = approvalBoardService;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _employeeAppraisalService = employeeAppraisalService;
             _mapper = mapper;
@@ -196,8 +198,8 @@ namespace Web.Controllers
                     {
                         return RedirectToAction("Signout", "Employee");
                     }
-
-                    var response = await _appraisalItemService.GetByAppraisal(appraisalId);
+                    var board = await _approvalBoardService.GetById(appraisalId); //get board detail
+                    var response = await _appraisalItemService.GetByAppraisal(board.ServiceId);
                     
                     return Json(new
                     {

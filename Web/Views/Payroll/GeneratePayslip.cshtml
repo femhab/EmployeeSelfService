@@ -65,15 +65,15 @@
                             <img src="assets/img/logo2.png" class="inv-logo" alt="">
                             <ul class="list-unstyled mb-0">
                                 <li><strong>Employee Information</strong></li>
-                                <li>Company Address: </li>
+                                <li>Company Address: @Model.PayslipResponse.BasicReport.companyaddress</li>
                                 <li>Employee ID: @Model.PayslipResponse.BasicReport.emp_no</li>
                                 <li>Full Name: @Model.PayslipResponse.BasicReport.emp_name</li>
                                 <li>Birth Date:  @Model.Employee.DOB?.ToString("dd MMMM yyyy")</li>
                                 <li>Engagement Date: @Model.Employee.EmploymentDate?.ToString("dd MMMM yyyy")</li>
                                 <li>Grade Level/ Step: @Model.Employee.GradeLevel.Descc/  @Model.PayslipResponse.BasicReport.payGroup</li>
                                 <li>Department:  @Model.Employee.Department.Descc</li>
-                                <li>Position: </li>
-                                <li>Cost Center: </li>
+                                <li>Position:  </li>
+                                <li>Cost Center: @Model.PayslipResponse.BasicReport.costcenter</li>
                             </ul>
                         </div>
                         <div class="col-sm-6 m-b-20">
@@ -84,14 +84,14 @@
                                     <li>PhoneNumber:  </li>
                                     <li>Tax Status: </li>
                                     <li>Pay Period:</li>
-                                    <li>Account Number: </li>
-                                    <li>Pension Number: </li>
+                                    <li>Account Number: @Model.PayslipResponse.BasicReport.accountno</li>
+                                    <li>Pension Number: @Model.PayslipResponse.BasicReport.PFA</li>
                                     <li>Location: @Model.Employee.Location.Descc</li>
                                     <li>Termination Date: </li>
-                                    <li>Pay Rate: </li>
-                                    <li>Hourly Rate: </li>
-                                    <li>Ordinary Hours: </li>
-                                    <li>Ordinary Days: </li>
+                                    <li>Pay Rate: @Model.PayslipResponse.BasicReport.Rate</li>
+                                    <li>Hourly Rate: @Model.PayslipResponse.BasicReport.HourlyRate</li>
+                                    <li>Ordinary Hours: @Model.PayslipResponse.BasicReport.OrdinaryHours</li>
+                                    <li>Ordinary Days: @Model.PayslipResponse.BasicReport.OrdinaryDays</li>
                                 </ul>
                             </div>
                         </div>
@@ -173,8 +173,8 @@
                                     <tbody>
                                         <tr>
                                             <td><strong>Industrial Training Fund</strong> </td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.ITF</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.YTD_ITF</span></td>
                                         </tr>
                                         <tr>
                                             <td><strong>National Pension Fund</strong> </td>
@@ -183,23 +183,23 @@
                                         </tr>
                                         <tr>
                                             <td><strong>NHF</strong> </td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.NHF</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.YTD_NHFA</span></td>
                                         </tr>
                                         <tr>
                                             <td><strong>NSITF</strong> </td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.NSITF</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.YTD_NSITF</span></td>
                                         </tr>
                                         <tr>
                                             <td><strong>Gratuity</strong> </td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.GRATUIT</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.YTD_GRATUIT</span></td>
                                         </tr>
                                         <tr>
                                             <td><strong>Group Life</strong> </td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
-                                            <td><span class="float-right">₦@String.Format("{0:#,###0.00}", 0)</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.GRPLIFE</span></td>
+                                            <td><span class="float-right">₦@Model.PayslipResponse.BasicReport.YTD_GRPLIFE</span></td>
                                         </tr>
                                         <tr>
                                             <td><strong>Total Company Contribution</strong></td>

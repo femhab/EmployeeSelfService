@@ -19,11 +19,11 @@ namespace ViewModel.ServiceModel
             });
             modelBuilder.Entity<EarningReportModel>(f =>
             {
-                f.HasKey(e => e.prz_payTypCode);
+                f.HasKey(e => e.amount);
             });
             modelBuilder.Entity<DeductionReportModel>(f =>
             {
-                f.HasKey(e => e.deductions);
+                f.HasKey(e => e.amount);
             });
 
             base.OnModelCreating(modelBuilder);

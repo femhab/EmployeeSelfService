@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
+using Data.Entities;
 using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,15 +20,17 @@ namespace Web.Controllers
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly IEmployeeAppraisalService _employeeAppraisalService;
         private readonly IDashboardService _dashboardService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public DashboardController(IApprovalBoardService approvalBoardService, IMapper mapper, IDashboardService dashboardService, IAppraisalCategoryService appraisalCategoryService, IAppraisalRatingService appraisalRatingService, IEmployeeAppraisalService employeeAppraisalService)
+        public DashboardController(IApprovalBoardService approvalBoardService, IMapper mapper, IDashboardService dashboardService, IAppraisalCategoryService appraisalCategoryService, IAppraisalRatingService appraisalRatingService, IEmployeeAppraisalService employeeAppraisalService, IUnitOfWork unitOfWork)
         {
             _appraisalRatingService = appraisalRatingService;
             _approvalBoardService = approvalBoardService;
             _appraisalCategoryService = appraisalCategoryService;
             _employeeAppraisalService = employeeAppraisalService;
             _dashboardService = dashboardService;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -79,7 +83,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApprovalBoardAction(Guid ProcessorId, ApprovalStatus status, Level approvalLevel, Guid serviceId, Guid approvalWorkItemId)
+        public async Task<ActionResult> ApprovalBoardAction(bool status, Level approvalLevel, Guid serviceId)
         {
             try
             {
@@ -90,7 +94,8 @@ namespace Web.Controllers
                     {
                         return RedirectToAction("Signout", "Employee");
                     }
-                    var response = await _approvalBoardService.ApprovalAction(ProcessorId, status, approvalLevel, serviceId, approvalWorkItemId);
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("leave"));
+                    var response = await _approvalBoardService.ApprovalAction(authData.Id, status? ApprovalStatus.Approved: ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
                     return Json(new
                     {
                         status = response.Status,
