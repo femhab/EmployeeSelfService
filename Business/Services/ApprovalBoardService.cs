@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using Data.Entities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Configuration;
 using ViewModel.ResponseModel;
 
 namespace Business.Services
@@ -17,12 +20,19 @@ namespace Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
+        private readonly SqlConnection _sqlConnection;
+        private readonly SqlConnection _prSqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public ApprovalBoardService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService)
+
+        public ApprovalBoardService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
+            _configuration = configuration;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
+            _prSqlConnection = new SqlConnection(_configuration["ConnectionStrings:PRServerConnection"]);
         }
 
         public async Task<BaseResponse> ApprovalAction(Guid ProcessorId, ApprovalStatus status, Level approvalLevel, Guid serviceId, Guid approvalWorkItemId)
@@ -68,6 +78,26 @@ namespace Business.Services
                     try
                     {
                         await _approvalBoardActiveLevelService.CreateOrUpdate(data.ApprovalWorkItemId, data.ServiceId, (approvalProcessor != null) ? newApprovalLevel : Level.HR);
+                        if(enlistBoard.ApprovalLevel == Level.HR)
+                        {
+                            var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ApprovalWorkItemId);
+                            if (approvalWorkItem.Name.ToLower() == "leave")
+                            {
+                                var leave = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
+                                await WriteLeaveToHR(leave);
+                            }
+                            else if (approvalWorkItem.Name.ToLower() == "training")
+                            {
+                                var training = await _unitOfWork.GetRepository<Training>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
+                                var trainingCalender = await _unitOfWork.GetRepository<TrainingCalender>().GetFirstOrDefaultAsync(predicate: x => x.Topic.Title.ToLower() == training.TrainingTopic.ToLower());
+                                await WriteTrainingToHR(training, trainingCalender.HRTrainingCalenderID );
+                            }
+                            else if(approvalWorkItem.Name.ToLower() == "loan")
+                            {
+                                var loan = await _unitOfWork.GetRepository<Loan>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
+                                await WriteLoanToHR(loan);
+                            }
+                        }
                     }
                     catch(Exception ex)
                     {
@@ -131,6 +161,162 @@ namespace Business.Services
         {
             var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
             return model;
+        }
+
+        public async Task<ApprovalBoard> GetUnsignedAppraisal(Guid serviceId)
+        {
+            var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: c => c.ServiceId == serviceId && c.SignOff == false);
+            return model;
+        }
+
+        public async Task<BaseResponse> SignOffAppraisal(Guid appraisalId)
+        {
+            var model = await GetUnsignedAppraisal(appraisalId);
+            model.SignOff = true;
+            if(model != null)
+            {
+                _unitOfWork.GetRepository<ApprovalBoard>().Update(model);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            return new BaseResponse() { Status = true, Message = ResponseMessage.SignOffSuccessful };
+        }
+
+        public async Task WriteLeaveToHR(Leave leave)
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                try
+                {
+                    cmd.Connection = _sqlConnection;
+                    cmd.CommandType = CommandType.Text;
+                    var leaveType = "";
+                    if(leave.LeaveType.Class == LeaveClass.Annual)
+                    {
+                        leaveType = "ANU";
+                    }
+                    if (leave.LeaveType.Class == LeaveClass.Casual)
+                    {
+                        leaveType = "CAS";
+                    }
+                    if (leave.LeaveType.Class == LeaveClass.Exam)
+                    {
+                        leaveType = "EXM";
+                    }
+                    if (leave.LeaveType.Class == LeaveClass.Maternity)
+                    {
+                        leaveType = "MAT";
+                    }
+                    if (leave.LeaveType.Class == LeaveClass.Sick)
+                    {
+                        leaveType = "SIK";
+                    }
+                    if (leave.LeaveType.Class == LeaveClass.Study)
+                    {
+                        leaveType = "STD";
+                    }
+
+                    cmd.CommandText = @"INSERT INTO HREmpLeaveAct(Emp_No,LeaveCode,fromm,too,leave_days,resum_date,Emp_Comment,FromDate,ToDate,Status,HRStatus,DateOfApplication,LeaveAllowance,Insertusername,InsertTransacDate,InsertTransacType) 
+                                VALUES(@param1,@param2,@param3,@param4,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14,@param15)"; //HREmpLeaveActId @param16
+                    cmd.Parameters.AddWithValue("@param1", leave.Emp_No);
+                    cmd.Parameters.AddWithValue("@param2", leaveType);
+                    cmd.Parameters.AddWithValue("@param3", leave.DateFrom);
+                    cmd.Parameters.AddWithValue("@param4", leave.DateTo);
+                    //cmd.Parameters.AddWithValue("@param5", leave.RemainingDays); //cahnge to leave days
+                    cmd.Parameters.AddWithValue("@param6", leave.ResumptionDate);
+                    cmd.Parameters.AddWithValue("@param7", "");
+                    cmd.Parameters.AddWithValue("@param8", leave.DateFrom.ToString());
+                    cmd.Parameters.AddWithValue("@param9", leave.DateTo.ToString());
+                    cmd.Parameters.AddWithValue("@param10", "");
+                    cmd.Parameters.AddWithValue("@param11", 0);
+                    cmd.Parameters.AddWithValue("@param12", leave.CreatedDate);
+                    cmd.Parameters.AddWithValue("@param13", leave.IsAllowanceRequested);
+                    cmd.Parameters.AddWithValue("@param14", "ESS");
+                    cmd.Parameters.AddWithValue("@param15", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@param16", "Insert");
+                    cmd.Parameters.AddWithValue("@param17", 0);
+
+                    _sqlConnection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+        }
+
+        public async Task WriteAppraisalToHR()
+        {
+
+        }
+
+        public async Task WriteTrainingToHR(Training training, int trainingCalenderId)
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                try
+                {
+                    cmd.Connection = _sqlConnection;
+                    cmd.CommandType = CommandType.Text;
+
+                    cmd.CommandText = @"INSERT INTO EmployeeTrainings(New_TrainingCalendarID,AlternateTopic,AltStartDate,AltEndDate,HRStatus,Emp_No) 
+                                VALUES(,@param2,@param3,@param4,@param5,@param6,@param7)"; //EmployeeTrainingsID @param1
+                    //cmd.Parameters.AddWithValue("@param1", 0);
+                    cmd.Parameters.AddWithValue("@param2", trainingCalenderId);
+                    cmd.Parameters.AddWithValue("@param3", training.TrainingTopic);
+                    cmd.Parameters.AddWithValue("@param4", training.StartDate);
+                    cmd.Parameters.AddWithValue("@param5", training.EndDate);
+                    cmd.Parameters.AddWithValue("@param6", 0);
+                    cmd.Parameters.AddWithValue("@param7", training.Emp_No);
+
+                    _sqlConnection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+        }
+
+        public async Task WriteLoanToHR(Loan loan)
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                try
+                {
+                    cmd.Connection = _prSqlConnection;
+                    cmd.CommandType = CommandType.Text;
+
+                    cmd.CommandText = @"INSERT INTO PRLNAPRV(emp_no,start_date,end_date,amt_rqst,amt_aprv,no_of_pay,mon_ded,hrstatus,FromDate,ToDate,ValueDate,Insertusername,InsertTransacDate,InsertTransacType) 
+                                VALUES(@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14,@param15)"; //PRLNAPRVId @param1
+                    //cmd.Parameters.AddWithValue("@param1", 0);
+                    cmd.Parameters.AddWithValue("@param2", loan.Emp_No);
+                    cmd.Parameters.AddWithValue("@param3", loan.StartDate);
+                    cmd.Parameters.AddWithValue("@param4", loan.EndDate);
+                    cmd.Parameters.AddWithValue("@param5", loan.AmountRequested);
+                    cmd.Parameters.AddWithValue("@param6", loan.AmountApproved);
+                    cmd.Parameters.AddWithValue("@param7", loan.NoOfInstallment);
+                    cmd.Parameters.AddWithValue("@param8", loan.InstallmentAmount);
+                    cmd.Parameters.AddWithValue("@param9", 0);
+                    cmd.Parameters.AddWithValue("@param10", loan.StartDate.ToString());
+                    cmd.Parameters.AddWithValue("@param11", loan.EndDate.ToString());
+                    cmd.Parameters.AddWithValue("@param12", loan.CreatedDate.ToString());
+                    cmd.Parameters.AddWithValue("@param13", "ESS");
+                    cmd.Parameters.AddWithValue("@param14", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@param15", "Insert");
+
+                    _sqlConnection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
         }
     }
 }

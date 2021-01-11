@@ -118,7 +118,7 @@
                                     @foreach (var item in Model.Employeee)
                                     {
 
-                                        <option value="@item.Emp_No">@item.Emp_No - @item.FirstName  @item.LastName </option>
+                                        <option value="@item.Emp_No">@item.Emp_No - @item.first_Name  @item.last_Name </option>
                                     }
                                 </select>
                             </div>
@@ -307,10 +307,6 @@
                 lastname: {
                     required: true,
                 },
-                email: {
-                    required: true,
-                    email:true
-                },
                 password: {
                     required: true,
                 },
@@ -332,10 +328,6 @@
                 },
                 lastname: {
                     required: "Employee Last name required"
-                },
-                email: {
-                    required: "Employee First name required",
-                    email: "Valid email required"
                 },
                 password: {
                     required: "Password field required",
@@ -383,10 +375,10 @@
             unregisteredList.forEach(function (entry) {
                if (entry.emp_No == pendingUser) {
                     $("#empno").val(entry.emp_No);
-                    $("#firstname").val(entry.firstName);
-                    $("#lastname").val(entry.lastName);
-                    $("#username").val(entry.userName);
-                    $("#email").val(entry.emailAddress);
+                   $("#firstname").val(entry.first_Name);
+                   $("#lastname").val(entry.last_Name);
+                   $("#username").val(entry.mid_Name);
+                   $("#email").val(entry.Employee_Email);
                 }
             });
             handleNonEmptyInput();

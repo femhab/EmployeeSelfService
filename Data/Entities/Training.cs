@@ -13,5 +13,6 @@ namespace Data.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool IsScheduled { get; set; }
+        public string OtherDetails { get; set; }
     }
 }

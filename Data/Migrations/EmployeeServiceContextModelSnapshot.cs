@@ -331,6 +331,8 @@ namespace Data.Migrations
 
                     b.Property<Guid>("ServiceId");
 
+                    b.Property<bool>("SignOff");
+
                     b.Property<int>("Status");
 
                     b.Property<DateTime?>("UpdatedDate");
@@ -1683,6 +1685,8 @@ namespace Data.Migrations
 
                     b.Property<string>("ModifiedBy");
 
+                    b.Property<string>("OtherDetails");
+
                     b.Property<DateTime>("StartDate");
 
                     b.Property<string>("TrainingTopic");
@@ -1696,6 +1700,90 @@ namespace Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("Trainings");
+                });
+
+            modelBuilder.Entity("Data.Entities.TrainingCalender", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal>("AmtPerHead");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<DateTime?>("EndDate");
+
+                    b.Property<int>("HRTrainingCalenderID");
+
+                    b.Property<int?>("HoursPerDay");
+
+                    b.Property<bool>("InternalFlag");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<int?>("IsInternational");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("Organiser");
+
+                    b.Property<DateTime?>("StartDate");
+
+                    b.Property<Guid>("TopicId");
+
+                    b.Property<int?>("TrainingRoomID");
+
+                    b.Property<int?>("TrainingYear");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.Property<string>("Username");
+
+                    b.Property<string>("Venue");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("TrainingCalender");
+                });
+
+            modelBuilder.Entity("Data.Entities.TrainingNomination", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Emp_No");
+
+                    b.Property<Guid>("EmployeeId");
+
+                    b.Property<int>("HRTrainingCalendarID");
+
+                    b.Property<int>("HRTrainingNominationID");
+
+                    b.Property<bool>("IsApplied");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<Guid>("TrainingCalenderId");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("TrainingCalenderId");
+
+                    b.ToTable("TrainingNomination");
                 });
 
             modelBuilder.Entity("Data.Entities.TrainingTopics", b =>
@@ -2293,6 +2381,27 @@ namespace Data.Migrations
                     b.HasOne("Data.Entities.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Data.Entities.TrainingCalender", b =>
+                {
+                    b.HasOne("Data.Entities.TrainingTopics", "Topic")
+                        .WithMany()
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Data.Entities.TrainingNomination", b =>
+                {
+                    b.HasOne("Data.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Data.Entities.TrainingCalender", "TrainingCalender")
+                        .WithMany()
+                        .HasForeignKey("TrainingCalenderId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

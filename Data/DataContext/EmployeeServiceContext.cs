@@ -58,6 +58,8 @@ namespace Data.DataContext
         public DbSet<Transfer>  Transfers { get; set; }
         public DbSet<Training> Trainings { get; set; }
         public DbSet<TrainingTopics> TrainingTopics { get; set; }
+        public DbSet<TrainingCalender> TrainingCalender { get; set; }
+        public DbSet<TrainingNomination> TrainingNomination { get; set; }
         public DbSet<Unit>  Units { get; set; }
         public DbSet<UserRole> EmployeeRoles { get; set; }
 

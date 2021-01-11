@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ViewModel.ResponseModel;
 using ViewModel.ServiceModel;
 
@@ -17,14 +18,16 @@ namespace Business.Services
         private readonly ServiceContext _dbContext;
         private readonly IUnitOfWork _unitOfWork;
         private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public DepartmentService(ServiceContext dbContext, IUnitOfWork unitOfWork)
+        public DepartmentService(ServiceContext dbContext,IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _dbContext = dbContext;
             _unitOfWork = unitOfWork;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _configuration = configuration;
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
         }
-
+        
         public async Task<IEnumerable<Department>> GetAll(Expression<Func<Department, bool>> predicate, string include = null, bool includeDeleted = false)
         {
             var model = await _unitOfWork.GetRepository<Department>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));

@@ -463,7 +463,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "advance").OrderBy(x => x.ApprovalLevel).Take(5))
+                                        @foreach (var item in Model.EmployeeApprovalconfig.Where(x => x.ApprovalWorkItem.Name.ToLower() == "payment advance").OrderBy(x => x.ApprovalLevel).Take(5))
                                         {
                                             <tr>
                                                 <td>@item.ApprovalLevel.ToString()</td>
@@ -2343,6 +2343,80 @@
             }
             if (maxcount >= 10 ) {
                 dict[10] = $("#tabletransfer10select").val();
+            }
+
+            AddApprovalConfigs(workItem, empid, empno, dict, maxcount);
+        }
+
+        function SubmitTrainingApprovalConfig() {
+            var dict = new Object();
+            var maxcount = $("#maxtrainingcount").val();
+            var empno = $("#empno").val();
+            var empid = $("#empid").val();
+            dict[1] = $("#tabletraining1select").val();
+            if (maxcount >= 2) {
+                dict[2] = $("#tabletraining2select").val();
+            }
+            if (maxcount >= 3) {
+                dict[3] = $("#tabletraining3select").val();
+            }
+            if (maxcount >= 4) {
+                dict[4] = $("#tabletraining4select").val();
+            }
+            if (maxcount >= 5) {
+                dict[5] = $("#tabletraining5select").val();
+            }
+            if (maxcount >= 6) {
+                dict[6] = $("#tabletraining6select").val();
+            }
+            if (maxcount >= 7) {
+                dict[7] = $("#tabletraining7select").val();
+            }
+            if (maxcount >= 8) {
+                dict[8] = $("#tabletraining8select").val();
+            }
+            if (maxcount >= 9) {
+                dict[9] = $("#tabletraining9select").val();
+            }
+            if (maxcount >= 10) {
+                dict[10] = $("#tabletraining10select").val();
+            }
+
+            AddApprovalConfigs(workItem, empid, empno, dict, maxcount);
+        }
+
+        function SubmitAdvanceApprovalConfig() {
+            var dict = new Object();
+            var maxcount = $("#maxadvancecount").val();
+            var empno = $("#empno").val();
+            var empid = $("#empid").val();
+            dict[1] = $("#tableadvance1select").val();
+            if (maxcount >= 2) {
+                dict[2] = $("#tableadvance2select").val();
+            }
+            if (maxcount >= 3) {
+                dict[3] = $("#tableadvance3select").val();
+            }
+            if (maxcount >= 4) {
+                dict[4] = $("#tableadvance4select").val();
+            }
+            if (maxcount >= 5) {
+                dict[5] = $("#tableadvance5select").val();
+            }
+            if (maxcount >= 6) {
+                dict[6] = $("#tableadvance6select").val();
+            }
+            if (maxcount >= 7) {
+                dict[7] = $("#tableadvance7select").val();
+            }
+            if (maxcount >= 8) {
+                dict[8] = $("#tableadvance8select").val();
+            }
+            if (maxcount >= 9) {
+                dict[9] = $("#tableadvance9select").val();
+            }
+            if (maxcount >= 10) {
+                dict[10] = $("#tableadvance10select").val();
             }
 
             AddApprovalConfigs(workItem, empid, empno, dict, maxcount);

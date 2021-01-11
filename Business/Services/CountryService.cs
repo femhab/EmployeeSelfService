@@ -1,6 +1,7 @@
 ﻿using Business.Interfaces;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -16,11 +17,13 @@ namespace Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public CountryService(IUnitOfWork unitOfWork)
+        public CountryService(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _configuration = configuration;
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
         }
 
         public async Task<BaseResponse> Refresh()

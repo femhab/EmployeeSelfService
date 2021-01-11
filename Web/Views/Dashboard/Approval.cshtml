@@ -96,11 +96,26 @@
                                             }
                                             @if (item.ApprovalWorkItem.Name.ToLower().Contains("appraisal"))
                                             {
-                                                <a class="dropdown-item" id="@item.Id" onclick="OnAppraisalSelect(this.id)" data-toggle="modal" data-target="#review_appraisal"><i class="fa fa-list m-r-5"></i>Appraisal Detail</a>
+                                                @if (item.SignOff)
+                                                {
+                                                    <a class="dropdown-item" id="@item.Id" onclick="OnAppraisalSelect(this.id)" data-toggle="modal" data-target="#review_appraisal"><i class="fa fa-list m-r-5"></i>Appraisal Detail</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="dropdown-item"><i class="fa fa-list m-r-5"></i>Awaiting Signoff</a>
+                                                }
                                             }
                                             @if (item.ApprovalWorkItem.Name.ToLower().Contains("transfer"))
                                             {
                                                 <a class="dropdown-item" href="#"><i class="fa fa-list m-r-5"></i>Transfer Detail</a>
+                                            }
+                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("payment advance"))
+                                            {
+                                                <a class="dropdown-item" href="#"><i class="fa fa-list m-r-5"></i>Payment Advance Detail</a>
+                                            }
+                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("training"))
+                                            {
+                                                <a class="dropdown-item" id="@item.Id" onclick="OnTrainingSelect(this.id)" data-toggle="modal" data-target="#training_review"><i class="fa fa-list m-r-5"></i>Training Detail</a>
                                             }
 
                                         </div>
@@ -130,7 +145,7 @@
                     <div class="form-group">
                         <label>Leave Type <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" readonly type="text" id="leavetypeid">
+                            <input class="form-control" readonly type="text" id="leavetypeid">
                         </div>
                     </div>
                     <div class="form-group">
@@ -183,7 +198,6 @@
     </div>
 </div>
 <!-- /Review Leave Modal -->
-
 <!-- Review Performance Appraisal Modal -->
 <div id="review_appraisal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -198,53 +212,53 @@
                 <form>
                     <div class="row" id="appendAppraisal">
                         @*@foreach (var item in Model.AppraisalCategories)
-                        {
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-header" style="background-color:#daa520">
-                                        <h4 class="card-title mb-0" id="categorydescription">@item.Description</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table mb-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Indicator</th>
-                                                        <th>Employee Value</th>
-                                                        <th>Supervisor Value</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>CategoryItem Name</td>
-                                                        <td>Initial Value</td>
-                                                        <td>
-                                                            <select name="customer_experience" class="form-control">
-                                                                <option value="">Select New</option>
-                                                                @foreach (var rating in Model.AppraisalRatings)
-                                                                {
-                                                                    <option value="@rating.Id">@rating.Description</option>
-                                                                }
-                                                            </select>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                            {
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header" style="background-color:#daa520">
+                                            <h4 class="card-title mb-0" id="categorydescription">@item.Description</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Indicator</th>
+                                                            <th>Employee Value</th>
+                                                            <th>Supervisor Value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>CategoryItem Name</td>
+                                                            <td>Initial Value</td>
+                                                            <td>
+                                                                <select name="customer_experience" class="form-control">
+                                                                    <option value="">Select New</option>
+                                                                    @foreach (var rating in Model.AppraisalRatings)
+                                                                    {
+                                                                        <option value="@rating.Id">@rating.Description</option>
+                                                                    }
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        }*@
+                            }*@
                     </div>
                     <div class="form-group" hidden>
                         <label><span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control" readonly type="text" id="level">
-                            <input class="form-control" readonly type="text" id="serviceid">
+                            <input class="form-control" readonly type="text" id="appraisallevel">
+                            <input class="form-control" readonly type="text" id="appraisalserviceid">
                         </div>
                     </div>
-                    <div class="row" onclick="RejectAppraisalAction()">
-                        <div class="col-6">
+                    <div class="row">
+                        <div class="col-6" onclick="RejectAppraisalAction()">
                             <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
                         </div>
                         <div class="col-6" onclick="ApprovedAppraisalAction()">
@@ -258,9 +272,69 @@
 </div>
 <!-- Review Performance Appraisal Modal -->
 
+<!-- Review Training Modal -->
+<div id="training_review" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Training Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Training Topic <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control" readonly type="text" id="trainingtopic">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Training Year <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control" readonly type="text" id="trainingyear">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="trainingstartdate">
+                        </div>
+                    </div>
+                    <div class="form-group" id="datetodiv">
+                        <label>End Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="trainingenddate">
+                        </div>
+                    </div>
+
+                    <div class="form-group" hidden>
+                        <label><span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control" readonly type="text" id="traininglevel">
+                            <input class="form-control" readonly type="text" id="trainingserviceid">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6" onclick="RejectTrainingAction()">
+                            <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
+                        </div>
+                        <div class="col-6" onclick="ApprovedTrainingAction()">
+                            <a class="btn btn-primary continue-btn">Approve <i class="fa fa-check text-success"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Review Leave Modal -->
+
 @section Scripts{
     <script type="text/javascript">
-
+        var prefixValue = "";
         var appraisalList = JSON.parse('@Json.Serialize(@Model.AppraisalCategories)');
         var ratingList = JSON.parse('@Json.Serialize(@Model.AppraisalRatings)');
         var approvalboard = JSON.parse('@Json.Serialize(@Model.ApprovalBoard)');
@@ -274,10 +348,15 @@
             getLeaveById(leaveId);
         }
 
+        function OnTrainingSelect(trainingId) {
+            getTrainingById(trainingId);
+        }
+
         function PrintSelect(items, empAppraisalId, categoryItemId) {
+            //prefixValue = empAppraisalId + "/" + categoryItemId;
             var str = "";
             for (var i = 0; i < items.length; i++) {
-                str += '<option value="'+ empAppraisalId/categoryItemId/items[i].id +'">' + items[i].description + '</option >'
+                str += '<option value="' + empAppraisalId + "/" + categoryItemId + "/" + items[i].id +'">' + items[i].description + '</option >'
             }
             return str;
         }
@@ -293,7 +372,7 @@
                         <td>
                             <select name="customer_experience" class="form-control" id="appraisalrating">
                                 <option value="">Select Rating</option>
-                                ${PrintSelect(ratingList, newItemList[i].id, newItemList[i].appraisalCategoryItemId)}
+                                ${PrintSelect(ratingList, newItemList[i].employeeAppraisalId, newItemList[i].appraisalCategoryItemId)}
                             </select>
                         </td>
                     </tr>`;
@@ -309,7 +388,6 @@
                 data: { appraisalId: appraisalId },
                 success: function (response) {
                     if (response.status) {
-                        //$("#resumptiondate").val(response?.data?.resumptionDate);
                         for (var i = 0; i < appraisalList.length; i++) {
                             appraisalView = `
                                 <div class="col-lg-12">
@@ -328,7 +406,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        ${PrintCategoryItem(response?.data, appraisalList[i].id)}
+                                                        ${PrintCategoryItem(response?.data?.detail, appraisalList[i].id)}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -338,6 +416,8 @@
                                 `;
                             $("#appendAppraisal").append(appraisalView);
                         }
+                        $("#appraisalserviceid").val(response?.data?.serviceId);
+                        $("#appraisallevel").val(response?.data?.level);
                     }
                     else {
                     }
@@ -376,6 +456,32 @@
             });
         }
 
+        function getTrainingById(trainingId) {
+            $.ajax({
+                url: '@Url.Action("GetTrainingById", "Training")',
+                type: 'POST',
+                dataType: 'json',
+                data: { trainingId: trainingId },
+                success: function (response) {
+                    if (response.status) {
+                        $("#trainingtopic").val(response?.data?.trainingTopic);
+                        $("#trainingstartdate").val(response?.data?.dateFrom);
+                        $("#trainingenddate").val(response?.data?.dateTo);
+                        $("#trainingyear").val(response?.data?.trainingYear);
+                        $("#isallowanceadded").val(response?.data?.isAllowance);
+                        $("#trainingserviceid").val(response?.data?.serviceId);
+                        $("#traininglevel").val(response?.data?.level);
+                    }
+                    else {
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
         function ApprovedLeaveAction() {
             level = $("#level").val();
             serviceid = $("#serviceid").val();
@@ -389,15 +495,32 @@
         }
 
         function ApprovedAppraisalAction() {
-            //level = $("#level").val();
-            //serviceid = $("#serviceid").val();
-            //ApprovalAction(true, level, serviceid);
+            var dict = [];
+            $('select[id=appraisalrating]').each(function () {
+                dict.push(this.value);
+            });
+            //console.log(dict);
+            level = $("#appraisallevel").val();
+            serviceid = $("#appraisalserviceid").val();
+            ApprovalAppraisalAction(true, level, serviceid, dict);
         }
 
         function RejectAppraisalAction() {
-            //level = $("#level").val();
-            //serviceid = $("#serviceid").val();
-            //ApprovalAction(false, level, serviceid);
+            level = $("#appraisallevel").val();
+            serviceid = $("#appraisalserviceid").val();
+            ApprovalAppraisalAction(false, level, serviceid, null);
+        }
+
+        function ApprovedTrainingAction() {
+            level = $("#traininglevel").val();
+            serviceid = $("#trainingserviceid").val();
+            ApprovalTrainingAction(true, level, serviceid);
+        }
+
+        function RejectTrainingAction() {
+            level = $("#traininglevel").val();
+            serviceid = $("#trainingserviceid").val();
+            ApprovalTrainingAction(false, level, serviceid);
         }
 
         function ApprovalAction(status, approvalLevel, serviceId) {
@@ -411,6 +534,53 @@
                         toastr.success(response?.message)
                         $('#leave_review').modal('hide');
                         $('#review_appraisal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function ApprovalAppraisalAction(status, approvalLevel, serviceId, categoryItemUpdate) {
+            $.ajax({
+                url: '@Url.Action("ApprovalBoardAppraisalAction", "Dashboard")',
+                type: 'POST',
+                dataType: 'json',
+                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId, categoryItemUpdate: categoryItemUpdate },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#leave_review').modal('hide');
+                        $('#review_appraisal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function ApprovalTrainingAction(status, approvalLevel, serviceId) {
+            $.ajax({
+                url: '@Url.Action("ApprovalBoardTrainingAction", "Dashboard")',
+                type: 'POST',
+                dataType: 'json',
+                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#training_review').modal('hide');
                         location.reload();
                     }
                     else {

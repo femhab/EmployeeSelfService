@@ -9,6 +9,7 @@ using Business.Interfaces;
 using Data.Entities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ViewModel.ResponseModel;
 
 namespace Business.Services
@@ -19,13 +20,15 @@ namespace Business.Services
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public LoanService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService)
+        public LoanService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IConfiguration configuration)
         {
+            _configuration = configuration;
             _unitOfWork = unitOfWork;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _approvalBoardService = approvalBoardService;
-            _sqlConnection = new SqlConnection(PayrollDbConfig.ConnectionStringUrl);
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:PRServerConnection"]);
         }
 
         public async Task<LoanEligibilityResponseModel> CheckEligibility(string emp_No)

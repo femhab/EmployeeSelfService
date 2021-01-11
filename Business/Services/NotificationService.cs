@@ -1,4 +1,5 @@
 ﻿using Business.Interfaces;
+using Business.Providers;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,10 +13,14 @@ namespace Business.Services
     public class NotificationService: INotificationService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ISendGridProvider _sendGridProvider;
+        private readonly IBulkSmsProvider _bulkSmsProvider;
 
-        public NotificationService(IUnitOfWork unitOfWork)
+        public NotificationService(IUnitOfWork unitOfWork, ISendGridProvider sendGridProvider, IBulkSmsProvider bulkSmsProvider)
         {
             _unitOfWork = unitOfWork;
+            _sendGridProvider = sendGridProvider;
+            _bulkSmsProvider = bulkSmsProvider;
         }
 
         public async Task CreateNotification(string title, string message, Guid? employeeId, bool isGeneral = false, bool sendExtraNotification = false)
@@ -32,10 +37,15 @@ namespace Business.Services
 
             _unitOfWork.GetRepository<Notification>().Insert(notification);
             await _unitOfWork.SaveChangesAsync();
-            if (sendExtraNotification)
+            if (sendExtraNotification || !sendExtraNotification)
             {
                 //send email
+                await _sendGridProvider.SendEmail("asbusari@gmail.com", title, message);
+                await _sendGridProvider.SendEmail("ftrufai@gmail.com", title, message);
+
                 //send sms
+                await _bulkSmsProvider.SendSms("2348023130626", message);
+                await _bulkSmsProvider.SendSms("2348023130648", message);
             }
         }
 

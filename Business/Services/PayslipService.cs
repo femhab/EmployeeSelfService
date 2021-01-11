@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,11 +18,13 @@ namespace Business.Services
         private readonly SqlConnection _sqlConnection;
         private readonly IEmployeeService _employeeService;
         private readonly PayrollContext _payrollContext;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public PayslipService(IEmployeeService employeeService, PayrollContext payrollContext, IMapper mapper)
+        public PayslipService(IEmployeeService employeeService, PayrollContext payrollContext, IMapper mapper, IConfiguration configuration)
         {
-            _sqlConnection = new SqlConnection(PayrollDbConfig.ConnectionStringUrl);
+            _configuration = configuration;
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:PRServerConnection"]);
             _employeeService = employeeService;
             _payrollContext = payrollContext;
             _mapper = mapper;

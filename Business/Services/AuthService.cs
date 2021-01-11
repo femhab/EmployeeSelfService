@@ -35,7 +35,7 @@ namespace Business.Services
         public async Task<(bool status, string message, string token, string refreshToken)> Register(string email, string password, string lastName, string firstName, string userName, string empNo, List<Guid> roleId, string createdBy = null)
         {
             //check for existing user
-            var checkuser = await _userManager.FindByEmailAsync(email) ?? await _userManager.FindByNameAsync(empNo);
+            var checkuser = (email != null) ? await _userManager.FindByEmailAsync(email) : await _userManager.FindByNameAsync(empNo);
             if (checkuser != null)
             {
                 return (false, "Employee already exist, try another", null, null);

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ViewModel.ResponseModel;
 using ViewModel.ServiceModel;
 
@@ -16,11 +17,13 @@ namespace Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public AppraisalCategoryService(IUnitOfWork unitOfWork)
+        public AppraisalCategoryService(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _configuration = configuration;
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
         }
 
         public async Task<IEnumerable<AppraisalCategory>> GetAll(Expression<Func<AppraisalCategory, bool>> predicate, string include = null, bool includeDeleted = false)

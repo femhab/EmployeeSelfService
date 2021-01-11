@@ -54,10 +54,10 @@ namespace ViewModel.Model
 
     public class HRUserModel
     {
-        public string UserName { get; set; }
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
-        public string EmailAddress { get; set; }
+        public string first_Name { get; set; }
+        public string last_Name { get; set; }
+        public string mid_Name { get; set; }
+        public string Employee_Email { get; set; }
         public string Emp_No { get; set; }
     }
 

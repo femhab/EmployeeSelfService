@@ -15,11 +15,11 @@ namespace Business.Services
         private readonly IEmployeeTitleService _employeeTitleService;
         private readonly IAvailabilityStatusService _availabilityStatusService;
         private readonly ITrainingService _trainingService;
-        private readonly ITrainingCalenderService _trainingCalenderService;
         private readonly IDepartmentService _departmentService;
         private readonly IGradeLevelService _gradeLevelService;
+        private readonly ITrainingNominationService _trainingNominationService;
 
-        public RefreshingService(ICountryService countryService, IStateService stateService, ILGAService lgaService, ISectionService sectionService, ILocationService locationService, ICourtesyService courtesyService, IMaritalStatusService maritalStatusService, IEmployeeTitleService employeeTitleService, IAvailabilityStatusService availabilityStatusService, ITrainingService trainingService, IDepartmentService departmentService, IGradeLevelService gradeLevelService, ITrainingCalenderService trainingCalenderService)
+        public RefreshingService(ICountryService countryService, IStateService stateService, ILGAService lgaService, ISectionService sectionService, ILocationService locationService, ICourtesyService courtesyService, IMaritalStatusService maritalStatusService, IEmployeeTitleService employeeTitleService, IAvailabilityStatusService availabilityStatusService, ITrainingService trainingService, IDepartmentService departmentService, IGradeLevelService gradeLevelService, ITrainingNominationService trainingNominationService)
         {
             _countryService = countryService;
             _stateService = stateService;
@@ -31,7 +31,7 @@ namespace Business.Services
             _employeeTitleService = employeeTitleService;
             _availabilityStatusService = availabilityStatusService;
             _trainingService = trainingService;
-            _trainingCalenderService = trainingCalenderService;
+            _trainingNominationService = trainingNominationService;
             _departmentService = departmentService;
             _gradeLevelService = gradeLevelService;
         }
@@ -48,7 +48,7 @@ namespace Business.Services
             await _courtesyService.Refresh();
             await _maritalStatusService.Refresh();
             await _trainingService.RefreshTopics();
-            await _trainingCalenderService.Refresh();
+            await _trainingNominationService.Refresh();
             await _gradeLevelService.Refresh();
         }
     }

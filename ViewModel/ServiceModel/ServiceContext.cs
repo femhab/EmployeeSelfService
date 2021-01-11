@@ -6,23 +6,25 @@ namespace ViewModel.ServiceModel
     {
         public ServiceContext(DbContextOptions<ServiceContext> options): base(options) { }
 
-        public DbSet<Appraisal_EmpRating> Appraisal_EmpRating { get; set; }
-        public DbSet<AppraisalCategorries> AppraisalCategory { get; set; }
-        public DbSet<AppraisalCategoryItems> AppraisalCategoryItem { get; set; }
-        public DbSet<AppraisalPeriod> AppraisalPeriod { get; set; }
-        public DbSet<AppraisalRatings> AppraisalRating { get; set; }
-        public DbSet<HRDepCode> HRDepCode { get; set; }
-        public DbSet<HRDept> HRDept { get; set; }
-        public DbSet<HRDivision> HRDivision { get; set; }
-        public DbSet<HREducGrade> HREducGrade { get; set; }
-        public DbSet<HREducLevel> HREducLevel { get; set; }
-        public DbSet<HREducQual> HREducQual { get; set; }
-        public DbSet<HREmpMst> HREmpMst { get; set; }
-        public DbSet<HRGrade> HRGrade { get; set; }
-        public DbSet<hrleavedays> hrleavedays { get; set; }
-        public DbSet<HRUnit> HRUnit { get; set; }
-        public DbSet<HRUsers> HRUsers { get; set; }
-        
+        //public DbSet<Appraisal_EmpRating> Appraisal_EmpRating { get; set; }
+        //public DbSet<AppraisalCategorries> AppraisalCategory { get; set; }
+        //public DbSet<AppraisalCategoryItems> AppraisalCategoryItem { get; set; }
+        //public DbSet<AppraisalPeriod> AppraisalPeriod { get; set; }
+        //public DbSet<AppraisalRatings> AppraisalRating { get; set; }
+        //public DbSet<HRDepCode> HRDepCode { get; set; }
+        //public DbSet<HRDept> HRDept { get; set; }
+        //public DbSet<HRDivision> HRDivision { get; set; }
+        //public DbSet<HREducGrade> HREducGrade { get; set; }
+        //public DbSet<HREducLevel> HREducLevel { get; set; }
+        //public DbSet<HREducQual> HREducQual { get; set; }
+        //public DbSet<HREmpMst> HREmpMst { get; set; }
+        //public DbSet<HRGrade> HRGrade { get; set; }
+        //public DbSet<hrleavedays> hrleavedays { get; set; }
+        //public DbSet<HRUnit> HRUnit { get; set; }
+        //public DbSet<HRUsers> HRUsers { get; set; }
+        public DbSet<New_TrainingCalendar> New_TrainingCalendar { get; set; }
+        public DbSet<New_TrainingNomination> New_TrainingNomination { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -15,13 +15,15 @@ namespace Business.Services
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly INotificationService _notificationService;
 
-        public EmployeeAppraisalService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService)
+        public EmployeeAppraisalService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _approvalBoardService = approvalBoardService;
             _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse> Create(EmployeeAppraisal model)
@@ -47,10 +49,12 @@ namespace Business.Services
                     Status = ApprovalStatus.Pending,
                     CreatedDate = DateTime.Now,
                     Id = Guid.NewGuid(),
-                    CreatedBy = model.Emp_No
+                    CreatedBy = model.Emp_No,
+                    SignOff = true
                 };
                 await _approvalBoardService.Create(enlistBoard);
                 await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
+                await _notificationService.CreateNotification(NotificationAction.AppraisalCreateTitle, NotificationAction.AppraisalCreateMessage, model.EmployeeId, false, false);
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }

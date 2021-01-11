@@ -1,6 +1,8 @@
 ﻿using Business.Interfaces;
 using Data.Entities;
+using Data.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,6 +11,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ViewModel.ResponseModel;
+using ViewModel.ServiceModel;
 
 namespace Business.Services
 {
@@ -19,16 +22,20 @@ namespace Business.Services
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
         private readonly INotificationService _notificationService;
+        private readonly IConfiguration _configuration;
         private readonly SqlConnection _sqlConnection;
+        private readonly PayrollContext _payrollContext;
 
-        public PaymentAdvanceService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, INotificationService notificationService)
+        public PaymentAdvanceService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, INotificationService notificationService, IConfiguration configuration, PayrollContext payrollContext)
         {
             _unitOfWork = unitOfWork;
+            _configuration = configuration;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _approvalBoardService = approvalBoardService;
             _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
             _notificationService = notificationService;
-            _sqlConnection = new SqlConnection(PayrollDbConfig.ConnectionStringUrl);
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:PRServerConnection"]);
+            _payrollContext = payrollContext;
         }
 
         public async Task<BaseResponse> Create(PaymentAdvance model)
@@ -44,6 +51,35 @@ namespace Business.Services
             {
                 _unitOfWork.GetRepository<PaymentAdvance>().Insert(model);
                 //await _unitOfWork.SaveChangesAsync();
+
+                //submit for approval
+                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("payment advance"));
+                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
+                try
+                {
+                    var enlistBoard = new ApprovalBoard()
+                    {
+                        EmployeeId = model.EmployeeId,
+                        ApprovalLevel = Level.FirstLevel,
+                        Emp_No = model.Emp_No,
+                        ApprovalWorkItemId = approvalWorkItem.Id,
+                        ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
+                        ApprovalProcessor = approvalProcessor.Processor,
+                        ServiceId = model.Id,
+                        Status = ApprovalStatus.Pending,
+                        CreatedDate = DateTime.Now,
+                        Id = Guid.NewGuid(),
+                        CreatedBy = model.Emp_No
+                    };
+                    await _approvalBoardService.Create(enlistBoard);
+                    await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
+                    await _notificationService.CreateNotification(NotificationAction.AdvanceCreateTitle, NotificationAction.AdvanceCreateMessage, model.EmployeeId, false, false);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
 
                 var checkTracking = await _unitOfWork.GetRepository<PaymentAdvanceTrack>().GetFirstOrDefaultAsync(predicate: x => x.Year == model.TargetDate.Year && x.EmployeeId == model.EmployeeId);
                 if(checkTracking != null)
@@ -86,13 +122,15 @@ namespace Business.Services
 
             decimal maximumAmount = 0;
 
+            //var resource = _payrollContextSqlQuery<decimal>.FromSql($"Select dbo.ESSBasic(${emp_No})");
+
             using (_sqlConnection)
             {
                 _sqlConnection.Open();
 
-                SqlCommand cmd = new SqlCommand("Select dbo.ESSBasic(@EmpNo)", _sqlConnection);
+                SqlCommand cmd = new SqlCommand($"Select dbo.ESSBasic(@EmpNo)", _sqlConnection);
+                cmd.Parameters.Add(new SqlParameter("@EmpNo", $"{emp_No}"));
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@EmpNo", emp_No));
                 
                 maximumAmount = cmd.ExecuteNonQuery();
             }

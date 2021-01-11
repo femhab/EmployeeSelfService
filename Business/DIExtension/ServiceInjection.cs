@@ -66,6 +66,7 @@ namespace Business.DIExtension
             services.AddTransient<IPaymentAdvanceService, PaymentAdvanceService>();
             services.AddTransient<ITrainingCalenderService, TrainingCalenderService>();
             services.AddTransient<ITrainingFeedbackService, TrainingFeedbackService>();
+            services.AddTransient<ITrainingNominationService, TrainingNominationService>();
             services.AddTransient<IPayslipService, PayslipService>();
             services.AddTransient<ISendGridProvider, SendGridProvider>();
             services.AddTransient<IBulkSmsProvider, BulkSmsProvider>();

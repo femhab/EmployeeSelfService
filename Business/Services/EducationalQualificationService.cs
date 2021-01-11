@@ -1,6 +1,7 @@
 ﻿using Business.Interfaces;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -17,12 +18,13 @@ namespace Business.Services
         private readonly ServiceContext _dbContext;
         private readonly IUnitOfWork _unitOfWork;
         private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public EducationalQualificationService(ServiceContext dbContext, IUnitOfWork unitOfWork)
+        public EducationalQualificationService(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
-            _dbContext = dbContext;
             _unitOfWork = unitOfWork;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _configuration = configuration;
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
         }
 
         public async Task<IEnumerable<EducationalQualification>> GetAll(Expression<Func<EducationalQualification, bool>> predicate, string include = null, bool includeDeleted = false)

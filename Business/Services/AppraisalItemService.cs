@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using ViewModel.Model;
 using ViewModel.ResponseModel;
 
 namespace Business.Services
@@ -25,6 +26,31 @@ namespace Business.Services
             }
             await _unitOfWork.SaveChangesAsync();
             return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
+        }
+
+        public async Task<BaseResponse> Update(List<AppraisalItemUpdateModel> model)
+        {
+            try
+            {
+                var updateList = new List<AppraisalItem>();
+                foreach (var item in model)
+                {
+                    var check = await _unitOfWork.GetRepository<AppraisalItem>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeAppraisalId == item.EmployeeAppraisalId && x.AppraisalCategoryItemId == item.CategoryItemId);
+                    if (check != null)
+                    {
+                        check.AppraisalRatingId = item.RatingId;
+                        check.UpdatedDate = DateTime.Now;
+                        updateList.Add(check);
+                    }
+                }
+                _unitOfWork.GetRepository<AppraisalItem>().Update(updateList);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
         }
 
         public async Task<IEnumerable<AppraisalItem>> GetByEmployee(Guid employeeId)

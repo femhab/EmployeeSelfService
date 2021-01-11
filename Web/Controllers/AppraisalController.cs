@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ViewModel.Model;
 using Web.Helper.JWT;
@@ -111,7 +112,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> AddAppraisal(List<string> catItemWeight)
+        public async Task<ActionResult> UpdateAppraisal(Guid id, List<string> catItemWeight)
         {
             try
             {
@@ -187,7 +188,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> getAppraisalById(Guid appraisalId)
+        public async Task<ActionResult> AddAppraisal(List<string> catItemWeight)
         {
             try
             {
@@ -198,13 +199,135 @@ namespace Web.Controllers
                     {
                         return RedirectToAction("Signout", "Employee");
                     }
-                    var board = await _approvalBoardService.GetById(appraisalId); //get board detail
-                    var response = await _appraisalItemService.GetByAppraisal(board.ServiceId);
-                    
+
+                    //get first level approver
+                    var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "appraisal", Level.FirstLevel);
+                    var appraisalPeriod = await _appraisalPeriodService.GetActivePeriod();
+
+                    if (approverConfig != null)
+                    {
+                        var employeeAppraisal = new EmployeeAppraisal()
+                        {
+                            EmployeeId = authData.Id,
+                            Emp_No = authData.Emp_No,
+                            LastRatingManagerId = authData.Emp_No,
+                            LastRatingManagerName = authData.LastName + authData.LastName,
+                            NextRatingManagerId = approverConfig.Emp_No,
+                            NextRatingManagerName = approverConfig.Employee.LastName + approverConfig.Employee.FirstName,
+                            AppraisalPeriodId = appraisalPeriod.Id,
+                            Id = Guid.NewGuid(),
+                            CreatedDate = DateTime.Now,
+                        };
+
+                        var appraisalItemList = new List<AppraisalItem>();
+
+                        foreach (var item in catItemWeight)
+                        {
+                            Guid category = Guid.Parse(item.Split("/")[0]);
+                            Guid categoryItem = Guid.Parse(item.Split("/")[1]);
+                            Guid rating = Guid.Parse(item.Split("/")[2]);
+
+                            appraisalItemList.Add(new AppraisalItem() { AppraisalCategoryId = category, AppraisalCategoryItemId = categoryItem, AppraisalRatingId = rating, EmployeeAppraisalId = employeeAppraisal.Id, Id = Guid.NewGuid(), CreatedDate = DateTime.Now });
+                        }
+
+                        var appraisalCreate = await _employeeAppraisalService.Create(employeeAppraisal);
+                        if (appraisalCreate.Status)
+                        {
+                            await _appraisalItemService.Create(appraisalItemList);
+                        }
+
+                        return Json(new
+                        {
+                            status = appraisalCreate.Status,
+                            message = appraisalCreate.Message
+                        });
+                    }
+
+
+                    return Json(new
+                    {
+                        status = false,
+                        message = "You don't have approval configuration for appraisal yet, reach out to the admin."
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> getAppraisalById(Guid appraisalId, bool isAppraisalView = false)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var response = new List<AppraisalItem>();
+                    var board = new ApprovalBoard();
+                    var unsignedBoard = new ApprovalBoard();
+                    if (isAppraisalView == false)
+                    {
+                        board = await _approvalBoardService.GetById(appraisalId); //get board detail
+                        response = (await _appraisalItemService.GetByAppraisal(board.ServiceId)).ToList();
+                    }
+                    else
+                    {
+                        response = (await _appraisalItemService.GetByAppraisal(appraisalId)).ToList();
+                        unsignedBoard = await _approvalBoardService.GetUnsignedAppraisal(appraisalId);
+                    }
+
                     return Json(new
                     {
                         status = (response != null) ? true : false,
-                        data = response
+                        data = new { detail = response, level = board.ApprovalLevel, serviceId = board.ServiceId, unsigned = (unsignedBoard != null) ? true: false, apparaisalid = appraisalId}
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> SignOffAppraisal(Guid appraisalId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var response = await _approvalBoardService.SignOffAppraisal(appraisalId);
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        data = response.Message
                     });
 
                 }

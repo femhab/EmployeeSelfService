@@ -11,7 +11,7 @@ namespace Business.Interfaces
 {
     public interface IEmployeeService
     {
-        Task<IEnumerable<HRUsers>> GetUnregisteredBaseEmployee();
+        Task<IEnumerable<HREmpMst>> GetUnregisteredBaseEmployee();
         Task<Employee> GetByEmployerIdOrEmail(string employeeIdOrEmail);
         Task<EmployeeResponseModel> Create(Employee model);
         Task<BaseResponse> RequestBasicInfoChange(Guid id, string lastName, string firstName, string email);

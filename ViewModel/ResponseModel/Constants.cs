@@ -25,6 +25,7 @@
         public const string LoanTypeExist = "You already have an ongoing/approved/pending loan of this type";
         public const string LoanProcessStarted = "You can not update a loan when process already started";
         public const string AppraisalExist = "You already submitted an appraisal for this year";
+        public const string SignOffSuccessful = "The service was signed off successfully for next approval";
     }
 
     public class NotificationAction
@@ -32,11 +33,15 @@
         public const string RoleCreateTitle = "New Role Added";
         public const string FeedbackCreateTitle = "New Feedback";
         public const string DisciplinaryCreateTitle = "New query";
+        public const string AppraisalCreateTitle = "New Appraisal";
+        public const string AdvanceCreateTitle = "New Payment Advance Request";
         public const string LeaveCreateTitle = "New Leave";
         public const string NOKCreateTitle = "New Next of Kin";
         public const string DependentCreateTitle = "New Dependent";
         public const string TrainingCreateTitle = "New Training";
         public const string RoleCreateMessage = "A new role is just added, confirm from profile if you have been assigned to this role";
+        public const string AppraisalCreateMessage = "You just submitted a new appraisal. Please not that you are to signoff after every review ny the approval manager";
+        public const string AdvanceCreateMessage = "You just requested for a payment advance... Exercise patient while the managers see to the request approval";
         public const string DisciplinaryCreateMessage = "You just issued a query to a lower grade staff.";
         public const string LeaveCreateMessage = "Your leave request was recieved successfully";
         public const string NOKCreateMessage = "You just added a next of kin. Wait while it is reviewed for approval";

@@ -193,6 +193,11 @@ namespace Web.Controllers
                                 authRegister.message
                             });
                         }
+                        return Json(new
+                        {
+                            authRegister.status,
+                            authRegister.message
+                        });
                     }                      
                     return Json(new
                     {

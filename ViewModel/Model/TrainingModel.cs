@@ -13,10 +13,12 @@ namespace ViewModel.Model
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool IsScheduled { get; set; }
+        public string OtherDetails { get; set; }
     }
 
     public class TrainingViewModel: AuthDataModel
     {
         public IEnumerable<TrainingTopicModel> TrainingTopics { get; set; }
+        public IEnumerable<TrainingNominationModel> TrainingNomination { get; set; }
     }
 }

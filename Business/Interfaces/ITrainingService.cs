@@ -8,9 +8,10 @@ namespace Business.Interfaces
 {
     public interface ITrainingService
     {
-        Task<BaseResponse> Create(Training model);
+        Task<BaseResponse> Create(Training model, Guid? nominationId);
         Task<IEnumerable<Training>> GetByEmployee(Guid employeeId);
         Task<BaseResponse> RefreshTopics();
         Task<IEnumerable<TrainingTopics>> GetAll();
+        Task<Training> GetById(Guid id);
     }
 }

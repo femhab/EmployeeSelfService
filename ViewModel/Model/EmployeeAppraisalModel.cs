@@ -26,4 +26,11 @@ namespace ViewModel.Model
         public Guid AppraisalRatingId { get; set; }
         public AppraisalRatingModel AppraisalRating { get; set; }
     }
+
+    public class AppraisalItemUpdateModel
+    {
+        public Guid EmployeeAppraisalId { get; set; }
+        public Guid CategoryItemId { get; set; }
+        public Guid RatingId { get; set; }
+    }
 }

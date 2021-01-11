@@ -11,6 +11,7 @@ using Business.Interfaces;
 using Data.Entities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ViewModel.Model;
 using ViewModel.ResponseModel;
 using ViewModel.ServiceModel;
@@ -26,15 +27,17 @@ namespace Business.Services
         private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
         private readonly SqlConnection _sqlConnection;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public EmployeeService(IUnitOfWork unitOfWork, ServiceContext dbContext, IApprovalBoardService approvalBoardService, IMapper mapper, IGradeLevelService gradeLevelService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService)
+        public EmployeeService(IUnitOfWork unitOfWork, ServiceContext dbContext, IApprovalBoardService approvalBoardService, IMapper mapper, IGradeLevelService gradeLevelService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, IConfiguration configuration)
         {
+            _configuration = configuration;
             _unitOfWork = unitOfWork;
             _dbContext = dbContext;
             _approvalBoardService = approvalBoardService;
             _gradeLevelService = gradeLevelService;
             _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
             _mapper = mapper;
         }
 
@@ -262,22 +265,22 @@ namespace Business.Services
             return model;
         }
 
-        public async Task<IEnumerable<HRUsers>> GetUnregisteredBaseEmployee()
+        public async Task<IEnumerable<HREmpMst>> GetUnregisteredBaseEmployee()
         {
-            var sql = "select * from HRUsers";
+            var sql = "select * from HREmpMst";
             SqlCommand query = new SqlCommand(sql, _sqlConnection);
-            List<HRUsers> userList = new List<HRUsers>();
+            List<HREmpMst> userList = new List<HREmpMst>();
             _sqlConnection.Open();
             using (SqlDataReader reader = query.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    HRUsers requester = new HRUsers()
+                    HREmpMst requester = new HREmpMst()
                     {
-                        FirstName = reader["FirstName"].ToString(),
-                        LastName = reader["LastName"].ToString(),
-                        UserName = reader["UserName"].ToString(),
-                        EmailAddress = reader["EmailAddress"].ToString(),
+                        first_Name = reader["first_Name"].ToString(),
+                        last_Name = reader["last_Name"].ToString(),
+                        mid_Name = reader["mid_Name"].ToString(),
+                        Employee_Email = reader["Employee_Email"].ToString(),
                         Emp_No = reader["Emp_No"].ToString(),
                     };
                     userList.Add(requester);
@@ -287,7 +290,7 @@ namespace Business.Services
 
             var registeredEmployee = await GetAll();
 
-            List<HRUsers> unRegisteredUser = new List<HRUsers>();
+            List<HREmpMst> unRegisteredUser = new List<HREmpMst>();
 
             foreach (var item in userList)
             {

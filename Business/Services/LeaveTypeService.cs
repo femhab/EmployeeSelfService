@@ -8,6 +8,7 @@ using Business.Interfaces;
 using Data.Entities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ViewModel.ResponseModel;
 using ViewModel.ServiceModel;
 
@@ -18,12 +19,14 @@ namespace Business.Services
         private readonly ServiceContext _dbContext;
         private readonly IUnitOfWork _unitOfWork;
         private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public LeaveTypeService(ServiceContext dbContext, IUnitOfWork unitOfWork)
+        public LeaveTypeService(ServiceContext dbContext, IUnitOfWork unitOfWork, IConfiguration configuration)
         {
+            _configuration = configuration;
             _dbContext = dbContext;
             _unitOfWork = unitOfWork;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
         }
 
         public async Task<BaseResponse> Edit(Guid id, int availableDays)

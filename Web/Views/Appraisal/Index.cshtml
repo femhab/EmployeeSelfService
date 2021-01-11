@@ -55,7 +55,7 @@
                                 }
                                 else
                                 {
-                                     <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
+                                    <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
                                 }
 
                                 <td> @item.NextRatingManagerName </td>
@@ -63,8 +63,7 @@
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_appraisal"><i class="fa fa-pencil m-r-5"></i> View</a>
-                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#"><i class="fa fa-address-book-o m-r-5"></i> Sign Off</a>
+                                            <a class="dropdown-item" id="@item.Id" onclick="OnAppraisalSelect(this.id)" data-toggle="modal" data-target="#view_appraisal"><i class="fa fa-pencil m-r-5"></i> View and Sign Off</a>
                                         </div>
                                     </div>
                                 </td>
@@ -140,9 +139,76 @@
     </div>
 </div>
 <!-- /Add Performance Appraisal Modal -->
+<!-- Review Performance Appraisal Modal -->
+<div id="view_appraisal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Appraisal Form</h5>
+                <h2>- (might have undergo Manager Review)</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row" id="appendAppraisal">
+                        @*@foreach (var item in Model.AppraisalCategories)
+                            {
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header" style="background-color:#daa520">
+                                            <h4 class="card-title mb-0" id="categorydescription">@item.Description</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Indicator</th>
+                                                            <th>Employee Value</th>
+                                                            <th>Supervisor Value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>CategoryItem Name</td>
+                                                            <td>Initial Value</td>
+                                                            <td>
+                                                                <select name="customer_experience" class="form-control">
+                                                                    <option value="">Select New</option>
+                                                                    @foreach (var rating in Model.AppraisalRatings)
+                                                                    {
+                                                                        <option value="@rating.Id">@rating.Description</option>
+                                                                    }
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }*@
+                    </div>
+                    <div class="row" hidden id="showsignoff" onclick="SignOff()">
+                        <input class="form-control" hidden type="text" id="appraisalid">
+                        <div class="col-12">
+                            <a class="btn btn-primary continue-btn">SignOff <i class="fa fa-check text-success"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Review Performance Appraisal Modal -->
 
 @section Scripts{
     <script type="text/javascript">
+        var appraisalList = JSON.parse('@Json.Serialize(@Model.AppraisalCategories)');
+        var ratingList = JSON.parse('@Json.Serialize(@Model.AppraisalRatings)');
 
         function SubmitAppraisal() {
             var dict = [];
@@ -168,6 +234,103 @@
                     else {
                         toastr.error(response ?.message)
                     }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function OnAppraisalSelect(appraisalId) {
+            getAppraisalById(appraisalId, true);
+        }
+
+        function PrintCategoryItem(items, categoryId) {
+            var str;
+            var newItemList = items.filter(x => x.appraisalCategoryId == categoryId);
+            for (var i = 0; i < newItemList.length; i++) {
+                str += `<tr>
+                        <td>${newItemList[i].appraisalCategoryItem.description}</td>
+                        <td>${newItemList[i].appraisalRating.description}</td>
+                    </tr>`;
+            }
+            return str;
+        }
+
+        function getAppraisalById(appraisalId, isAppraisalView) {
+            $.ajax({
+                url: '@Url.Action("getAppraisalById", "Appraisal")',
+                type: 'POST',
+                dataType: 'json',
+                data: { appraisalId: appraisalId, isAppraisalView: isAppraisalView },
+                success: function (response) {
+                    if (response.status) {
+                        for (var i = 0; i < appraisalList.length; i++) {
+                            appraisalView = `
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header" style="background-color:#daa520">
+                                            <h4 class="card-title mb-0" id="categorydescription">${appraisalList[i].description}</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Indicator</th>
+                                                            <th>Employee Value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${PrintCategoryItem(response?.data?.detail, appraisalList[i].id)}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                `;
+                            $("#appendAppraisal").append(appraisalView);
+                        }
+                        $("#appraisalserviceid").val(response?.data?.serviceId);
+                        $("#appraisallevel").val(response?.data?.level);
+                        $("#appraisalid").val(response?.data?.apparaisalid);
+                        if (response?.data?.unsigned) {
+                            document.getElementById('showsignoff').removeAttribute("hidden");
+                        }
+                    }
+                    else {
+                        toastr.error("record not found");
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function SignOff() {
+            var appraisalid = $("#appraisalid").val();
+            submitSignOff(appraisalid);
+        }
+
+        function submitSignOff(appraisalId) {
+            $.ajax({
+                url: '@Url.Action("SignOffAppraisal", "Appraisal")',
+                type: 'POST',
+                dataType: 'json',
+                data: { appraisalId: appraisalId },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#view_appraisal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error("record not found");
+                    }
+
                     return;
                 }, error: function () {
                     alerty("danger", "Opps", "request Failed");

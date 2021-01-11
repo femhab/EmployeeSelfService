@@ -19,16 +19,18 @@ namespace Web.Controllers
         private readonly IAppraisalCategoryService _appraisalCategoryService;
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly IEmployeeAppraisalService _employeeAppraisalService;
+        private readonly IAppraisalItemService _appraisalItemService;
         private readonly IDashboardService _dashboardService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public DashboardController(IApprovalBoardService approvalBoardService, IMapper mapper, IDashboardService dashboardService, IAppraisalCategoryService appraisalCategoryService, IAppraisalRatingService appraisalRatingService, IEmployeeAppraisalService employeeAppraisalService, IUnitOfWork unitOfWork)
+        public DashboardController(IApprovalBoardService approvalBoardService, IMapper mapper, IDashboardService dashboardService, IAppraisalCategoryService appraisalCategoryService, IAppraisalRatingService appraisalRatingService, IEmployeeAppraisalService employeeAppraisalService, IUnitOfWork unitOfWork, IAppraisalItemService appraisalItemService)
         {
             _appraisalRatingService = appraisalRatingService;
             _approvalBoardService = approvalBoardService;
             _appraisalCategoryService = appraisalCategoryService;
             _employeeAppraisalService = employeeAppraisalService;
+            _appraisalItemService = appraisalItemService;
             _dashboardService = dashboardService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -96,6 +98,90 @@ namespace Web.Controllers
                     }
                     var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("leave"));
                     var response = await _approvalBoardService.ApprovalAction(authData.Id, status? ApprovalStatus.Approved: ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        //action section
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ApprovalBoardAppraisalAction(bool status, Level approvalLevel, Guid serviceId, List<string> categoryItemUpdate)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("appraisal"));
+                    //if approved update catgoryitem weight
+                    var updateList = new List<AppraisalItemUpdateModel>();
+                    foreach (var item in categoryItemUpdate)
+                    {
+                        if(item != null)
+                        {
+                            Guid empAppraisal = Guid.Parse(item.Split("/")[0]);
+                            Guid categoryItem = Guid.Parse(item.Split("/")[1]);
+                            Guid rating = string.IsNullOrEmpty(item.Split("/")[2]) ? Guid.Empty : Guid.Parse(item.Split("/")[2]);
+
+                            if (rating != Guid.Empty)
+                            {
+                                updateList.Add(new AppraisalItemUpdateModel() { EmployeeAppraisalId = empAppraisal, CategoryItemId = categoryItem, RatingId = rating });
+                            }
+                        }
+                    }
+                    await _appraisalItemService.Update(updateList);
+                    var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ApprovalBoardTrainingAction(bool status, Level approvalLevel, Guid serviceId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("training"));
+                    var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
                     return Json(new
                     {
                         status = response.Status,

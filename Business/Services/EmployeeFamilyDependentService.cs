@@ -2,6 +2,7 @@
 using Data.Entities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,12 +20,14 @@ namespace Business.Services
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly INotificationService _notificationService;
         private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public EmployeeFamilyDependentService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, INotificationService notificationService)
+        public EmployeeFamilyDependentService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, INotificationService notificationService, IConfiguration configuration)
         {
+            _configuration = configuration;
             _unitOfWork = unitOfWork;
             _approvalBoardService = approvalBoardService;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
             _notificationService = notificationService;
         }
 

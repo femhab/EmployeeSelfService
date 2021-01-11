@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ViewModel.Model;
 using ViewModel.ResponseModel;
 
 namespace Business.Interfaces
@@ -12,5 +13,6 @@ namespace Business.Interfaces
         Task<IEnumerable<AppraisalItem>> GetByEmployee(Guid employeeId);
         Task<IEnumerable<AppraisalItem>> GetByAppraisal(Guid appraisalId);
         Task<IEnumerable<AppraisalItem>> GetAll();
+        Task<BaseResponse> Update(List<AppraisalItemUpdateModel> model);
     }
 }

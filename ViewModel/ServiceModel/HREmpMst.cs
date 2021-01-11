@@ -5,6 +5,10 @@ namespace ViewModel.ServiceModel
     public class HREmpMst: BaseServiceModel
     {
         public string Emp_No { get; set; }
+        public string first_Name { get; set; }
+        public string last_Name { get; set; }
+        public string mid_Name { get; set; }
+        public string Employee_Email { get; set; }
         public string GradeCode { get; set; }
         public string LevelCode { get; set; }
         public string DivisionCode { get; set; }

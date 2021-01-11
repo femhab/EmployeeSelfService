@@ -2,6 +2,7 @@
 using Data.Entities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -21,58 +22,56 @@ namespace Business.Services
         private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
         private readonly INotificationService _notificationService;
         private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
 
-        public TrainingService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, INotificationService notificationService)
+
+        public TrainingService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, INotificationService notificationService, IConfiguration configuration)
         {
+            _configuration = configuration;
             _unitOfWork = unitOfWork;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _approvalBoardService = approvalBoardService;
             _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
             _notificationService = notificationService;
-            _sqlConnection = new SqlConnection(HRDbConfig.ConnectionStringUrl);
+            _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
         }
 
-        public async Task<BaseResponse> Create(Training model)
+        public async Task<BaseResponse> Create(Training model, Guid? nominationId)
         {
-            //check if he has applied during the year
-            var check = await _unitOfWork.GetRepository<Training>().GetFirstOrDefaultAsync(predicate: x => x.CreatedDate.Year == DateTime.Now.Year && x.TrainingTopic.ToLower() == model.TrainingTopic.ToLower());
-            if(check == null)
+            _unitOfWork.GetRepository<Training>().Insert(model);
+            await _unitOfWork.SaveChangesAsync();
+
+            //submit for approval
+            var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("training"));
+            var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
+            try
             {
-                _unitOfWork.GetRepository<Training>().Insert(model);
-                await _unitOfWork.SaveChangesAsync();
-
-                //submit for approval
-                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("training"));
-                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
-                try
+                var enlistBoard = new ApprovalBoard()
                 {
-                    var enlistBoard = new ApprovalBoard()
-                    {
-                        EmployeeId = model.EmployeeId,
-                        ApprovalLevel = Level.FirstLevel,
-                        Emp_No = model.Emp_No,
-                        ApprovalWorkItemId = approvalWorkItem.Id,
-                        ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
-                        ApprovalProcessor = approvalProcessor.Processor,
-                        ServiceId = model.Id,
-                        Status = ApprovalStatus.Pending,
-                        CreatedDate = DateTime.Now,
-                        Id = Guid.NewGuid(),
-                        CreatedBy = model.Emp_No
-                    };
-                    await _approvalBoardService.Create(enlistBoard);
-                    await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-
+                    EmployeeId = model.EmployeeId,
+                    ApprovalLevel = Level.FirstLevel,
+                    Emp_No = model.Emp_No,
+                    ApprovalWorkItemId = approvalWorkItem.Id,
+                    ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
+                    ApprovalProcessor = approvalProcessor.Processor,
+                    ServiceId = model.Id,
+                    Status = ApprovalStatus.Pending,
+                    CreatedDate = DateTime.Now,
+                    Id = Guid.NewGuid(),
+                    CreatedBy = model.Emp_No
+                };
+                await _approvalBoardService.Create(enlistBoard);
+                await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
                 await _notificationService.CreateNotification(NotificationAction.TrainingCreateTitle, NotificationAction.TrainingCreateMessage, model.EmployeeId, false, false);
-
-                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
-            return new BaseResponse() { Status = false, Message = ResponseMessage.RecordExist };
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            await _notificationService.CreateNotification(NotificationAction.TrainingCreateTitle, NotificationAction.TrainingCreateMessage, model.EmployeeId, false, false);
+
+            return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
         }
 
         public async Task<BaseResponse> RefreshTopics()
@@ -138,6 +137,10 @@ namespace Business.Services
             return data;
         }
 
-
+        public async Task<Training> GetById(Guid id)
+        {
+            var data = await _unitOfWork.GetRepository<Training>().GetFirstOrDefaultAsync(predicate: x => x.Id == id);
+            return data;
+        }
     }
 }
