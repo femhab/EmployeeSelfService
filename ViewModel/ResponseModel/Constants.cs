@@ -34,9 +34,11 @@
         public const string FeedbackCreateTitle = "New Feedback";
         public const string DisciplinaryCreateTitle = "New query";
         public const string AppraisalCreateTitle = "New Appraisal";
+        public const string TransferCreateTitle = "New Transfer Request";
         public const string AdvanceCreateTitle = "New Payment Advance Request";
         public const string LeaveCreateTitle = "New Leave";
         public const string NOKCreateTitle = "New Next of Kin";
+        public const string LoanCreateTitle = "New Loan Requested";
         public const string DependentCreateTitle = "New Dependent";
         public const string TrainingCreateTitle = "New Training";
         public const string RoleCreateMessage = "A new role is just added, confirm from profile if you have been assigned to this role";
@@ -45,7 +47,9 @@
         public const string DisciplinaryCreateMessage = "You just issued a query to a lower grade staff.";
         public const string LeaveCreateMessage = "Your leave request was recieved successfully";
         public const string NOKCreateMessage = "You just added a next of kin. Wait while it is reviewed for approval";
+        public const string LoanCreateMessage = "You just requested for a loan... Exercise patient while the managers see to the request approval";
         public const string TrainingCreateMessage = "You just applied to partake in a training";
+        public const string TransferCreateMessage = "You just applied for a new transfer";
         public const string DependentCreateMessage = "You just added a dependent. Wait while it is reviewed for approval";
         public const string RoleDeletedTitle = "A Role Deleted";
         public const string RoleDeleteMessage = "A role is just deleted, if you have this role before, you no longer have this role";

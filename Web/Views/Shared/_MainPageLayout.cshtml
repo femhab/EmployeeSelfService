@@ -137,7 +137,6 @@
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="@Url.Action("Profile", "Employee", new { id="default" })">My Profile</a>
-                        <a class="dropdown-item" href="settings.html">Settings</a>
                         <a class="dropdown-item" asp-controller="Employee" asp-action="Signout">Logout</a>
                     </div>
                 </li>
@@ -258,8 +257,8 @@
                             <li>
                                 <a asp-controller="Admin" asp-action="AddWorkItem"><i class="la la-mail-forward"></i> <span> Manage Work Item </span></a>
                             </li>
-                            <li class="submenu">
-                                <a href="#"><i class="la la-mail-forward"></i> <span> Set Appraisal Period </span></a>
+                            <li>
+                                <a asp-controller="Admin" asp-action="SetApprovalPeriod"><i class="la la-mail-forward"></i> <span> Set Appraisal Period </span></a>
                             </li>
                         }
 

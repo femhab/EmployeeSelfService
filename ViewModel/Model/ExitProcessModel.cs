@@ -19,6 +19,6 @@ namespace ViewModel.Model
     {
         public EmployeeModel Employee { get; set; }
         public IEnumerable<ExitProcessModel> ExitProcessList { get; set; }
-        public IEnumerable<DepartmentModel> ClearanceDepartment { get; set; }
+        public List<DepartmentModel> ClearanceDepartment { get; set; }
     }
 }

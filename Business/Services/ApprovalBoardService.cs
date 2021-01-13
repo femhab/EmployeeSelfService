@@ -83,19 +83,38 @@ namespace Business.Services
                             var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ApprovalWorkItemId);
                             if (approvalWorkItem.Name.ToLower() == "leave")
                             {
-                                var leave = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
-                                await WriteLeaveToHR(leave);
+                                var leave = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId, null, c => c.Include(i => i.LeaveType));
+                                if(leave != null)
+                                {
+                                    await WriteLeaveToHR(leave);
+                                }
+                                else
+                                {
+                                    var recall = await _unitOfWork.GetRepository<LeaveRecall>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
+                                    //add the days to leave tracking.
+                                }
+                                
                             }
                             else if (approvalWorkItem.Name.ToLower() == "training")
                             {
                                 var training = await _unitOfWork.GetRepository<Training>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
                                 var trainingCalender = await _unitOfWork.GetRepository<TrainingCalender>().GetFirstOrDefaultAsync(predicate: x => x.Topic.Title.ToLower() == training.TrainingTopic.ToLower());
-                                await WriteTrainingToHR(training, trainingCalender.HRTrainingCalenderID );
+                                await WriteTrainingToHR(training, (trainingCalender == null) ? 0: trainingCalender.HRTrainingCalenderID);
                             }
                             else if(approvalWorkItem.Name.ToLower() == "loan")
                             {
                                 var loan = await _unitOfWork.GetRepository<Loan>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
                                 await WriteLoanToHR(loan);
+                            }
+                            else if (approvalWorkItem.Name.ToLower() == "transfer")
+                            {
+                                var transfer = await _unitOfWork.GetRepository<AppliedTransfer>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId, include: c => c.Include(i => i.Department).Include(i => i.Division).Include(i => i.Section).Include(i => i.Employee).Include(i => i.Employee.Department));
+                                await WriteTransferToHR(transfer);
+                            }
+                            else if (approvalWorkItem.Name.ToLower() == "payment advance")
+                            {
+                                var advance = await _unitOfWork.GetRepository<PaymentAdvance>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
+                                await WriteAdvanceToHR(advance);
                             }
                         }
                     }
@@ -216,24 +235,24 @@ namespace Business.Services
                     }
 
                     cmd.CommandText = @"INSERT INTO HREmpLeaveAct(Emp_No,LeaveCode,fromm,too,leave_days,resum_date,Emp_Comment,FromDate,ToDate,Status,HRStatus,DateOfApplication,LeaveAllowance,Insertusername,InsertTransacDate,InsertTransacType) 
-                                VALUES(@param1,@param2,@param3,@param4,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14,@param15)"; //HREmpLeaveActId @param16
+                                VALUES(@param1,@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14,@param15,@param16)";
+
                     cmd.Parameters.AddWithValue("@param1", leave.Emp_No);
                     cmd.Parameters.AddWithValue("@param2", leaveType);
                     cmd.Parameters.AddWithValue("@param3", leave.DateFrom);
                     cmd.Parameters.AddWithValue("@param4", leave.DateTo);
-                    //cmd.Parameters.AddWithValue("@param5", leave.RemainingDays); //cahnge to leave days
+                    cmd.Parameters.AddWithValue("@param5", leave.NoOfDays);
                     cmd.Parameters.AddWithValue("@param6", leave.ResumptionDate);
-                    cmd.Parameters.AddWithValue("@param7", "");
+                    cmd.Parameters.AddWithValue("@param7", DBNull.Value);
                     cmd.Parameters.AddWithValue("@param8", leave.DateFrom.ToString());
                     cmd.Parameters.AddWithValue("@param9", leave.DateTo.ToString());
-                    cmd.Parameters.AddWithValue("@param10", "");
-                    cmd.Parameters.AddWithValue("@param11", 0);
+                    cmd.Parameters.AddWithValue("@param10", DBNull.Value);
+                    cmd.Parameters.AddWithValue("@param11", DBNull.Value);
                     cmd.Parameters.AddWithValue("@param12", leave.CreatedDate);
                     cmd.Parameters.AddWithValue("@param13", leave.IsAllowanceRequested);
                     cmd.Parameters.AddWithValue("@param14", "ESS");
                     cmd.Parameters.AddWithValue("@param15", DateTime.Now);
                     cmd.Parameters.AddWithValue("@param16", "Insert");
-                    cmd.Parameters.AddWithValue("@param17", 0);
 
                     _sqlConnection.Open();
                     cmd.ExecuteNonQuery();
@@ -246,11 +265,6 @@ namespace Business.Services
             }
         }
 
-        public async Task WriteAppraisalToHR()
-        {
-
-        }
-
         public async Task WriteTrainingToHR(Training training, int trainingCalenderId)
         {
             using (SqlCommand cmd = new SqlCommand())
@@ -261,14 +275,14 @@ namespace Business.Services
                     cmd.CommandType = CommandType.Text;
 
                     cmd.CommandText = @"INSERT INTO EmployeeTrainings(New_TrainingCalendarID,AlternateTopic,AltStartDate,AltEndDate,HRStatus,Emp_No) 
-                                VALUES(,@param2,@param3,@param4,@param5,@param6,@param7)"; //EmployeeTrainingsID @param1
+                                VALUES(@param1,@param2,@param3,@param4,@param5,@param6)";
                     //cmd.Parameters.AddWithValue("@param1", 0);
-                    cmd.Parameters.AddWithValue("@param2", trainingCalenderId);
-                    cmd.Parameters.AddWithValue("@param3", training.TrainingTopic);
-                    cmd.Parameters.AddWithValue("@param4", training.StartDate);
-                    cmd.Parameters.AddWithValue("@param5", training.EndDate);
-                    cmd.Parameters.AddWithValue("@param6", 0);
-                    cmd.Parameters.AddWithValue("@param7", training.Emp_No);
+                    cmd.Parameters.AddWithValue("@param1", trainingCalenderId);
+                    cmd.Parameters.AddWithValue("@param2", training.TrainingTopic);
+                    cmd.Parameters.AddWithValue("@param3", training.StartDate);
+                    cmd.Parameters.AddWithValue("@param4", training.EndDate);
+                    cmd.Parameters.AddWithValue("@param5", DBNull.Value);
+                    cmd.Parameters.AddWithValue("@param6", training.Emp_No);
 
                     _sqlConnection.Open();
                     cmd.ExecuteNonQuery();
@@ -291,24 +305,86 @@ namespace Business.Services
                     cmd.CommandType = CommandType.Text;
 
                     cmd.CommandText = @"INSERT INTO PRLNAPRV(emp_no,start_date,end_date,amt_rqst,amt_aprv,no_of_pay,mon_ded,hrstatus,FromDate,ToDate,ValueDate,Insertusername,InsertTransacDate,InsertTransacType) 
-                                VALUES(@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14,@param15)"; //PRLNAPRVId @param1
-                    //cmd.Parameters.AddWithValue("@param1", 0);
-                    cmd.Parameters.AddWithValue("@param2", loan.Emp_No);
-                    cmd.Parameters.AddWithValue("@param3", loan.StartDate);
-                    cmd.Parameters.AddWithValue("@param4", loan.EndDate);
-                    cmd.Parameters.AddWithValue("@param5", loan.AmountRequested);
-                    cmd.Parameters.AddWithValue("@param6", loan.AmountApproved);
-                    cmd.Parameters.AddWithValue("@param7", loan.NoOfInstallment);
-                    cmd.Parameters.AddWithValue("@param8", loan.InstallmentAmount);
-                    cmd.Parameters.AddWithValue("@param9", 0);
-                    cmd.Parameters.AddWithValue("@param10", loan.StartDate.ToString());
-                    cmd.Parameters.AddWithValue("@param11", loan.EndDate.ToString());
-                    cmd.Parameters.AddWithValue("@param12", loan.CreatedDate.ToString());
-                    cmd.Parameters.AddWithValue("@param13", "ESS");
-                    cmd.Parameters.AddWithValue("@param14", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@param15", "Insert");
+                                VALUES(@param1,@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14)"; 
+                    cmd.Parameters.AddWithValue("@param1", loan.Emp_No);
+                    cmd.Parameters.AddWithValue("@param2", loan.StartDate);
+                    cmd.Parameters.AddWithValue("@param3", loan.EndDate);
+                    cmd.Parameters.AddWithValue("@param4", loan.AmountRequested);
+                    cmd.Parameters.AddWithValue("@param5", loan.AmountApproved);
+                    cmd.Parameters.AddWithValue("@param6", loan.NoOfInstallment);
+                    cmd.Parameters.AddWithValue("@param7", loan.InstallmentAmount);
+                    cmd.Parameters.AddWithValue("@param8", DBNull.Value);
+                    cmd.Parameters.AddWithValue("@param9", loan.StartDate.ToString());
+                    cmd.Parameters.AddWithValue("@param10", loan.EndDate.ToString());
+                    cmd.Parameters.AddWithValue("@param11", loan.CreatedDate.ToString());
+                    cmd.Parameters.AddWithValue("@param12", "ESS");
+                    cmd.Parameters.AddWithValue("@param13", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@param14", "Insert");
+
+                    _prSqlConnection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+        }
+
+        public async Task WriteAppraisalToHR()
+        {
+
+        }
+
+        public async Task WriteTransferToHR(AppliedTransfer transfer)
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                try
+                {
+                    cmd.Connection = _sqlConnection;
+                    cmd.CommandType = CommandType.Text;
+
+                    cmd.CommandText = @"INSERT INTO EmpTransfer(Emp_No,OldDeptCode,NewDeptCode) 
+                                VALUES(@param1,@param2,@param3)";
+                    cmd.Parameters.AddWithValue("@param1", transfer.Emp_No);
+                    cmd.Parameters.AddWithValue("@param2", transfer.Employee.Department.DeptCode);
+                    cmd.Parameters.AddWithValue("@param3", transfer.Department.DeptCode);
 
                     _sqlConnection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+        }
+
+        public async Task WriteAdvanceToHR(PaymentAdvance advance)
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                try
+                {
+                    cmd.Connection = _prSqlConnection;
+                    cmd.CommandType = CommandType.Text;
+
+                    cmd.CommandText = @"INSERT INTO PRDEDMST(emp_no,prz_entityCode,prz_DedCode,fx_ded_amt,start_date,end_date,Insertusername,InsertTransacDate,InsertTransacType) 
+                                VALUES(@param1,@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9)";
+                    cmd.Parameters.AddWithValue("@param1", advance.Emp_No);
+                    cmd.Parameters.AddWithValue("@param2", "001");
+                    cmd.Parameters.AddWithValue("@param3", "ADV");
+                    cmd.Parameters.AddWithValue("@param4", advance.Amount);
+                    cmd.Parameters.AddWithValue("@param5", advance.TargetDate);
+                    cmd.Parameters.AddWithValue("@param6", advance.TargetDate);
+                    cmd.Parameters.AddWithValue("@param7", "ESS");
+                    cmd.Parameters.AddWithValue("@param8", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@param9", "Insert");
+
+                    _prSqlConnection.Open();
                     cmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)

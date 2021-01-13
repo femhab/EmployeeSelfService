@@ -40,7 +40,7 @@ namespace Business.Services
                     {
                         cmd.Connection = _sqlConnection;
                         cmd.CommandType = CommandType.Text;
-                        cmd.CommandText = @"INSERT INTO HREmpEdu(Emp_No,EduclLevelCode,EduTypCode,SchoolCode,grad_year,Note,DegreeCode,EducDspCode,GradeCode,CountryCode,Insertusername,InsertTransacDate,InsertTransacType) 
+                        cmd.CommandText = @"INSERT INTO TempHREmpEdu(Emp_No,EduclLevelCode,EduTypCode,SchoolCode,grad_year,Note,DegreeCode,EducDspCode,GradeCode,CountryCode,Insertusername,InsertTransacDate,InsertTransacType) 
                                 VALUES(@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14)";
 
                         //cmd.Parameters.AddWithValue("@param1", 0);

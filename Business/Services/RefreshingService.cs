@@ -18,8 +18,10 @@ namespace Business.Services
         private readonly IDepartmentService _departmentService;
         private readonly IGradeLevelService _gradeLevelService;
         private readonly ITrainingNominationService _trainingNominationService;
+        private readonly IAppraisalCategoryItemService _appraisalCategoryItemService;
+        private readonly IAppraisalCategoryService _appraisalCategoryService;
 
-        public RefreshingService(ICountryService countryService, IStateService stateService, ILGAService lgaService, ISectionService sectionService, ILocationService locationService, ICourtesyService courtesyService, IMaritalStatusService maritalStatusService, IEmployeeTitleService employeeTitleService, IAvailabilityStatusService availabilityStatusService, ITrainingService trainingService, IDepartmentService departmentService, IGradeLevelService gradeLevelService, ITrainingNominationService trainingNominationService)
+        public RefreshingService(ICountryService countryService, IStateService stateService, ILGAService lgaService, ISectionService sectionService, ILocationService locationService, ICourtesyService courtesyService, IMaritalStatusService maritalStatusService, IEmployeeTitleService employeeTitleService, IAvailabilityStatusService availabilityStatusService, ITrainingService trainingService, IDepartmentService departmentService, IGradeLevelService gradeLevelService, ITrainingNominationService trainingNominationService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService)
         {
             _countryService = countryService;
             _stateService = stateService;
@@ -34,6 +36,8 @@ namespace Business.Services
             _trainingNominationService = trainingNominationService;
             _departmentService = departmentService;
             _gradeLevelService = gradeLevelService;
+            _appraisalCategoryService = appraisalCategoryService;
+            _appraisalCategoryItemService = appraisalCategoryItemService;
         }
 
         public async Task Refresh()
@@ -50,6 +54,9 @@ namespace Business.Services
             await _trainingService.RefreshTopics();
             await _trainingNominationService.Refresh();
             await _gradeLevelService.Refresh();
+            await _departmentService.Refresh();
+            await _appraisalCategoryService.Refresh();
+            await _appraisalCategoryItemService.Refresh();
         }
     }
 }

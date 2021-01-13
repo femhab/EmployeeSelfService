@@ -63,7 +63,7 @@ namespace Business.Services
 
         public async Task<ExitProcess> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<ExitProcess>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            var model = await _unitOfWork.GetRepository<ExitProcess>().GetFirstOrDefaultAsync(predicate: c => c.Id == id, null, include: c => c.Include(i => i.Employee).Include(i => i.Employee.Department));
             return model;
         }
     }

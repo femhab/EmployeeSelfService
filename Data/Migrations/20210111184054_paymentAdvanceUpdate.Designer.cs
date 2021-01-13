@@ -4,14 +4,16 @@ using Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(EmployeeServiceContext))]
-    partial class EmployeeServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210111184054_paymentAdvanceUpdate")]
+    partial class paymentAdvanceUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -491,8 +493,6 @@ namespace Data.Migrations
 
                     b.Property<string>("DivisionCode");
 
-                    b.Property<Guid?>("HOD");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("ModifiedBy");
@@ -809,15 +809,9 @@ namespace Data.Migrations
 
                     b.Property<Guid>("AppraisalPeriodId");
 
-                    b.Property<string>("Counselling");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("Development");
-
-                    b.Property<string>("DisciplinaryAction");
 
                     b.Property<string>("Emp_No");
 
@@ -835,19 +829,7 @@ namespace Data.Migrations
 
                     b.Property<string>("NextRatingManagerName");
 
-                    b.Property<string>("OtherDetail");
-
-                    b.Property<string>("Promotion");
-
-                    b.Property<string>("Redeployment");
-
-                    b.Property<string>("Strenght");
-
-                    b.Property<string>("Training");
-
                     b.Property<DateTime?>("UpdatedDate");
-
-                    b.Property<string>("Weekness");
 
                     b.HasKey("Id");
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
 using Data.Entities;
+using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,14 +19,16 @@ namespace Web.Controllers
         private readonly ITrainingService _trainingService;
         private readonly ITrainingNominationService _trainingNominationService;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IMapper _mapper;
 
-        public TrainingController(IMapper mapper, ITrainingService trainingService, ITrainingNominationService trainingNominationService, IApprovalBoardService approvalBoardService)
+        public TrainingController(IMapper mapper, ITrainingService trainingService, ITrainingNominationService trainingNominationService, IApprovalBoardService approvalBoardService, IEmployeeApprovalConfigService employeeApprovalConfigService)
         {
             _mapper = mapper;
             _trainingService = trainingService;
             _trainingNominationService = trainingNominationService;
             _approvalBoardService = approvalBoardService;
+            _employeeApprovalConfigService = employeeApprovalConfigService;
         }
 
         public async Task<ActionResult> Apply()
@@ -63,38 +66,49 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
-                    var trainingApplication = new Training();
-                    trainingApplication.EmployeeId = authData.Id;
-                    trainingApplication.Emp_No = authData.Emp_No;
-                    trainingApplication.CreatedDate = DateTime.Now;
-                    trainingApplication.Id = Guid.NewGuid();
-                    trainingApplication.IsScheduled = isSchedule.Value;
-                    if (nominationId != null)
+                    var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "training", Level.FirstLevel);
+
+                    if (approverConfig != null)
                     {
-                        var nominationDetail = await _trainingNominationService.GetById(nominationId.Value);
-                        trainingApplication.StartDate = nominationDetail.TrainingCalender.StartDate.Value;
-                        trainingApplication.EndDate = nominationDetail.TrainingCalender.EndDate.Value;
-                        trainingApplication.TrainingTopic = nominationDetail.TrainingCalender.Topic.Title;
-                        trainingApplication.TrainingYear = nominationDetail.TrainingCalender.TrainingYear.Value;
+                        var trainingApplication = new Training();
+                        trainingApplication.EmployeeId = authData.Id;
+                        trainingApplication.Emp_No = authData.Emp_No;
+                        trainingApplication.CreatedDate = DateTime.Now;
+                        trainingApplication.Id = Guid.NewGuid();
+                        trainingApplication.IsScheduled = isSchedule.Value;
+                        if (nominationId != null)
+                        {
+                            var nominationDetail = await _trainingNominationService.GetById(nominationId.Value);
+                            trainingApplication.StartDate = nominationDetail.TrainingCalender.StartDate.Value;
+                            trainingApplication.EndDate = nominationDetail.TrainingCalender.EndDate.Value;
+                            trainingApplication.TrainingTopic = nominationDetail.TrainingCalender.Topic.Title;
+                            trainingApplication.TrainingYear = nominationDetail.TrainingCalender.TrainingYear.Value;
+                        }
+                        else
+                        {
+                            var startingDate = DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                            var endingDate = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                            trainingApplication.StartDate = startingDate;
+                            trainingApplication.EndDate = endingDate;
+                            trainingApplication.TrainingTopic = trainingTopic;
+                            trainingApplication.TrainingYear = year.Value;
+                            trainingApplication.OtherDetails = otherDetails;
+                        }
+                        var response = await _trainingService.Create(trainingApplication, nominationId);
+                        if (nominationId != null)
+                            await _trainingNominationService.UpdateStatus(nominationId.Value, true);
+                        return Json(new
+                        {
+                            status = response.Status,
+                            message = response.Message
+                        });
                     }
-                    else
-                    {
-                        var startingDate = DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                        var endingDate = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                        trainingApplication.StartDate = startingDate;
-                        trainingApplication.EndDate = endingDate;
-                        trainingApplication.TrainingTopic = trainingTopic;
-                        trainingApplication.TrainingYear = year.Value;
-                        trainingApplication.OtherDetails = otherDetails;
-                    }
-                    var response = await _trainingService.Create(trainingApplication, nominationId);
-                     if (nominationId != null) 
-                        await _trainingNominationService.UpdateStatus(nominationId.Value, true);
                     return Json(new
                     {
-                        status = response.Status,
-                        message = response.Message
+                        status = false,
+                        message = "You don't have approval configuration for training yet, reach out to the admin."
                     });
+
                 }
                 return Json(new
                 {

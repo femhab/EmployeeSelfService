@@ -115,7 +115,7 @@
                                                                 <select name="customer_experience" class="form-control" id="appraisalrating">
                                                                     @foreach (var item in Model.AppraisalRatings)
                                                                     {
-                                                                        <option value="@category.Id/@categoryItem.Id/@item.Id">@item.Description</option>
+                                                                        <option value="@category.Id/@categoryItem.Id/@item.Id">@item.Weight - @item.Description</option>
                                                                     }
                                                                 </select>
                                                             </td>
@@ -154,43 +154,85 @@
                 <form>
                     <div class="row" id="appendAppraisal">
                         @*@foreach (var item in Model.AppraisalCategories)
-                            {
-                                <div class="col-lg-12">
-                                    <div class="card">
-                                        <div class="card-header" style="background-color:#daa520">
-                                            <h4 class="card-title mb-0" id="categorydescription">@item.Description</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Indicator</th>
-                                                            <th>Employee Value</th>
-                                                            <th>Supervisor Value</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>CategoryItem Name</td>
-                                                            <td>Initial Value</td>
-                                                            <td>
-                                                                <select name="customer_experience" class="form-control">
-                                                                    <option value="">Select New</option>
-                                                                    @foreach (var rating in Model.AppraisalRatings)
-                                                                    {
-                                                                        <option value="@rating.Id">@rating.Description</option>
-                                                                    }
-                                                                </select>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }*@
+            {
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header" style="background-color:#daa520">
+                            <h4 class="card-title mb-0" id="categorydescription">@item.Description</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Indicator</th>
+                                            <th>Employee Value</th>
+                                            <th>Supervisor Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>CategoryItem Name</td>
+                                            <td>Initial Value</td>
+                                            <td>
+                                                <select name="customer_experience" class="form-control">
+                                                    <option value="">Select New</option>
+                                                    @foreach (var rating in Model.AppraisalRatings)
+                                                    {
+                                                        <option value="@rating.Id">@rating.Description</option>
+                                                    }
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }*@
+                    </div>
+                    <div class="form-group">
+                        <label><span>Discussions</span></label>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Strenghts (Discuss staff’s strenghts from above)</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisalstrenght"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Weaknesses (Discuss staff’s weaknesses from above)</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisalweekness"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span>Recommendations</span></label>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Further Counselling</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisalcounselling"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Redeployment</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisalredeployement"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Career Development</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisaldevelopment"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Disciplinary Action</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisalaction"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Training Needs</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisaltraining"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Promotion</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisalpromotion"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Other Actions</span></label>
+                        <textarea rows="5" class="form-control" readonly disabled id="appraisaldetail"></textarea>
                     </div>
                     <div class="row" hidden id="showsignoff" onclick="SignOff()">
                         <input class="form-control" hidden type="text" id="appraisalid">
@@ -295,6 +337,17 @@
                         $("#appraisalserviceid").val(response?.data?.serviceId);
                         $("#appraisallevel").val(response?.data?.level);
                         $("#appraisalid").val(response?.data?.apparaisalid);
+
+                        $("#appraisalstrenght").val(response?.data?.strenght);
+                        $("#appraisalweekness").val(response?.data?.weekness);
+                        $("#appraisalcounselling").val(response?.data?.counselling);
+                        $("#appraisalredeployement").val(response?.data?.redeployment);
+                        $("#appraisaldevelopment").val(response?.data?.development);
+                        $("#appraisalaction").val(response?.data?.action);
+                        $("#appraisaltraining").val(response?.data?.training);
+                        $("#appraisalpromotion").val(response?.data?.promotion);
+                        $("#appraisaldetail").val(response?.data?.others);
+
                         if (response?.data?.unsigned) {
                             document.getElementById('showsignoff').removeAttribute("hidden");
                         }

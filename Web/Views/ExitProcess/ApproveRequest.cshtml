@@ -18,9 +18,9 @@
                     <li class="breadcrumb-item active">Approve Exit Process</li>
                 </ul>
             </div>
-            <div class="col-auto float-right ml-auto">
+            @*<div class="col-auto float-right ml-auto">
                 <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_resignation"><i class="fa fa-plus"></i> Approve Exit</a>
-            </div>
+            </div>*@
         </div>
     </div>
     <!-- /Page Header -->
@@ -44,7 +44,7 @@
                     <tbody>
                         @if (Model.ExitProcessList != null)
                         {
-                            @foreach (var item in Model.ExitProcessList.Where(x => x.Status == ViewModel.Enumeration.ExitProcessStatusEnum.Pending))
+                            @foreach (var item in Model.ExitProcessList)
                             {
                                 <tr>
                                     <td>1</td>
@@ -126,7 +126,7 @@
                         <textarea class="form-control" id="exitreason" readonly rows="4"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Department<span class="text-danger">*</span></label>
+                        <label>Clearing Department<span class="text-danger">*</span></label>
                         <select class="select" id="clearingdepartment">
                             <option>Select Department</option>
                             @foreach (var item in Model.ClearanceDepartment)
@@ -157,15 +157,12 @@
         var exitList = JSON.parse('@Json.Serialize(@Model.ExitProcessList)');
 
         function OnExitSelect(itemId) {
-            exitList.forEach(function (entry) {
-               if (entry.id == itemId) {
-                   $("#exitemployee").val(entry.employee.lastName + " " + entry.employee.firstName + "-" + entry.employee.emp_No);
-                   $("#exitreason").val(entry.reason);
-                   $("#createddate").val(entry.noticeDate);
-                   $("#exitdate").val(entry.exitDate);
-                   selectedId = entry.id;
-                }
-            });
+            selectedId = itemId;
+            GetExitById(itemId);
+            //exitList.forEach(function (entry) {
+            //   if (entry.id == itemId) {
+            //    }
+            //});
         }
 
         function ApproveExitRequest()
@@ -187,6 +184,29 @@
                         toastr.success(response?.message)
                         $('#add_resignation').modal('hide');
                         location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function GetExitById(exitId) {
+            $.ajax({
+                url: '@Url.Action("GetExitById", "ExitProcess")',
+                type: 'POST',
+                dataType: 'json',
+                data: { exitId: exitId },
+                success: function (response) {
+                    if (response.status) {
+                        $("#exitemployee").val(response?.data?.lastName + " " + response?.data?.firstName + "-" + response?.data?.empNo);
+                        $("#exitreason").val(response?.data?.reason);
+                        $("#createddate").val(response?.data?.noticeDate);
+                        $("#exitdate").val(response?.data?.exitDate);
                     }
                     else {
                         toastr.warning(response ?.message);

@@ -48,7 +48,7 @@ namespace Business.Services
                     {
                         cmd.Connection = _sqlConnection;
                         cmd.CommandType = CommandType.Text;
-                        cmd.CommandText = @"INSERT INTO HREmpDepD(Emp_No,first_Name,last_Name,date_birth,DepCode,GenoTypeCode,BloodCode,active,gender,Insertusername,InsertTransacDate,InsertTransacType) 
+                        cmd.CommandText = @"INSERT INTO TempHREmpDepD(Emp_No,first_Name,last_Name,date_birth,DepCode,GenoTypeCode,BloodCode,active,gender,Insertusername,InsertTransacDate,InsertTransacType) 
                                 VALUES(@param1,@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param11,@param12,@param13)";
                         cmd.Parameters.AddWithValue("@param1", insert.Emp_No);
                         cmd.Parameters.AddWithValue("@param2", insert.FirstName);

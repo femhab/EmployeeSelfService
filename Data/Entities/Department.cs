@@ -1,4 +1,5 @@
 ﻿using Data.Entities.Common;
+using System;
 
 namespace Data.Entities
 {
@@ -10,5 +11,6 @@ namespace Data.Entities
         public string DivisionCode { get; set; }   
         public int Slot { get; set; }
         public bool CanClearEmployeeOnExit { get; set; }
+        public Guid? HOD { get; set; } //employeeId of the hod
     }
 }

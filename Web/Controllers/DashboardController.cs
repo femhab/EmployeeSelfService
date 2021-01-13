@@ -119,7 +119,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApprovalBoardAppraisalAction(bool status, Level approvalLevel, Guid serviceId, List<string> categoryItemUpdate)
+        public async Task<ActionResult> ApprovalBoardAppraisalAction(bool status, Level approvalLevel, Guid serviceId, List<string> categoryItemUpdate, string strenght, string weekness, string counselling, string redeployment, string development, string disciplinaryAction, string training, string promotion, string otherDetail)
         {
             try
             {
@@ -133,6 +133,7 @@ namespace Web.Controllers
                     var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("appraisal"));
                     //if approved update catgoryitem weight
                     var updateList = new List<AppraisalItemUpdateModel>();
+                    var appraisalId = new Guid();
                     foreach (var item in categoryItemUpdate)
                     {
                         if(item != null)
@@ -145,8 +146,25 @@ namespace Web.Controllers
                             {
                                 updateList.Add(new AppraisalItemUpdateModel() { EmployeeAppraisalId = empAppraisal, CategoryItemId = categoryItem, RatingId = rating });
                             }
+                            appraisalId = empAppraisal;
                         }
                     }
+                    var updatedAppraisal = await _employeeAppraisalService.GetById(serviceId);
+                    if(updatedAppraisal != null)
+                    {
+                        updatedAppraisal.Strenght = strenght;
+                        updatedAppraisal.Counselling = counselling;
+                        updatedAppraisal.Redeployment = redeployment;
+                        updatedAppraisal.Development = development;
+                        updatedAppraisal.DisciplinaryAction = disciplinaryAction;
+                        updatedAppraisal.Training = training;
+                        updatedAppraisal.Promotion = promotion;
+                        updatedAppraisal.OtherDetail = otherDetail;
+                        updatedAppraisal.Weekness = weekness;
+                        _unitOfWork.GetRepository<EmployeeAppraisal>().Update(updatedAppraisal);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
                     await _appraisalItemService.Update(updateList);
                     var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
                     return Json(new
@@ -181,6 +199,103 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
                     var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("training"));
+                    var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ApprovalBoardLoanAction(bool status, Level approvalLevel, Guid serviceId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("loan"));
+                    var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ApprovalBoardAdvanceAction(bool status, Level approvalLevel, Guid serviceId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("payment advance"));
+                    var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        public async Task<ActionResult> ApprovalBoardTransferAction(bool status, Level approvalLevel, Guid serviceId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("transfer"));
                     var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
                     return Json(new
                     {

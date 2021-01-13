@@ -72,5 +72,11 @@ namespace Business.Services
             var data = await _unitOfWork.GetRepository<EmployeeAppraisal>().GetAllAsync(predicate: x => x.LastRatingManagerId == processorId, null, "Employee,AppraisalPeriod");
             return data;
         }
+
+        public async Task<EmployeeAppraisal> GetById(Guid id)
+        {
+            var model = await _unitOfWork.GetRepository<EmployeeAppraisal>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            return model;
+        }
     }
 }

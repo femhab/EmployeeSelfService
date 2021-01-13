@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ViewModel.Enumeration;
 using ViewModel.Model;
+using ViewModel.ResponseModel;
 using Web.Helper.JWT;
 
 namespace Web.Controllers
@@ -21,13 +23,15 @@ namespace Web.Controllers
         private readonly IMapper _mapper;
         private readonly IDepartmentService _departmentService;
         private readonly IApprovalWorkItemService _approvalWorkItemService;
+        private readonly IAppraisalPeriodService _appraisalPeriodService;
 
-        public AdminController(IEmployeeService employeeService, IRoleService roleService, IMapper mapper, IDepartmentService departmentService, IApprovalWorkItemService approvalWorkItemService)
+        public AdminController(IEmployeeService employeeService, IRoleService roleService, IMapper mapper, IDepartmentService departmentService, IApprovalWorkItemService approvalWorkItemService, IAppraisalPeriodService appraisalPeriodService)
         {
             _employeeService = employeeService;
             _roleService = roleService;
             _departmentService = departmentService;
             _approvalWorkItemService = approvalWorkItemService;
+            _appraisalPeriodService = appraisalPeriodService;
             _mapper = mapper;
         }
 
@@ -112,10 +116,12 @@ namespace Web.Controllers
 
                 AdminViewModel adminViewModel = new AdminViewModel();
                 var departmentList = await _departmentService.GetAll();
+                var employeeList = await _employeeService.GetAll();
                 var clearingDepartment = await _departmentService.GetByExitApproval();
 
                 adminViewModel.DepartmentList = _mapper.Map<IEnumerable<DepartmentModel>>(departmentList);
                 adminViewModel.ClearingDepartment = _mapper.Map<IEnumerable<DepartmentModel>>(clearingDepartment);
+                adminViewModel.EmployeeList = _mapper.Map<IEnumerable<EmployeeModel>>(employeeList);
                 return View(adminViewModel);
             }
             catch (Exception ex)
@@ -328,6 +334,75 @@ namespace Web.Controllers
                     {
                        status = response.Status,
                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> AddAppraisalPeriod(string startDate, string endDate)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var from = DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var to = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    var response = await _appraisalPeriodService.Create(from, to);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> AssignHOD(Guid departmentId, Guid hodId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var response = await _departmentService.AssignHOD(departmentId, hodId);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
                     });
                 }
                 return Json(new

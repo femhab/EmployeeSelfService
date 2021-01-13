@@ -42,7 +42,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<Department>> GetByExitApproval()
         {
-            var data = await GetAll(x => x.CanClearEmployeeOnExit);
+            var data = await GetAll(x => x.CanClearEmployeeOnExit, "Employee,Employee.Department");
             return data;
         }
 
@@ -96,6 +96,19 @@ namespace Business.Services
             _unitOfWork.GetRepository<Department>().Update(department);
             await _unitOfWork.SaveChangesAsync();
             return new BaseResponse() { Status = true, Message = ResponseMessage.OperationSuccessful };
+        }
+
+        public async Task<BaseResponse> AssignHOD(Guid departmentId, Guid hodId)
+        {
+            var department = await _unitOfWork.GetRepository<Department>().GetFirstOrDefaultAsync(predicate: x => x.Id == departmentId);
+            if(department != null)
+            {
+                department.HOD = hodId;
+                _unitOfWork.GetRepository<Department>().Update(department);
+                await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
+            }
+            return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
     }
 }

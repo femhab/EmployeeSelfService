@@ -104,6 +104,12 @@ namespace Business.Services
             return data;
         }
 
+        public async Task<PaymentAdvance> GetById(Guid id)
+        {
+            var data = await _unitOfWork.GetRepository<PaymentAdvance>().GetFirstOrDefaultAsync(predicate: x => x.Id == id);
+            return data;
+        }
+
         public async Task<IEnumerable<PaymentAdvance>> GetByEmployee(Guid employeeId)
         {
             var data = await GetAll(x => x.EmployeeId == employeeId, "Employee");

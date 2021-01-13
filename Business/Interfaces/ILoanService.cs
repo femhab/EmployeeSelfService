@@ -12,5 +12,6 @@ namespace Business.Interfaces
         Task<BaseResponse> Edit(Loan request);
         Task<IEnumerable<Loan>> GetByEmployee(Guid employeeId);
         Task<LoanEligibilityResponseModel> CheckEligibility(string Emp_No);
+        Task<Loan> GetById(Guid id);
     }
 }

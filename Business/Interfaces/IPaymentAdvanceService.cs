@@ -12,5 +12,6 @@ namespace Business.Interfaces
         Task<IEnumerable<PaymentAdvance>> GetAll();
         Task<IEnumerable<PaymentAdvance>> GetByEmployee(Guid employeeId);
         Task<PaymentAdvanceResponseModel> CheckEligibility(string emp_No);
+        Task<PaymentAdvance> GetById(Guid id);
     }
 }

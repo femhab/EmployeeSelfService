@@ -19,11 +19,15 @@ namespace Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
+        private readonly INotificationService _notificationService;
         private readonly SqlConnection _sqlConnection;
         private readonly IConfiguration _configuration;
 
-        public LoanService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IConfiguration configuration)
+        public LoanService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardService approvalBoardService, IConfiguration configuration, INotificationService notificationService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService)
         {
+            _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
+            _notificationService = notificationService;
             _configuration = configuration;
             _unitOfWork = unitOfWork;
             _employeeApprovalConfigService = employeeApprovalConfigService;
@@ -76,6 +80,8 @@ namespace Business.Services
                 };
                 await _approvalBoardService.Create(enlistBoard);
                 //boardactivelevel
+                await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
+                await _notificationService.CreateNotification(NotificationAction.LoanCreateTitle, NotificationAction.LoanCreateMessage, model.EmployeeId, false, false);
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.LoanCreatedSuccessfully };
             }         
@@ -84,7 +90,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<Loan>> GetByEmployee(Guid employeeId)
         {
-            var data = await GetAll(x => x.EmployeeId == employeeId);
+            var data = await GetAll(x => x.EmployeeId == employeeId, "Employee,LoanType");
             return data;
         }
 
@@ -104,13 +110,13 @@ namespace Business.Services
 
         public async Task<IEnumerable<Loan>> GetAll(Expression<Func<Loan, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<Loan>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var model = await _unitOfWork.GetRepository<Loan>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
             return model;
         }
 
         public async Task<Loan> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<Loan>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            var model = await _unitOfWork.GetRepository<Loan>().GetFirstOrDefaultAsync(predicate: c => c.Id == id, null, include: e => e.Include(i => i.LoanType).Include(i => i.Employee));
             return model;
         }
     }

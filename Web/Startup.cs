@@ -5,6 +5,7 @@ using System.Text;
 using AutoMapper;
 using Business.DIExtension;
 using Business.Mapping;
+using Coravel;
 using Data.DataContext;
 using Data.Entities;
 using Microsoft.AspNetCore.Authentication;
@@ -25,6 +26,7 @@ using Newtonsoft.Json.Serialization;
 using ViewModel.ServiceModel;
 using Web.Helper.Cookie;
 using Web.Helper.JWT;
+using Web.Helper.Schedular;
 
 namespace Web
 {
@@ -159,6 +161,11 @@ namespace Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            services.AddTransient<RefreshHelper>();
+            services.AddScheduler();
+            services.AddQueue();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -188,6 +195,12 @@ namespace Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Login}/{id?}");
+            });
+
+            var provider = app.ApplicationServices;
+            provider.UseScheduler(scheduler =>
+            {
+                scheduler.Schedule<RefreshHelper>().EveryThirtyMinutes();
             });
         }
     }

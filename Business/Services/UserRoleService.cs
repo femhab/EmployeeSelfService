@@ -74,7 +74,14 @@ namespace Business.Services
         public async Task<UserRole> GetByClearanceRole(Guid employeeId)
         {
             var data = (await GetAll(x => x.EmployeeId == employeeId && x.Role.Description.Contains("clearance"), "Employee,Role")).FirstOrDefault();
-            return data;
+            var employee = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: x => x.Id == employeeId);
+            if(employee.DepartmentId != null)
+            {
+                var clearingDepartment = await _unitOfWork.GetRepository<Department>().GetFirstOrDefaultAsync(predicate: x => x.Id == employee.DepartmentId && x.CanClearEmployeeOnExit);
+                if (clearingDepartment != null)
+                    return data;
+            }
+            return null;
         }
 
         public async Task<IEnumerable<UserRole>> GetAll(Expression<Func<UserRole, bool>> predicate, string include = null, bool includeDeleted = false)

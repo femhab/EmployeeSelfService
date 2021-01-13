@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewData["Title"] = "SetApprovalPeriod";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Appraisal Period</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Admin</a></li>
+                <li class="breadcrumb-item active">Appraisal Period</li>
+            </ul>
+        </div>
+        <div class="col-auto float-right ml-auto">
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-white">CSV</button>
+                <button class="btn btn-white">PDF</button>
+                <button class="btn btn-white"><i class="fa fa-print fa-lg"></i> Print</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Header -->
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form>
+                    <div class="form-group">
+                        <label>Start Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" id="startperiod" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" id="endperiod" type="text">
+                        </div>
+                    </div>
+                    <div class="submit-section" onclick="SubmitSubmitAppraisalPeriod()">
+                        <div class="btn btn-primary submit-btn">Submit</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function SubmitSubmitAppraisalPeriod()
+        {
+            datefrom = $("#startperiod").val();
+            dateto = $("#endperiod").val();
+            sendAppraisalPeriodForm(datefrom, dateto);
+        }
+        function sendAppraisalPeriodForm(startdate, enddate) {
+            $.ajax({
+                url: '@Url.Action("AddAppraisalPeriod", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { startDate: startdate, endDate: enddate },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response ?.message);
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+    </script>
+}

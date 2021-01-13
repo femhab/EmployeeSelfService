@@ -22,9 +22,10 @@ namespace Web.Controllers
         private readonly ILeaveTypeService _leaveTypeService;
         private readonly IEmployeeService _employeeService;
         private readonly IApprovalBoardService _approvalBoardService;
+        private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IMapper _mapper;
 
-        public LeaveController(IGradeLevelService gradeLevelService, ILeaveService leaveService, ILeaveTypeService leaveTypeService, IEmployeeService employeeService, IMapper mapper, ILeaveRecallService leaveRecallService, IApprovalBoardService approvalBoardService)
+        public LeaveController(IGradeLevelService gradeLevelService, ILeaveService leaveService, ILeaveTypeService leaveTypeService, IEmployeeService employeeService, IMapper mapper, ILeaveRecallService leaveRecallService, IApprovalBoardService approvalBoardService, IEmployeeApprovalConfigService employeeApprovalConfigService)
         {
             _leaveService = leaveService;
             _leaveRecallService = leaveRecallService;
@@ -32,6 +33,7 @@ namespace Web.Controllers
             _leaveTypeService = leaveTypeService;
             _employeeService = employeeService;
             _approvalBoardService = approvalBoardService;
+            _employeeApprovalConfigService = employeeApprovalConfigService;
             _mapper = mapper;
         }
 
@@ -74,34 +76,53 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
-                    var startDate = DateTime.ParseExact(dateFrom, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var endDate = DateTime.ParseExact(dateTo, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var resumeDate = DateTime.ParseExact(resumptionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
-                    var model = new Leave()
+                    if(noOfDays < 5 && isAllowanceAdded == true)
                     {
-                        EmployeeId = authData.Id,
-                        Emp_No = authData.Emp_No,
-                        DateFrom = startDate,
-                        DateTo = endDate,
-                        LeaveTypeId = leaveTypeId,
-                        IsAllowanceRequested = isAllowanceAdded,
-                        Id = Guid.NewGuid(),
-                        CreatedDate = DateTime.Now,
-                        NoOfDays = noOfDays,
-                        DaysUsed = 0,
-                        RemainingDays = remainingDays,
-                        ResumptionDate = resumeDate,
-                        LeaveStatus = LeaveStatus.Pending,
-                        Status = ApprovalStatus.Pending,
-                        LastProccessedBy = authData.Emp_No
-                    };
+                        return Json(new
+                        {
+                            status = false,
+                            message = "“You are not qualified for Leave Allowance.The total number of leave days is less than 5”"
+                        });
+                    }
 
-                    var response = await _leaveService.Create(model);
+                    var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "leave", Level.FirstLevel);
+
+                    if(approverConfig != null)
+                    {
+                        var startDate = DateTime.ParseExact(dateFrom, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                        var endDate = DateTime.ParseExact(dateTo, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                        var resumeDate = DateTime.ParseExact(resumptionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                        var model = new Leave()
+                        {
+                            EmployeeId = authData.Id,
+                            Emp_No = authData.Emp_No,
+                            DateFrom = startDate,
+                            DateTo = endDate,
+                            LeaveTypeId = leaveTypeId,
+                            IsAllowanceRequested = isAllowanceAdded,
+                            Id = Guid.NewGuid(),
+                            CreatedDate = DateTime.Now,
+                            NoOfDays = noOfDays,
+                            DaysUsed = 0,
+                            RemainingDays = remainingDays,
+                            ResumptionDate = resumeDate,
+                            LeaveStatus = LeaveStatus.Pending,
+                            Status = ApprovalStatus.Pending,
+                            LastProccessedBy = authData.Emp_No
+                        };
+
+                        var response = await _leaveService.Create(model);
+                        return Json(new
+                        {
+                            status = response.Status,
+                            message = response.Message
+                        });
+                    }
                     return Json(new
                     {
-                        status = response.Status,
-                        message = response.Message
+                        status = false,
+                        message = "You don't have approval configuration for leave yet, reach out to the admin."
                     });
 
                 }

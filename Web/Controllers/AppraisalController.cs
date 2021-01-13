@@ -127,6 +127,10 @@ namespace Web.Controllers
                     //get first level approver
                     var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "appraisal", Level.FirstLevel);
                     var appraisalPeriod = await _appraisalPeriodService.GetActivePeriod();
+                    if(appraisalPeriod == null)
+                    {
+
+                    }
 
                     if (approverConfig != null)
                     {
@@ -202,8 +206,15 @@ namespace Web.Controllers
 
                     //get first level approver
                     var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "appraisal", Level.FirstLevel);
-                    var appraisalPeriod = await _appraisalPeriodService.GetActivePeriod();
-
+                    var appraisalPeriod = (await _appraisalPeriodService.GetActivePeriod());
+                    if(appraisalPeriod == null || appraisalPeriod.StartDate > DateTime.Now)
+                    {
+                        return Json(new
+                        {
+                            status = false,
+                            message = "No active appraisal at this period."
+                        });
+                    }
                     if (approverConfig != null)
                     {
                         var employeeAppraisal = new EmployeeAppraisal()
@@ -216,7 +227,7 @@ namespace Web.Controllers
                             NextRatingManagerName = approverConfig.Employee.LastName + approverConfig.Employee.FirstName,
                             AppraisalPeriodId = appraisalPeriod.Id,
                             Id = Guid.NewGuid(),
-                            CreatedDate = DateTime.Now,
+                            CreatedDate = DateTime.Now
                         };
 
                         var appraisalItemList = new List<AppraisalItem>();
@@ -242,8 +253,6 @@ namespace Web.Controllers
                             message = appraisalCreate.Message
                         });
                     }
-
-
                     return Json(new
                     {
                         status = false,
@@ -276,23 +285,26 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
                     var response = new List<AppraisalItem>();
+                    var empAppraisal = new EmployeeAppraisal();
                     var board = new ApprovalBoard();
                     var unsignedBoard = new ApprovalBoard();
                     if (isAppraisalView == false)
                     {
                         board = await _approvalBoardService.GetById(appraisalId); //get board detail
                         response = (await _appraisalItemService.GetByAppraisal(board.ServiceId)).ToList();
+                        empAppraisal = await _employeeAppraisalService.GetById(board.ServiceId);
                     }
                     else
                     {
                         response = (await _appraisalItemService.GetByAppraisal(appraisalId)).ToList();
                         unsignedBoard = await _approvalBoardService.GetUnsignedAppraisal(appraisalId);
+                        empAppraisal = await _employeeAppraisalService.GetById(appraisalId);
                     }
 
                     return Json(new
                     {
                         status = (response != null) ? true : false,
-                        data = new { detail = response, level = board.ApprovalLevel, serviceId = board.ServiceId, unsigned = (unsignedBoard != null) ? true: false, apparaisalid = appraisalId}
+                        data = new { detail = response, level = board.ApprovalLevel, serviceId = board.ServiceId, unsigned = (unsignedBoard != null) ? true: false, apparaisalid = appraisalId, strenght = empAppraisal.Strenght, weekness = empAppraisal.Weekness, development = empAppraisal.Development, counselling = empAppraisal.Counselling, redeployment = empAppraisal.Redeployment, action = empAppraisal.DisciplinaryAction, training = empAppraisal.Training, promotion = empAppraisal.Promotion, others = empAppraisal.OtherDetail}
                     });
 
                 }

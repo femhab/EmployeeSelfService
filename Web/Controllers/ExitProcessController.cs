@@ -9,6 +9,7 @@ using Data.Entities;
 using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ViewModel.Enumeration;
 using ViewModel.Model;
 using Web.Helper.JWT;
 
@@ -59,17 +60,25 @@ namespace Web.Controllers
             }
 
             ExitProcessViewModel exitProcessViewModel = new ExitProcessViewModel();
-            var exitApplication =await _exitProcessService.GetUnapprovedApplication();
-            var clearingDepartment = await _departmentService.GetByExitApproval();
+            var exitApplication = (await _exitProcessService.GetUnapprovedApplication()).Where(x => x.Status == ExitProcessStatus.Pending);
+            var clearingDepartment = (await _departmentService.GetByExitApproval()).ToList();
 
             var userRole = await _userRoleService.GetByClearanceRole(authData.Id);
-            if(userRole != null)
+            exitProcessViewModel = _mapper.Map<ExitProcessViewModel>(authData);
+            var getHod = await _employeeService.GetHOD(authData.Id);
+
+            if (userRole != null || getHod != null)
             {
                 exitProcessViewModel.ExitProcessList = _mapper.Map<IEnumerable<ExitProcessModel>>(exitApplication);
-            }
-            exitProcessViewModel = _mapper.Map<ExitProcessViewModel>(authData);
-            exitProcessViewModel.ClearanceDepartment = _mapper.Map<IEnumerable<DepartmentModel>>(clearingDepartment);
 
+                foreach (var item in exitApplication)
+                {
+                    clearingDepartment.Add(item.Employee.Department);
+                }
+            }
+            
+            exitProcessViewModel.ClearanceDepartment = _mapper.Map<List<DepartmentModel>>(clearingDepartment);
+           
             return View(exitProcessViewModel);
         }
 
@@ -144,6 +153,39 @@ namespace Web.Controllers
                         status = response.Status,
                         message = response.Message
                     });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetExitById(Guid exitId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var response = await _exitProcessService.GetById(exitId);
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        data = new { reason = response.Reason, noticeDate= response.NoticeDate.ToString("dddd, dd MMMM yyyy"), exitDate = response.ExitDate.ToString("dddd, dd MMMM yyyy"), firstName = response.Employee.FirstName, lastName = response.Employee.LastName, empNo = response.Emp_No }
+                    }) ;
                 }
                 return Json(new
                 {

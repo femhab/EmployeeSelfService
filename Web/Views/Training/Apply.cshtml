@@ -45,35 +45,45 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    @foreach (var item in Model.TrainingNomination)
+                    @if (Model.TrainingNomination.Count() > 0)
                     {
-                        <div class="row staff-grid-row">
-                            <div class="col-md-4 col-sm-6 col-12 col-lg-4 col-xl-3">
-                                <div class="profile-widget">
-                                    <div class="dropdown profile-action">
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_client"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_client"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                        @foreach (var item in Model.TrainingNomination)
+                        {
+                            <div class="row staff-grid-row">
+                                <div class="col-md-4 col-sm-6 col-12 col-lg-4 col-xl-3">
+                                    <div class="profile-widget">
+                                        <div class="dropdown profile-action">
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_client"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_client"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                            </div>
                                         </div>
+                                        <input class="form-control" value="@item.Id" type="text" id="scheduledtopicid" hidden>
+                                        <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="client-profile.html">@item.TrainingCalender.Topic.Title</a></h4>
+                                        <h5 class="user-name m-t-10 mb-0 text-ellipsis"><a href="client-profile.html">@item.TrainingCalender.TrainingYear</a></h5>
+                                        <div class="small text-muted">@item.TrainingCalender.StartDate?.ToString("dd MMMM yyyy") - @item.TrainingCalender.EndDate?.ToString("dd MMMM yyyy")</div>
+                                        <div class="small text-muted">Venue: @item.TrainingCalender.Venue - Room ID: @item.TrainingCalender.TrainingRoomID</div>
+                                        @*<a href="#" class="btn btn-white btn-sm m-t-10">View</a>*@
+                                        @if (!item.IsApplied)
+                                        {
+                                            <a class="btn btn-white btn-sm m-t-10" onclick="SubmitScheduledTopic()">Apply</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-white btn-sm m-t-10">Applied</a>
+                                        }
                                     </div>
-                                    <input class="form-control" value="@item.Id" type="text" id="scheduledtopicid" hidden>
-                                    <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="client-profile.html">@item.TrainingCalender.Topic.Title</a></h4>
-                                    <h5 class="user-name m-t-10 mb-0 text-ellipsis"><a href="client-profile.html">@item.TrainingCalender.TrainingYear</a></h5>
-                                    <div class="small text-muted">@item.TrainingCalender.StartDate?.ToString("dd MMMM yyyy") - @item.TrainingCalender.EndDate?.ToString("dd MMMM yyyy")</div>
-                                    <div class="small text-muted">Venue: @item.TrainingCalender.Venue - Room ID: @item.TrainingCalender.TrainingRoomID</div>
-                                    @*<a href="#" class="btn btn-white btn-sm m-t-10">View</a>*@
-                                    @if (!item.IsApplied)
-                                    {
-                                        <a class="btn btn-white btn-sm m-t-10" onclick="SubmitScheduledTopic()">Apply</a>
-                                    }
-                                    else
-                                    {
-                                        <a class="btn btn-white btn-sm m-t-10">Applied</a>
-                                    }
                                 </div>
                             </div>
+                        }
+                    }
+                    else
+                    {
+                        <div>
+                            <label>No Scheduled Training for you at this time</label>
                         </div>
                     }
+
                 </div>
             </div>
         </div>

@@ -23,7 +23,7 @@
     <!-- /Page Header -->
 
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="card">
                 <div class="card-body">
                     <form>
@@ -44,7 +44,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="card">
                 <div class="card-body">
                     <form>
@@ -60,6 +60,41 @@
                         </div>
                         <div class="submit-section" onclick="RemoveDepartmentAuth()">
                             <div class="btn btn-primary submit-btn">Remove Clearance Authority</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Select Department </label>
+                            <select class="select" id="hoddepartmentid">
+                                <option value="">Select Department</option>
+                                @foreach (var item in Model.DepartmentList)
+                                {
+                                    <option value="@item.Id">@item.Descc</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Assign HOD </label>
+                            <select class="select" id="hodid">
+                                <option value="">Select Employee</option>
+                                @foreach (var item in Model.EmployeeList)
+                                {
+                                    <option value="@item.Id">@item.LastName -  @item.FirstName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="submit-section" onclick="SubmitHODRequest()">
+                            <div class="btn btn-primary submit-btn">Assign HOD</div>
                         </div>
                     </form>
                 </div>
@@ -90,6 +125,33 @@
                 type: 'POST',
                 dataType: 'json',
                 data: { departmentId: departmentId, canClear: canClear},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message);
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function SubmitHODRequest() {
+            var hoddepartmentid = $("#hoddepartmentid").val();
+            var hodid = $("#hodid").val();
+            AssignHOD(hoddepartmentid, hodid);
+        }
+
+        function AssignHOD(departmentId, hodId) {
+            $.ajax({
+                url: '@Url.Action("AssignHOD", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { departmentId: departmentId, hodId: hodId},
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response ?.message);

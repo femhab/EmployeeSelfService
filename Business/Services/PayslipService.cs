@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using ViewModel.ResponseModel;
@@ -30,7 +31,7 @@ namespace Business.Services
             _mapper = mapper;
         }
 
-        public async Task<PayslipResponseModel> GeneratePayslipData(Guid employeeId)
+        public async Task<PayslipResponseModel> GeneratePayslipData(Guid employeeId, DateTime payPeriod)
         {
             PayslipResponseModel payslipResponseModel = new PayslipResponseModel();
             var employee = await _employeeService.GetById(employeeId);
@@ -55,16 +56,14 @@ namespace Business.Services
                         };
                         resource = requester;
                     }
-                   
                 }
-
                 try
                 {
-                    var userBasic = _payrollContext.Set<BasicReportModel>().FromSql($"dbo.RPT_GETEMPBASICESS @emp_no = { employee.Emp_No}, @pay_period = '2020-10-31'").FirstOrDefault();
+                    var userBasic = _payrollContext.Set<BasicReportModel>().FromSql($"dbo.RPT_GETEMPBASICESS @emp_no = { employee.Emp_No}, @pay_period = {payPeriod}").FirstOrDefault();
 
                     payslipResponseModel.BasicReport = _mapper.Map<BasicReportModel>(userBasic);
 
-                    var userEarn = _payrollContext.Set<EarningReportModel>().FromSql($"dbo.RPT_GETEMPEARNESS  @emp_no = {employee.Emp_No}, @pay_period = '2020-10-31'").ToList();
+                    var userEarn = _payrollContext.Set<EarningReportModel>().FromSql($"dbo.RPT_GETEMPEARNESS  @emp_no = {employee.Emp_No}, @pay_period = {payPeriod}").ToList();
                     var earningItem = new List<EarningReportModel>();
                     foreach(var item in userEarn)
                     {
@@ -73,7 +72,7 @@ namespace Business.Services
                     }
                     payslipResponseModel.EarningReport = earningItem;
 
-                    var userDed = _payrollContext.Set<DeductionReportModel>().FromSql($"dbo.RPT_GETEMPDEDESS @emp_no = {employee.Emp_No}, @pay_period = '2020-10-31'").ToList();
+                    var userDed = _payrollContext.Set<DeductionReportModel>().FromSql($"dbo.RPT_GETEMPDEDESS @emp_no = {employee.Emp_No}, @pay_period = {payPeriod}").ToList();
                     var deductionItem = new List<DeductionReportModel>();
                     foreach (var item in userDed)
                     {
@@ -90,6 +89,42 @@ namespace Business.Services
 
                 return payslipResponseModel;
             }
+        }
+
+        public async Task<List<PayrollCalender>> PayrollCalender()
+        {
+            var sql = $"select * from prp_calend";
+            SqlCommand query = new SqlCommand(sql, _sqlConnection);
+            List<prp_calend> resource = new List<prp_calend>();
+            _sqlConnection.Open();
+            using (SqlDataReader reader = query.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    prp_calend requester = new prp_calend()
+                    {
+                        prz_entityCode = reader["prz_entityCode"].ToString(),
+                        prz_paygrpCode = reader["prz_paygrpCode"].ToString(),
+                        pay_period = Convert.ToDateTime(reader["pay_period"]).ToString("dd/MM/yyyy"),
+                        prz_taxYrCode = reader["prz_taxYrCode"].ToString()
+                    };
+                    resource.Add(requester);
+                }
+            }
+            List<PayrollCalender> calenders = new List<PayrollCalender>();
+            foreach(var item in resource)
+            {
+                var calender = new PayrollCalender()
+                {
+                    PayPeriod = DateTime.ParseExact(item.pay_period, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                    PayrollEntityCode = item.prz_entityCode,
+                    PayrollGroupCode = item.prz_paygrpCode,
+                    TaxYearCode = item.prz_taxYrCode
+                };
+                calenders.Add(calender);
+            }
+            _sqlConnection.Close();
+            return calenders;
         }
     }
 }

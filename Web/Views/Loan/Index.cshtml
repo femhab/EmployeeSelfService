@@ -26,30 +26,15 @@
     <!-- /Page Header -->
     <!-- Loan Statistics -->
     <div class="row">
-        <div class="col-md-3">
-            <div class="stats-info">
-                <h6>Emergency Loan</h6>
-                <h4>₦@String.Format("{0:#,###0.00}", 2000)/₦@String.Format("{0:#,###0.00}", 200000)</h4>
+        @foreach (var item in Model.LoanType)
+        {
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>@item.Name</h6>
+                    <h4>₦@String.Format("{0:#,###0.00}", 0)/₦@String.Format("{0:#,###0.00}", 0)</h4>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-info">
-                <h6>Housing Loan</h6>
-                <h4>₦@String.Format("{0:#,###0.00}", 0)/₦@String.Format("{0:#,###0.00}", 278888)</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-info">
-                <h6>Medical Loan</h6>
-                <h4>₦@String.Format("{0:#,###0.00}", 0)/₦@String.Format("{0:#,###0.00}", 989389)</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-info">
-                <h6>Other Loan</h6>
-                <h4>₦@String.Format("{0:#,###0.00}", 0)/₦@String.Format("{0:#,###0.00}", 30000)</h4>
-            </div>
-        </div>
+        }
     </div>
     <!-- /Loan Statistics -->
 
@@ -59,9 +44,9 @@
                 <table class="table table-striped custom-table mb-0 datatable">
                     <thead>
                         <tr>
-                            <th>Loan Type</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
+                            <th>LoanType</th>
+                            <th>StartDate</th>
+                            <th>EndDate</th>
                             <th>Amount Requested/Rate</th>
                             <th>Amount Approved/Rate</th>
                             <th>Monthly Deduction</th>
@@ -80,7 +65,7 @@
                                 <td>@item.StartDate.ToString("dd MMMM yyyy")</td>
                                 <td>@item.EndDate.ToString("dd MMMM yyyy")</td>
                                 <td>₦@String.Format("{0:#,###0.00}", item.AmountRequested)/@item.InterestRate</td>
-                                <td>₦@String.Format("{0:#,###0.00}", item.AmountApproved)//@item.InterestRate</td>
+                                <td>₦@String.Format("{0:#,###0.00}", item.AmountApproved)/@item.InterestRate</td>
                                 <td>₦@String.Format("{0:#,###0.00}", item.InstallmentAmount)</td>
                                 <td>@item.NoOfInstallment</td>
                                 <td class="text-center">
@@ -99,7 +84,6 @@
                                 </td>
                                 <td>
                                     <h2 class="table-avatar">
-                                        <a href="profile.html" class="avatar avatar-xs"><img src="~/img/profiles/avatar-09.jpg" alt=""></a>
                                         <a href="#">@item.LastApprover</a>
                                     </h2>
                                 </td>
@@ -107,7 +91,7 @@
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_loan"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                                         </div>
                                     </div>
@@ -137,6 +121,10 @@
                         <label>Loan Type <span class="text-danger">*</span></label>
                         <select class="select" id="loantypeid">
                             <option value="1">Select Loan Type - Interest Rate</option>
+                            @foreach (var item in Model.LoanType)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
                         </select>
                     </div>
                     <div class="form-group">
@@ -269,6 +257,8 @@
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message);
+                        $('#add_loan').modal('hide');
+                        location.reload();
                     }
                     else {
                         toastr.warning(response ?.message);

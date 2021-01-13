@@ -12,6 +12,7 @@ namespace Business.Interfaces
         Task<BaseResponse> Create(ExitProcess model);
         Task<BaseResponse> Update(Guid exitProcessId, ExitProcessStatus status);
         Task<IEnumerable<ExitProcess>> GetUnapprovedApplication();
+        Task<ExitProcess> GetById(Guid id);
 
     }
 }

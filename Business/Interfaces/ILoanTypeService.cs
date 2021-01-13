@@ -12,5 +12,6 @@ namespace Business.Interfaces
         Task<IEnumerable<LoanType>> GetAll();
         Task<BaseResponse> Edit(Guid id, string name);
         Task<BaseResponse> Delete(Guid id);
+        Task<BaseResponse> RefreshLoanType();
     }
 }

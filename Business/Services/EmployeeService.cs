@@ -25,11 +25,12 @@ namespace Business.Services
         private readonly IApprovalBoardService _approvalBoardService;
         private readonly IGradeLevelService _gradeLevelService;
         private readonly IApprovalBoardActiveLevelService _approvalBoardActiveLevelService;
+        private readonly INotificationService _notificationService;
         private readonly SqlConnection _sqlConnection;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public EmployeeService(IUnitOfWork unitOfWork, ServiceContext dbContext, IApprovalBoardService approvalBoardService, IMapper mapper, IGradeLevelService gradeLevelService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, IConfiguration configuration)
+        public EmployeeService(IUnitOfWork unitOfWork, ServiceContext dbContext, IApprovalBoardService approvalBoardService, IMapper mapper, IGradeLevelService gradeLevelService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, IConfiguration configuration, INotificationService notificationService)
         {
             _configuration = configuration;
             _unitOfWork = unitOfWork;
@@ -39,6 +40,7 @@ namespace Business.Services
             _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
             _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
             _mapper = mapper;
+            _notificationService = notificationService;
         }
 
         public async Task<EmployeeResponseModel> Create(Employee model)
@@ -209,7 +211,7 @@ namespace Business.Services
                     var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("transfer"));
                     var approvalProcessor = await _unitOfWork.GetRepository<EmployeeApprovalConfig>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.Id && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
 
-                    await _approvalBoardService.Create(new ApprovalBoard()
+                    var enlistBoard = new ApprovalBoard()
                     {
                         EmployeeId = model.Id,
                         ApprovalLevel = Level.FirstLevel,
@@ -217,21 +219,23 @@ namespace Business.Services
                         ApprovalWorkItemId = approvalWorkItem.Id,
                         ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
                         ApprovalProcessor = approvalProcessor.Processor,
-                        ServiceId = model.Id,
+                        ServiceId = appliedTransfer.Id,
                         Status = ApprovalStatus.Pending,
                         CreatedDate = DateTime.Now,
                         Id = Guid.NewGuid(),
                         CreatedBy = model.Emp_No
-                    });
+                    };
 
+                    await _approvalBoardService.Create(enlistBoard);
                     await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, appliedTransfer.Id, Level.FirstLevel);
+                    await _notificationService.CreateNotification(NotificationAction.TransferCreateTitle, NotificationAction.TransferCreateMessage, model.Id, false, false);
 
                     return new BaseResponse() { Status = true, Message = ResponseMessage.AwaitingApproval };
                 }
                 else
                 {
                     model.DivisionId = divisionId;
-                    model.DepartmentId = departmentId;
+                    model.DepartmentId = departmentId; 
                     model.UnitId = unitId;
                     _unitOfWork.GetRepository<Employee>().Update(model);
                     await _unitOfWork.SaveChangesAsync();
@@ -241,9 +245,15 @@ namespace Business.Services
             return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
 
+        public async Task<AppliedTransfer> GetTransferById(Guid id)
+        {
+            var data = await _unitOfWork.GetRepository<AppliedTransfer>().GetFirstOrDefaultAsync(predicate: x => x.Id == id, null, include: c => c.Include(i => i.Department).Include(i => i.Unit).Include(i => i.Division).Include(i => i.Section));
+            return data;
+        }
+
         public async Task<IEnumerable<Employee>> GetAll()
         {
-            var data = await GetAll(x => x.Status == Status.Active, "Department,Division,Unit,GradeLevel,Section,Location,MaritalStatus,Courtesy,Country,State,LGA,AvalaibilityStatus,EmployeeTitle");
+            var data = await GetAll(x => x.Status == Status.Active && x.Emp_No.ToLower() != "superadmin", "Department,Division,Unit,GradeLevel,Section,Location,MaritalStatus,Courtesy,Country,State,LGA,AvalaibilityStatus,EmployeeTitle");
             return data;
         }
 
@@ -304,7 +314,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<Employee>> GetAll(Expression<Func<Employee, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<Employee>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id));
+            var model = await _unitOfWork.GetRepository<Employee>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.Id), include);
             return model;
         }
 
@@ -372,6 +382,30 @@ namespace Business.Services
             await _unitOfWork.SaveChangesAsync();
 
             return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
+        }
+
+        public async Task<BaseResponse> Delete(Guid id)
+        {
+            if(id != null)
+            {
+                _unitOfWork.GetRepository<Employee>().Delete(id);
+                await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = true, Message = ResponseMessage.DeletedSuccessful };
+            }
+            return new BaseResponse() { Status = false, Message = ResponseMessage.NoRecordExist };
+        }
+
+        public async Task<Employee> GetHOD(Guid employeeId)
+        {
+            var employee = await GetById(employeeId);
+            var hod = new Employee();
+            if(employee != null || employee.DepartmentId != null)
+            {
+                var department = await _unitOfWork.GetRepository<Department>().GetFirstOrDefaultAsync(predicate: x => x.Id == employee.DepartmentId);
+                if(department.HOD != null)
+                    hod = await GetById(department.HOD.Value);
+            }
+            return hod;
         }
     }
 }

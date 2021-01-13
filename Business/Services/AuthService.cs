@@ -110,5 +110,15 @@ namespace Business.Services
             await _signInManager.SignOutAsync();
             return "Logout Successful";
         }
+
+        public async Task DeleteUser(Guid empId)
+        {
+            var employee = await _employeeService.GetById(empId);
+            var checkuser = await _userManager.FindByNameAsync(employee.Emp_No);
+            if(checkuser != null)
+            {
+                await _userManager.DeleteAsync(checkuser);
+            }
+        }
     }
 }

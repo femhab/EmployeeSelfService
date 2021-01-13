@@ -48,7 +48,7 @@ namespace Business.Services
                     {
                         cmd.Connection = _sqlConnection;
                         cmd.CommandType = CommandType.Text;
-                        cmd.CommandText = @"INSERT INTO HREmpNextOfKin(NOKName,NOKPhone,NOKAddress,NOKEmail,emp_no,DepCode,Insertusername,InsertTransacDate,InsertTransacType) 
+                        cmd.CommandText = @"INSERT INTO TempHREmpNextOfKin(NOKName,NOKPhone,NOKAddress,NOKEmail,emp_no,DepCode,Insertusername,InsertTransacDate,InsertTransacType) 
                                 VALUES(@param2,@param3,@param4,@param5,@param6,@param8,@param9,@param10,@param11)";
                         cmd.Parameters.AddWithValue("@param2", insert.LastName + " " + insert.FirstName);
                         cmd.Parameters.AddWithValue("@param3", insert.PhoneNumber);

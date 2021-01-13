@@ -22,7 +22,7 @@ namespace Web.Controllers
         private readonly IAuthService _authService;
         private readonly IDivisionService _divisionService;
         private readonly IDepartmentService _departmentService;
-        //private readonly IDepartmentService _departmentService;
+        private readonly IApprovalBoardService _approvalBoardService;
         private readonly IEmployeeNOKDetailService _employeeNOKDetailService;
         private readonly IEmployeeFamilyDependentService _employeeFamilyDependentService;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
@@ -37,7 +37,7 @@ namespace Web.Controllers
         private readonly ISectionService _sectionService;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService, IDivisionService divisionService,ISectionService sectionService)
+        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService, IDivisionService divisionService,ISectionService sectionService, IApprovalBoardService approvalBoardService)
         {
             _employeeService = employeeService;
             _approvalWorkItemService = approvalWorkItemService;
@@ -56,6 +56,7 @@ namespace Web.Controllers
             _userRoleService = userRoleService;
             _sectionService = sectionService;
             _relationshipService = relationshipService;
+            _approvalBoardService = approvalBoardService;
             _mapper = mapper;
         }
 
@@ -255,7 +256,7 @@ namespace Web.Controllers
                     return Json(new
                     {
                         status = response.Status,
-                        message = response.Message ?? "Failed to create Next of Kin Detail."
+                        message = response.Message
                     });
                 }
                 return Json(new
@@ -307,7 +308,7 @@ namespace Web.Controllers
                     return Json(new
                     {
                         status = response.Status,
-                        message = response.Message ?? "Failed to add dependent detail Detail."
+                        message = response.Message
                     });
                 }
                 return Json(new
@@ -418,12 +419,23 @@ namespace Web.Controllers
                     {
                         return RedirectToAction("Signout", "Employee");
                     }
-                    var response = await _employeeService.RequestTransfer(authData.Id, newDivision, newDepartment, newSection, newUnit); //dependent service
+
+                    var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "transfer", Level.FirstLevel);
+
+                    if(approverConfig != null)
+                    {
+                        var response = await _employeeService.RequestTransfer(authData.Id, newDivision, newDepartment, newSection, newUnit); //dependent service
+                        return Json(new
+                        {
+                            status = response.Status,
+                            message = response.Message
+                        });
+                    }
 
                     return Json(new
                     {
-                        status = response.Status,
-                        message = response.Message ?? "Failed to create Next of Kin Detail."
+                        status = false,
+                        message = "You don't have approval configuration for transfer yet, reach out to the admin."
                     });
                 }
                 return Json(new
@@ -452,6 +464,41 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
                     var response = await _employeeService.RequestBasicInfoChange(authData.Id, lastName, firstName, email); //dependent service
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message ?? "Failed to create Next of Kin Detail."
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> DeleteEmployee(Guid employeeId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    await _authService.DeleteUser(employeeId);
+                    var response = await _employeeService.Delete(employeeId); 
 
                     return Json(new
                     {
@@ -596,6 +643,42 @@ namespace Web.Controllers
                     status = true,
                     message = "Processing",
                     data = approvalCount
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetTransferById(Guid transferId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var board = await _approvalBoardService.GetById(transferId);
+                    var employee = await _employeeService.GetById(board.EmployeeId);
+                    var response = await _employeeService.GetTransferById(board.ServiceId);
+                    return Json(new
+                    {
+                        status = (response != null) ? true : false,
+                        data = new { currentDivision = employee.Division.Descc, currentDepartment = employee.Department.Descc, currentSection = employee.Section.Descc, currentUnit = (employee.Unit != null) ? employee.Unit.Descc : "", newDivision = response.Division.Descc, newDepartment = response.Department.Descc, newSection = response.Section.Descc, newUnit = (response.Unit != null) ? response.Unit.Descc : "", serviceId = response.Id, level = board.ApprovalLevel, employeeId = employee.Emp_No, employeeName = employee.LastName + " " + employee.FirstName }
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
                 });
             }
             catch (Exception ex)

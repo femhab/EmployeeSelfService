@@ -76,7 +76,7 @@
                         @foreach (var item in Model.ApprovalBoard)
                         {
                             <tr>
-                                <td><a href="estimate-view.html">@item.ApprovalWorkItem.Name</a></td>
+                                <td><a href="#">@item.ApprovalWorkItem.Name</a></td>
                                 <td>@item.Employee.LastName @item.Employee.FirstName</td>
                                 <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
                                 <td>@item.ApprovalLevel.ToString()</td>
@@ -92,7 +92,7 @@
                                             }
                                             @if (item.ApprovalWorkItem.Name.ToLower().Contains("loan"))
                                             {
-                                                <a class="dropdown-item" id="@item.ServiceId" onclick="" data-toggle="modal" data-target="#"><i class="fa fa-list m-r-5"></i>Loan Detail</a>
+                                                <a class="dropdown-item" id="@item.Id" onclick="OnLoanSelect(this.id)" data-toggle="modal" data-target="#loan_review"><i class="fa fa-list m-r-5"></i>Loan Detail</a>
                                             }
                                             @if (item.ApprovalWorkItem.Name.ToLower().Contains("appraisal"))
                                             {
@@ -107,11 +107,11 @@
                                             }
                                             @if (item.ApprovalWorkItem.Name.ToLower().Contains("transfer"))
                                             {
-                                                <a class="dropdown-item" href="#"><i class="fa fa-list m-r-5"></i>Transfer Detail</a>
+                                                <a class="dropdown-item" id="@item.Id" onclick="OnTransferSelect(this.id)" data-toggle="modal" data-target="#transfer_review"><i class="fa fa-list m-r-5"></i>Transfer Detail</a>
                                             }
                                             @if (item.ApprovalWorkItem.Name.ToLower().Contains("payment advance"))
                                             {
-                                                <a class="dropdown-item" href="#"><i class="fa fa-list m-r-5"></i>Payment Advance Detail</a>
+                                                <a class="dropdown-item" id="@item.Id" onclick="OnAdvanceSelect(this.id)" data-toggle="modal" data-target="#advance_review"><i class="fa fa-list m-r-5"></i>Payment Advance Detail</a>
                                             }
                                             @if (item.ApprovalWorkItem.Name.ToLower().Contains("training"))
                                             {
@@ -144,7 +144,7 @@
                 <form>
                     <div class="form-group">
                         <label>Leave Type <span class="text-danger">*</span></label>
-                        <div class="cal-icon">
+                        <div>
                             <input class="form-control" readonly type="text" id="leavetypeid">
                         </div>
                     </div>
@@ -211,44 +211,49 @@
             <div class="modal-body">
                 <form>
                     <div class="row" id="appendAppraisal">
-                        @*@foreach (var item in Model.AppraisalCategories)
-                            {
-                                <div class="col-lg-12">
-                                    <div class="card">
-                                        <div class="card-header" style="background-color:#daa520">
-                                            <h4 class="card-title mb-0" id="categorydescription">@item.Description</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Indicator</th>
-                                                            <th>Employee Value</th>
-                                                            <th>Supervisor Value</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>CategoryItem Name</td>
-                                                            <td>Initial Value</td>
-                                                            <td>
-                                                                <select name="customer_experience" class="form-control">
-                                                                    <option value="">Select New</option>
-                                                                    @foreach (var rating in Model.AppraisalRatings)
-                                                                    {
-                                                                        <option value="@rating.Id">@rating.Description</option>
-                                                                    }
-                                                                </select>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }*@
+                        @*Here goes attachments*@
+                    </div>
+                    <div class="form-group">
+                        <label><span>Discussions</span></label>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Strenght (Discuss staff’s strenghts from above)</span></label>
+                        <textarea rows="5" class="form-control" id="appraisalstrenght"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Weekness (Discuss staff’s weaknesses from above)</span></label>
+                        <textarea rows="5" class="form-control" id="appraisalweekness"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span>Recommendations</span></label>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Further Counselling</span></label>
+                        <textarea rows="5" class="form-control" id="appraisalcounselling"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Redeployment</span></label>
+                        <textarea rows="5" class="form-control" id="appraisalredeployement"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Career Development</span></label>
+                        <textarea rows="5" class="form-control" id="appraisaldevelopment"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Disciplinary Action</span></label>
+                        <textarea rows="5" class="form-control" id="appraisalaction"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Training Needs</span></label>
+                        <textarea rows="5" class="form-control" id="appraisaltraining"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Promotion</span></label>
+                        <textarea rows="5" class="form-control" id="appraisalpromotion"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Other Actions</span></label>
+                        <textarea rows="5" class="form-control" id="appraisaldetail"></textarea>
                     </div>
                     <div class="form-group" hidden>
                         <label><span class="text-danger">*</span></label>
@@ -271,7 +276,6 @@
     </div>
 </div>
 <!-- Review Performance Appraisal Modal -->
-
 <!-- Review Training Modal -->
 <div id="training_review" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -286,7 +290,7 @@
                 <form>
                     <div class="form-group">
                         <label>Training Topic <span class="text-danger">*</span></label>
-                        <div class="cal-icon">
+                        <div>
                             <input class="form-control" readonly type="text" id="trainingtopic">
                         </div>
                     </div>
@@ -311,7 +315,7 @@
 
                     <div class="form-group" hidden>
                         <label><span class="text-danger">*</span></label>
-                        <div class="cal-icon">
+                        <div>
                             <input class="form-control" readonly type="text" id="traininglevel">
                             <input class="form-control" readonly type="text" id="trainingserviceid">
                         </div>
@@ -331,6 +335,216 @@
     </div>
 </div>
 <!-- /Review Leave Modal -->
+<!-- Review Loan Modal -->
+<div id="loan_review" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Loan Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Loan Type <span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" readonly type="text" id="loantypeid">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Loan Amount <span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" readonly type="text" id="loanamount">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="loandatefrom">
+                        </div>
+                    </div>
+                    <div class="form-group" id="datetodiv">
+                        <label>End Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="loandateto">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Installments <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" readonly id="loannoofinstallments">
+                    </div>
+                    <div class="form-group" id="resumptiondatediv">
+                        <label>Installment/Frequency Amount<span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" readonly type="text" id="installmentamount">
+                        </div>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label><span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" readonly type="text" id="loanlevel">
+                            <input class="form-control" readonly type="text" id="loanserviceid">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6" onclick="RejectLoanAction()">
+                            <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
+                        </div>
+                        <div class="col-6" onclick="ApprovedLoanAction()">
+                            <a class="btn btn-primary continue-btn">Approve <i class="fa fa-check text-success"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Review Loan Modal -->
+<!-- Review Payment Advance Modal -->
+<div id="advance_review" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Payment Advance Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Amount Requested<span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" readonly type="text" id="advanceamount">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Date <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="advancetargetdate">
+                        </div>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label><span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" readonly type="text" id="advancelevel">
+                            <input class="form-control" readonly type="text" id="advanceserviceid">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6" onclick="RejectAdvanceAction()">
+                            <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
+                        </div>
+                        <div class="col-6" onclick="ApprovedAdvanceAction()">
+                            <a class="btn btn-primary continue-btn">Approve <i class="fa fa-check text-success"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Review Payment Advance Modal -->
+
+<!-- Review Transfer Modal -->
+<div id="transfer_review" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Transfer Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Employee Name<span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="transferemployeename">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Employee Id <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="transferemployeid">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Division: Transfer From <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="currentdivision">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Division: Transfer To <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="newdivision">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Department: Transfer From <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="currentdepartment">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Department: Transfer To <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="newdepartment">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Section: Transfer From <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="currentsection">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Section: Transfer To <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="newsection">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Unit: Transfer From <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="currentunit">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Unit: Transfer To <span class="text-danger">*</span></label>
+                                <input type="text" readonly value="" class="form-control" id="newunit">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label><span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" readonly type="text" id="transferlevel">
+                            <input class="form-control" readonly type="text" id="transferserviceid">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6" onclick="RejectTransferAction()">
+                            <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
+                        </div>
+                        <div class="col-6" onclick="ApprovedTransferAction()">
+                            <a class="btn btn-primary continue-btn">Approve <i class="fa fa-check text-success"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Review Transfer Modal -->
 
 @section Scripts{
     <script type="text/javascript">
@@ -352,11 +566,23 @@
             getTrainingById(trainingId);
         }
 
+        function OnLoanSelect(loanId) {
+            getLoanById(loanId);
+        }
+
+        function OnAdvanceSelect(advanceId) {
+            getAdvanceById(advanceId);
+        }
+
+        function OnTransferSelect(transferId) {
+            getTransferById(transferId);
+        }
+
         function PrintSelect(items, empAppraisalId, categoryItemId) {
             //prefixValue = empAppraisalId + "/" + categoryItemId;
             var str = "";
             for (var i = 0; i < items.length; i++) {
-                str += '<option value="' + empAppraisalId + "/" + categoryItemId + "/" + items[i].id +'">' + items[i].description + '</option >'
+                str += '<option value="' + empAppraisalId + "/" + categoryItemId + "/" + items[i].id + '">' + items[i].weight + "-" +  items[i].description + '</option >'
             }
             return str;
         }
@@ -364,7 +590,6 @@
         function PrintCategoryItem(items, categoryId) {
             var str;
             var newItemList = items.filter(x => x.appraisalCategoryId == categoryId);
-            console.log(newItemList);
             for (var i = 0; i < newItemList.length; i++) {
                 str += `<tr>
                         <td>${newItemList[i].appraisalCategoryItem.description}</td>
@@ -418,6 +643,16 @@
                         }
                         $("#appraisalserviceid").val(response?.data?.serviceId);
                         $("#appraisallevel").val(response?.data?.level);
+
+                        $("#appraisalstrenght").val(response?.data?.strenght);
+                        $("#appraisalweekness").val(response?.data?.weekness);
+                        $("#appraisalcounselling").val(response?.data?.counselling);
+                        $("#appraisalredeployement").val(response?.data?.redeployment);
+                        $("#appraisaldevelopment").val(response?.data?.development);
+                        $("#appraisalaction").val(response?.data?.action);
+                        $("#appraisaltraining").val(response?.data?.training);
+                        $("#appraisalpromotion").val(response?.data?.promotion);
+                        $("#appraisaldetail").val(response?.data?.others);
                     }
                     else {
                     }
@@ -482,6 +717,86 @@
             });
         }
 
+        function getLoanById(loanId) {
+            $.ajax({
+                url: '@Url.Action("GetLoanById", "Loan")',
+                type: 'POST',
+                dataType: 'json',
+                data: { loanId: loanId },
+                success: function (response) {
+                    if (response.status) {
+                        $("#loantypeid").val(response?.data?.loanType);
+                        $("#loandateto").val(response?.data?.dateFrom);
+                        $("#loandatefrom").val(response?.data?.dateTo);
+                        $("#loanamount").val("₦" + response?.data?.loanAmount);
+                        $("#loannoofinstallments").val(response?.data?.noOfInstallment);
+                        $("#installmentamount").val("₦" + response?.data?.installmentAmount);
+                        $("#loanserviceid").val(response?.data?.serviceId);
+                        $("#loanlevel").val(response?.data?.level);
+                    }
+                    else {
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function getAdvanceById(advanceId) {
+            $.ajax({
+                url: '@Url.Action("GetAdvanceById", "Payroll")',
+                type: 'POST',
+                dataType: 'json',
+                data: { advanceId: advanceId },
+                success: function (response) {
+                    if (response.status) {
+                        $("#advancetargetdate").val(response?.data?.targetDate);
+                        $("#advanceamount").val("₦" + response?.data?.amount);
+                        $("#advanceserviceid").val(response?.data?.serviceId);
+                        $("#advancelevel").val(response?.data?.level);
+                    }
+                    else {
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function getTransferById(transferId) {
+            $.ajax({
+                url: '@Url.Action("GetTransferById", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: { transferId: transferId },
+                success: function (response) {
+                    if (response.status) {
+                        $("#currentdivision").val(response?.data?.currentDivision);
+                        $("#currentdepartment").val(response?.data?.currentDepartment);
+                        $("#currentsection").val(response?.data?.currentSection);
+                        $("#currentunit").val(response?.data?.currentUnit);
+                        $("#newdivision").val(response?.data?.newDivision);
+                        $("#newdepartment").val(response?.data?.newDepartment);
+                        $("#newsection").val(response?.data?.newSection);
+                        $("#newunit").val(response?.data?.newUnit);
+                        $("#transferemployeename").val(response?.data?.employeeName);
+                        $("#transferemployeid").val(response?.data?.employeeId);
+                        $("#transferlevel").val(response?.data?.level);
+                        $("#transferserviceid").val(response?.data?.serviceId);
+                    }
+                    else {
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
         function ApprovedLeaveAction() {
             level = $("#level").val();
             serviceid = $("#serviceid").val();
@@ -502,13 +817,33 @@
             //console.log(dict);
             level = $("#appraisallevel").val();
             serviceid = $("#appraisalserviceid").val();
-            ApprovalAppraisalAction(true, level, serviceid, dict);
+            appraisalstrenght = $.trim($("#appraisalstrenght").val());
+            appraisalweekness = $.trim($("#appraisalweekness").val());
+            appraisalcounselling = $.trim($("#appraisalcounselling").val());
+            appraisalredeployement = $.trim($("#appraisalredeployement").val());
+            appraisaldevelopment = $.trim($("#appraisaldevelopment").val());
+            appraisalaction = $.trim($("#appraisalaction").val());
+            appraisaltraining = $.trim($("#appraisaltraining").val());
+            appraisalpromotion = $.trim($("#appraisalpromotion").val());
+            appraisaldetail = $.trim($("#appraisaldetail").val());
+            console.log(appraisalstrenght + appraisalweekness + appraisalcounselling + appraisalredeployement + appraisaldevelopment + appraisalaction + appraisaltraining + appraisalpromotion + appraisaldetail)
+            ApprovalAppraisalAction(true, level, serviceid, dict, appraisalstrenght, appraisalweekness, appraisalcounselling, appraisalredeployement, appraisaldevelopment, appraisalaction, appraisaltraining, appraisalpromotion, appraisaldetail);
         }
 
         function RejectAppraisalAction() {
             level = $("#appraisallevel").val();
             serviceid = $("#appraisalserviceid").val();
-            ApprovalAppraisalAction(false, level, serviceid, null);
+            appraisalstrenght = $.trim($("#appraisalstrenght").val());
+            appraisalweekness = $.trim($("#appraisalweekness").val());
+            appraisalcounselling = $.trim($("#appraisalcounselling").val());
+            appraisalredeployement = $.trim($("#appraisalredeployement").val());
+            appraisaldevelopment = $.trim($("#appraisaldevelopment").val());
+            appraisalaction = $.trim($("#appraisalaction").val());
+            appraisaltraining = $.trim($("#appraisaltraining").val());
+            appraisalpromotion = $.trim($("#appraisalpromotion").val());
+            appraisaldetail = $.trim($("#appraisaldetail").val());
+
+            ApprovalAppraisalAction(false, level, serviceid, null, appraisalstrenght, appraisalweekness, appraisalcounselling, appraisalredeployement, appraisaldevelopment, appraisalaction, appraisaltraining, appraisalpromotion, appraisaldetail);
         }
 
         function ApprovedTrainingAction() {
@@ -521,6 +856,42 @@
             level = $("#traininglevel").val();
             serviceid = $("#trainingserviceid").val();
             ApprovalTrainingAction(false, level, serviceid);
+        }
+
+        function ApprovedLoanAction() {
+            level = $("#loanlevel").val();
+            serviceid = $("#loanserviceid").val();
+            ApprovalLoanAction(true, level, serviceid);
+        }
+
+        function RejectLoanAction() {
+            level = $("#loanlevel").val();
+            serviceid = $("#loanserviceid").val();
+            ApprovalLoanAction(false, level, serviceid);
+        }
+
+        function ApprovedAdvanceAction() {
+            level = $("#advancelevel").val();
+            serviceid = $("#advanceserviceid").val();
+            ApprovalAdvanceAction(true, level, serviceid);
+        }
+
+        function RejectAdvanceAction() {
+            level = $("#advancelevel").val();
+            serviceid = $("#advanceserviceid").val();
+            ApprovalAdvanceAction(false, level, serviceid);
+        }
+
+        function ApprovedTransferAction() {
+            level = $("#transferlevel").val();
+            serviceid = $("#transferserviceid").val();
+            ApprovalTransferAction(true, level, serviceid);
+        }
+
+        function RejectTransferAction() {
+            level = $("#transferlevel").val();
+            serviceid = $("#transferserviceid").val();
+            ApprovalTransferAction(false, level, serviceid);
         }
 
         function ApprovalAction(status, approvalLevel, serviceId) {
@@ -547,12 +918,12 @@
             });
         }
 
-        function ApprovalAppraisalAction(status, approvalLevel, serviceId, categoryItemUpdate) {
+        function ApprovalAppraisalAction(status, approvalLevel, serviceId, categoryItemUpdate, strenght, weekness, counselling, redeployment, development, disciplinaryAction, training, promotion, otherDetail) {
             $.ajax({
                 url: '@Url.Action("ApprovalBoardAppraisalAction", "Dashboard")',
                 type: 'POST',
                 dataType: 'json',
-                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId, categoryItemUpdate: categoryItemUpdate },
+                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId, categoryItemUpdate: categoryItemUpdate, strenght: strenght, weekness: weekness, counselling: counselling, redeployment: redeployment, development: development, disciplinaryAction: disciplinaryAction, training: training, promotion: promotion, otherDetail: otherDetail },
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)
@@ -593,6 +964,76 @@
                 }
             });
         }
+
+        function ApprovalLoanAction(status, approvalLevel, serviceId) {
+            $.ajax({
+                url: '@Url.Action("ApprovalBoardLoanAction", "Dashboard")',
+                type: 'POST',
+                dataType: 'json',
+                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#loan_review').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function ApprovalAdvanceAction(status, approvalLevel, serviceId) {
+            $.ajax({
+                url: '@Url.Action("ApprovalBoardAdvanceAction", "Dashboard")',
+                type: 'POST',
+                dataType: 'json',
+                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#advance_review').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function ApprovalTransferAction(status, approvalLevel, serviceId) {
+            $.ajax({
+                url: '@Url.Action("ApprovalBoardTransferAction", "Dashboard")',
+                type: 'POST',
+                dataType: 'json',
+                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#transfer_review').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
 
     </script>
 }
