@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using ViewModel.Enumeration;
 
 namespace ViewModel.Model
@@ -17,5 +18,19 @@ namespace ViewModel.Model
         public Guid RelationshipId { get; set; }
         public RelationshipModel Relationship { get; set; }
         public ApprovalStatusEnum Status { get; set; }
+        public bool IsEmergencyContact { get; set; }
+    }
+
+    public class NokRequestModel
+    {
+        public string NokFirstName { get; set; }
+        public string NokLastName { get; set; }
+        public string NokEmail { get; set; }
+        public string NokPhonenumber { get; set; }
+        public Guid nokRelationShipId { get; set; }
+        public string NokAddress { get; set; }
+        public string NokDOB { get; set; }
+        public bool IsEmergency { get; set; }
+        public IFormFile NokPic { get; set; }
     }
 }

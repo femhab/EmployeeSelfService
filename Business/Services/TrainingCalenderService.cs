@@ -42,9 +42,9 @@ namespace Business.Services
                 {
                     var check = await _unitOfWork.GetRepository<TrainingCalender>().GetFirstOrDefaultAsync(predicate: x => x.HRTrainingCalenderID == item.New_TrainingCalendarID);
 
-                    var topic = await _unitOfWork.GetRepository<TrainingTopics>().GetFirstOrDefaultAsync(predicate: x => x.Title.ToLower() == item.Topic.ToLower()) ?? null;
+                    var topic = await _unitOfWork.GetRepository<TrainingTopics>().GetFirstOrDefaultAsync(predicate: x => x.Code.ToLower() == item.Topic.ToLower() ) ?? null;
 
-                    if (check == null)
+                    if (check == null && topic != null)
                     {
                         try
                         {

@@ -33,50 +33,58 @@ namespace Business.Services
 
         public async Task<BaseResponse> Create(EmployeeNOKDetail model)
         {
-            var check = await GetAll(x => x.EmployeeId == model.EmployeeId );
-            if (check.Count() < 3)
+            var checkNok = await GetAll(x => x.EmployeeId == model.EmployeeId && !x.IsEmergencyContact);
+            var checkEmergencyContact = await GetAll(x => x.EmployeeId == model.EmployeeId && x.IsEmergencyContact);
+
+            if ( checkNok.Count() > 2)
             {
-                _unitOfWork.GetRepository<EmployeeNOKDetail>().Insert(model);
-                await _unitOfWork.SaveChangesAsync();
+                return new BaseResponse() { Status = false, Message = ResponseMessage.MaxNokReached };
+            }
 
-                //submit for approval
-                var insert = await _unitOfWork.GetRepository<EmployeeNOKDetail>().GetFirstOrDefaultAsync(predicate: x => x.Id == model.Id, null, include: c => c.Include(i => i.Employee).Include(i => i.Relationship));
+            if (checkEmergencyContact.Count() > 2)
+            {
+                return new BaseResponse() { Status = false, Message = ResponseMessage.MaxEmerReached };
+            }
 
-                using (SqlCommand cmd = new SqlCommand())
+            _unitOfWork.GetRepository<EmployeeNOKDetail>().Insert(model);
+            await _unitOfWork.SaveChangesAsync();
+
+            //submit for approval
+            var insert = await _unitOfWork.GetRepository<EmployeeNOKDetail>().GetFirstOrDefaultAsync(predicate: x => x.Id == model.Id, null, include: c => c.Include(i => i.Employee).Include(i => i.Relationship));
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                try
                 {
-                    try
-                    {
-                        cmd.Connection = _sqlConnection;
-                        cmd.CommandType = CommandType.Text;
-                        cmd.CommandText = @"INSERT INTO TempHREmpNextOfKin(NOKName,NOKPhone,NOKAddress,NOKEmail,emp_no,DepCode,Insertusername,InsertTransacDate,InsertTransacType) 
+                    cmd.Connection = _sqlConnection;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = @"INSERT INTO TempHREmpNextOfKin(NOKName,NOKPhone,NOKAddress,NOKEmail,emp_no,DepCode,Insertusername,InsertTransacDate,InsertTransacType) 
                                 VALUES(@param2,@param3,@param4,@param5,@param6,@param8,@param9,@param10,@param11)";
-                        cmd.Parameters.AddWithValue("@param2", insert.LastName + " " + insert.FirstName);
-                        cmd.Parameters.AddWithValue("@param3", insert.PhoneNumber);
-                        cmd.Parameters.AddWithValue("@param4", insert.Address);
-                        cmd.Parameters.AddWithValue("@param5", insert.Email);
-                        cmd.Parameters.AddWithValue("@param6", insert.Emp_No);
-                        //cmd.Parameters.AddWithValue("@param7", null);
-                        cmd.Parameters.AddWithValue("@param8", insert.Relationship.Code);
-                        cmd.Parameters.AddWithValue("@param9", "Employee");
-                        cmd.Parameters.AddWithValue("@param10", DateTime.Now);
-                        cmd.Parameters.AddWithValue("@param11", "Insert");
+                    cmd.Parameters.AddWithValue("@param2", insert.LastName + " " + insert.FirstName);
+                    cmd.Parameters.AddWithValue("@param3", insert.PhoneNumber);
+                    cmd.Parameters.AddWithValue("@param4", insert.Address);
+                    cmd.Parameters.AddWithValue("@param5", insert.Email);
+                    cmd.Parameters.AddWithValue("@param6", insert.Emp_No);
+                    //cmd.Parameters.AddWithValue("@param7", null);
+                    cmd.Parameters.AddWithValue("@param8", insert.Relationship.Code);
+                    cmd.Parameters.AddWithValue("@param9", "Employee");
+                    cmd.Parameters.AddWithValue("@param10", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@param11", "Insert");
 
 
-                        _sqlConnection.Open();
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
-
+                    _sqlConnection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
                 }
 
-                await _notificationService.CreateNotification(NotificationAction.NOKCreateTitle, NotificationAction.NOKCreateMessage, model.EmployeeId, false, false);
-
-                return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
-            return new BaseResponse() { Status = false, Message = ResponseMessage.MaximumReached };
+
+            await _notificationService.CreateNotification(NotificationAction.NOKCreateTitle, NotificationAction.NOKCreateMessage, model.EmployeeId, false, false);
+
+            return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
         }
 
         public async Task<BaseResponse> Delete(Guid id)

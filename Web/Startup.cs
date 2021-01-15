@@ -200,7 +200,8 @@ namespace Web
             var provider = app.ApplicationServices;
             provider.UseScheduler(scheduler =>
             {
-                scheduler.Schedule<RefreshHelper>().EveryThirtyMinutes();
+                //scheduler.Schedule<RefreshHelper>().EveryThirtyMinutes();
+                scheduler.Schedule<RefreshHelper>().EveryFiveMinutes();
             });
         }
     }

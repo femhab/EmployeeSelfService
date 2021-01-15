@@ -13,7 +13,7 @@ namespace Data.Entities
         public DateTime? EndDate { get; set; }
         public string Organiser { get; set; }
         public string Venue { get; set; }
-        public decimal AmtPerHead { get; set; }
+        public decimal? AmtPerHead { get; set; }
         public bool InternalFlag { get; set; }
         public int? TrainingRoomID { get; set; }
         public string Username { get; set; }

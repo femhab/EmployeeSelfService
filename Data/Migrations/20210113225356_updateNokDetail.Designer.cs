@@ -4,14 +4,16 @@ using Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(EmployeeServiceContext))]
-    partial class EmployeeServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210113225356_updateNokDetail")]
+    partial class updateNokDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1693,8 +1695,6 @@ namespace Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<decimal>("AmtPerHead");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
@@ -1705,15 +1705,11 @@ namespace Data.Migrations
 
                     b.Property<DateTime>("EndDate");
 
-                    b.Property<int?>("HoursPerDay");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<bool>("IsScheduled");
 
                     b.Property<string>("ModifiedBy");
-
-                    b.Property<string>("Organizer");
 
                     b.Property<string>("OtherDetails");
 
@@ -1724,8 +1720,6 @@ namespace Data.Migrations
                     b.Property<int>("TrainingYear");
 
                     b.Property<DateTime?>("UpdatedDate");
-
-                    b.Property<string>("Venue");
 
                     b.HasKey("Id");
 
@@ -1739,7 +1733,7 @@ namespace Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<decimal?>("AmtPerHead");
+                    b.Property<decimal>("AmtPerHead");
 
                     b.Property<string>("CreatedBy");
 

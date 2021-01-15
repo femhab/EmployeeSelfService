@@ -54,7 +54,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyTraining(Guid? nominationId, bool? isSchedule, string trainingTopic, int? year, string startDate, string endDate, string otherDetails)
+        public async Task<ActionResult> ApplyTraining(Guid? nominationId, bool? isSchedule, string trainingTopic, int? year, string startDate, string endDate, string otherDetails, int hoursPerDay, string venue, decimal amtPerHead, string organiser)
         {
             try
             {
@@ -83,6 +83,10 @@ namespace Web.Controllers
                             trainingApplication.EndDate = nominationDetail.TrainingCalender.EndDate.Value;
                             trainingApplication.TrainingTopic = nominationDetail.TrainingCalender.Topic.Title;
                             trainingApplication.TrainingYear = nominationDetail.TrainingCalender.TrainingYear.Value;
+                            trainingApplication.HoursPerDay = nominationDetail.TrainingCalender.HoursPerDay.Value;
+                            trainingApplication.Venue = nominationDetail.TrainingCalender.Venue;
+                            trainingApplication.AmtPerHead = nominationDetail.TrainingCalender.AmtPerHead.Value;
+                            trainingApplication.Organizer = nominationDetail.TrainingCalender.Organiser;
                         }
                         else
                         {
@@ -93,6 +97,10 @@ namespace Web.Controllers
                             trainingApplication.TrainingTopic = trainingTopic;
                             trainingApplication.TrainingYear = year.Value;
                             trainingApplication.OtherDetails = otherDetails;
+                            trainingApplication.HoursPerDay = hoursPerDay;
+                            trainingApplication.Venue = venue;
+                            trainingApplication.AmtPerHead = amtPerHead;
+                            trainingApplication.Organizer = organiser;
                         }
                         var response = await _trainingService.Create(trainingApplication, nominationId);
                         if (nominationId != null)

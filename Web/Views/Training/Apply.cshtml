@@ -111,6 +111,22 @@
                             <div class="cal-icon"><input class="form-control datetimepicker" type="text" id="enddateun"></div>
                         </div>
                         <div class="form-group">
+                            <label>Venue <span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control" type="text" id="venueun"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Organizer <span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control" type="text" id="organizerun"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Hours Per Day <span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control" type="number" id="hoursun"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount Per Head <span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input class="form-control" type="number" id="amountun"></div>
+                        </div>
+                        <div class="form-group">
                             <label>Other Details <span class="text-danger">*</span></label>
                             <textarea rows="5" class="form-control" placeholder="Enter your other details here" id="otherdetailsun"></textarea>
                         </div>
@@ -150,15 +166,19 @@
             var startdate = $("#startdateun").val();
             var enddate = $("#enddateun").val();
             var otherdetails = $("#otherdetailsun").val();
-            ApplyTraining( null, false, unscheduledtopic, trainingyear, startdate, enddate, otherdetails);
+            var venue = $("#venueun").val();
+            var organizer = $("#organizerun").val();
+            var hoursperday = $("#hoursun").val();
+            var amountperhead = $("#amountun").val();
+            ApplyTraining(null, false, unscheduledtopic, trainingyear, startdate, enddate, otherdetails, hoursperday, venue, amountperhead, organizer);
         }
 
-        function ApplyTraining(nominationId, isSchedule, trainingTopic, year, startDate, endDate, otherDetails) {
+        function ApplyTraining(nominationId, isSchedule, trainingTopic, year, startDate, endDate, otherDetails, hoursPerDay, venue, amtPerHead, organiser) {
             $.ajax({
                 url: '@Url.Action("ApplyTraining", "Training")',
                 type: 'POST',
                 dataType: 'json',
-                data: { nominationId: nominationId, isSchedule: isSchedule, trainingTopic: trainingTopic, year: year, startDate: startDate, endDate: endDate, otherDetails: otherDetails},
+                data: { nominationId: nominationId, isSchedule: isSchedule, trainingTopic: trainingTopic, year: year, startDate: startDate, endDate: endDate, otherDetails: otherDetails, hoursPerDay: hoursPerDay, venue: venue, amtPerHead: amtPerHead, organiser: organiser},
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response ?.message)

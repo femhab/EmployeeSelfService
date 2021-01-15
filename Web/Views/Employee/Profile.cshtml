@@ -172,6 +172,7 @@
                                             <th>Date of Birth</th>
                                             <th>Phone</th>
                                             <th>Status</th>
+                                            <th>Emergency Contact</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -184,6 +185,7 @@
                                             <td>@item.DOB?.ToString("dd MMMM yyyy")</td>
                                             <td>@item.PhoneNumber</td>
                                             <td>@item.Status</td>
+                                            <td>@item.IsEmergencyContact</td>
                                             <td class="text-right">
                                                 <div class="dropdown dropdown-action">
                                                     <a aria-expanded="false" data-toggle="dropdown" class="action-icon dropdown-toggle" href="#"><i class="material-icons">more_vert</i></a>
@@ -1831,6 +1833,17 @@
                                             <input class="form-control" type="text" id="nokaddress">
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Picture <span class="text-danger">*</span></label>
+                                            <input class="form-control" type="file" id="nokpic">
+                                        </div>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="checkbox" id="isemergencycontact"> Is Emergency Contact? Yes. Leave balnk if it is not
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2175,8 +2188,8 @@
             sendAdvanceApprovalCount(count);
         }
 
-        function SubmitNextOfKin()
-        {
+        function SubmitNextOfKin() {
+            var isemergency;
             var nokemail = $("#nokemail").val();
             var nokphoneno = $("#nokphonenumber").val();
             var nokfirstname = $("#nokfirstname").val();
@@ -2184,8 +2197,24 @@
             var nokaddress = $("#nokaddress").val();
             var nokdob = $("#nokdob").val();
             var nokrelationshipid = $("#nokrelationshipid").val();
+            var nokpic = document.getElementById('nokpic').files[0];
+            console.log(nokpic);
+            //var nokpic = $("#nokpic").val();
+            if (document.getElementById('isemergencycontact').checked) { isemergency = true }
+            else { isemergency = false }
 
-            AddNextOfKin(nokfirstname, noklastname, nokemail, nokphoneno, nokaddress, nokrelationshipid, nokdob);
+            var formData = new FormData();
+            formData.append("noKFirstName", nokfirstname);
+            formData.append("nokLastName", noklastname);
+            formData.append("nokPhonenumber", nokphoneno);
+            formData.append("nokEmail", nokemail);
+            formData.append("nokRelationShipId", nokrelationshipid);
+            formData.append("nokAddress", nokaddress);
+            formData.append("nokDOB", nokdob);
+            formData.append("isEmergency", isemergency);
+            formData.append("nokPic", nokpic);
+
+            AddNextOfKin(formData);
         }
 
         function SubmitDependent()
@@ -2575,12 +2604,15 @@
         }
 
         var redirectUrl = '@Url.Action("Employee", "Dashboard")';
-        function AddNextOfKin(nokFirstName, nokLastName, nokEmail, nokPhoneNumber, nokAddress, nokrelationshipId, nokDob ) {
+        function AddNextOfKin(data) {
             $.ajax({
                 url: '@Url.Action("AddNextOfKin", "Employee")',
                 type: 'POST',
+                enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false,
                 dataType: 'json',
-                data: { noKFirstName: nokFirstName,  nokLastName: nokLastName, nokPhonenumber: nokPhoneNumber, nokEmail: nokEmail, nokRelationShipId: nokrelationshipId, nokAddress:  nokAddress, nokDOB: nokDob},
+                data: data,
                 success: function (response) {
                     if (response?.status) {
                         toastr.success(response?.message)

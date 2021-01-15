@@ -3,6 +3,8 @@ using Business.Interfaces;
 using Data.Entities;
 using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -218,10 +220,11 @@ namespace Web.Controllers
             }
         }
 
+        
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> AddNextOfKin(string noKFirstName, string nokLastName, string nokPhonenumber, Guid nokRelationShipId, string nokEmail, string nokAddress, string nokDOB)
+        public async Task<ActionResult> AddNextOfKin([FromForm] NokRequestModel model)
         {
             try
             {
@@ -233,22 +236,23 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
-                    var dob = DateTime.ParseExact(nokDOB, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var dob = DateTime.ParseExact(model.NokDOB, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
                     var nokDetail = new EmployeeNOKDetail()
                     {
                         Emp_No = authData.Emp_No,
                         EmployeeId = authData.Id,
-                        FirstName = noKFirstName,
-                        LastName = nokLastName,
-                        PhoneNumber = nokPhonenumber,
-                        RelationshipId = nokRelationShipId,
-                        Email = nokEmail,
+                        FirstName = model.NokFirstName,
+                        LastName = model.NokLastName,
+                        PhoneNumber = model.NokPhonenumber,
+                        RelationshipId = model.nokRelationShipId,
+                        Email = model.NokEmail,
                         DOB = dob,
                         Status = ApprovalStatus.Pending,
-                        Address = nokAddress,
+                        Address = model.NokAddress,
                         Id = Guid.NewGuid(),
-                        CreatedDate = DateTime.Now
+                        CreatedDate = DateTime.Now,
+                        IsEmergencyContact = model.IsEmergency
                     };
 
                     BaseResponse response = await _employeeNOKDetailService.Create(nokDetail);

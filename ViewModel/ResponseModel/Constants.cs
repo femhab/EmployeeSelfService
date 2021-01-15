@@ -11,7 +11,7 @@
         public const string OperationFailed = "Oop!, Please try again later";
         public const string LeaveExist = "You already enjoyed a leave or on a/pending leave request. If it is a recall case, please proceed to request leave recall instead";
         public const string MaximumLeaveReached = "Maximum allowed leave days reached";
-        public const string MaximumPaymentAdvanceApplied = "Maximum application in a year is reahed";
+        public const string MaximumPaymentAdvanceApplied = "“You cannot take more than 3 salary advance in a fiscal year”.";
         public const string PaymentAdvanceExist = "You already requested an advance for the month";
         public const string LeaveExecuted = "No record found/ leave process already executed";
         public const string LeaveRecallExecuted = "No record found/ leave recall already requested";
@@ -26,6 +26,8 @@
         public const string LoanProcessStarted = "You can not update a loan when process already started";
         public const string AppraisalExist = "You already submitted an appraisal for this year";
         public const string SignOffSuccessful = "The service was signed off successfully for next approval";
+        public const string MaxNokReached = "You are only allowed to have 2 Next of Kin";
+        public const string MaxEmerReached = "You are only allowed to have 2 Emergency Contact";
     }
 
     public class NotificationAction
