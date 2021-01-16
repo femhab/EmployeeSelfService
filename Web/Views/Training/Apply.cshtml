@@ -100,31 +100,51 @@
                         </div>
                         <div class="form-group">
                             <label>Training Year <span class="text-danger">*</span></label>
-                            <div class="cal-icon"><input class="form-control" type="text" id="trainingyearun"></div>
+                            <div><input class="form-control" type="text" id="trainingyearun"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Start Date<span class="text-danger">*</span></label>
-                            <div class="cal-icon"><input class="form-control datetimepicker" type="text" id="startdateun"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>End Date<span class="text-danger">*</span></label>
-                            <div class="cal-icon"><input class="form-control datetimepicker" type="text" id="enddateun"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Venue <span class="text-danger">*</span></label>
-                            <div class="cal-icon"><input class="form-control" type="text" id="venueun"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Organizer <span class="text-danger">*</span></label>
-                            <div class="cal-icon"><input class="form-control" type="text" id="organizerun"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Hours Per Day <span class="text-danger">*</span></label>
-                            <div class="cal-icon"><input class="form-control" type="number" id="hoursun"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Amount Per Head <span class="text-danger">*</span></label>
-                            <div class="cal-icon"><input class="form-control" type="number" id="amountun"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Start Date<span class="text-danger">*</span></label>
+                                    <div><input class="form-control datetimepicker" type="text" id="startdateun"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>End Date<span class="text-danger">*</span></label>
+                                    <div><input class="form-control datetimepicker" type="text" id="enddateun"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Venue <span class="text-danger">*</span></label>
+                                    <div><input class="form-control" type="text" id="venueun"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Organizer <span class="text-danger">*</span></label>
+                                    <div><input class="form-control" type="text" id="organizerun"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Hours Per Day <span class="text-danger">*</span></label>
+                                    <div><input class="form-control" type="number" id="hoursun"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Amount Per Head <span class="text-danger">*</span></label>
+                                    <div><input class="form-control" type="number" id="amountun"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Attachment (Advertisement File etc.)<span class="text-danger">*</span></label>
+                                    <div><input class="form-control" type="file" id="attachmentun"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Other Details <span class="text-danger">*</span></label>
@@ -157,7 +177,11 @@
 
         function SubmitScheduledTopic() {
             var scheduledtopic = $("#scheduledtopicid").val();
-            ApplyTraining(scheduledtopic, true);
+            var formData = new FormData();
+            formData.append("nominationId", scheduledtopic);
+            formData.append("isSchedule", true);
+
+            ApplyTraining(formData);
         }
 
         function SubmitUnScheduledTopic() {
@@ -170,15 +194,35 @@
             var organizer = $("#organizerun").val();
             var hoursperday = $("#hoursun").val();
             var amountperhead = $("#amountun").val();
-            ApplyTraining(null, false, unscheduledtopic, trainingyear, startdate, enddate, otherdetails, hoursperday, venue, amountperhead, organizer);
+            var attachment = document.getElementById('attachmentun').files[0];
+
+            var formData = new FormData();
+            formData.append("trainingTopic", unscheduledtopic);
+            formData.append("isSchedule", false);
+            formData.append("year", trainingyear);
+            formData.append("startDate", startdate);
+            formData.append("endDate", enddate);
+            formData.append("otherDetails", otherdetails);
+            formData.append("hoursPerDay", hoursperday);
+            formData.append("venue", venue);
+            formData.append("amtPerHead", amountperhead);
+            formData.append("organiser", organizer);
+            formData.append("attachmentFile", attachment);
+
+            ApplyTraining(formData);
         }
 
-        function ApplyTraining(nominationId, isSchedule, trainingTopic, year, startDate, endDate, otherDetails, hoursPerDay, venue, amtPerHead, organiser) {
+        //nominationId, isSchedule, trainingTopic, year, startDate, endDate, otherDetails, hoursPerDay, venue, amtPerHead, organiser
+        function ApplyTraining(data) {
             $.ajax({
                 url: '@Url.Action("ApplyTraining", "Training")',
                 type: 'POST',
+                enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false,
                 dataType: 'json',
-                data: { nominationId: nominationId, isSchedule: isSchedule, trainingTopic: trainingTopic, year: year, startDate: startDate, endDate: endDate, otherDetails: otherDetails, hoursPerDay: hoursPerDay, venue: venue, amtPerHead: amtPerHead, organiser: organiser},
+                data: data,
+                //{ nominationId: nominationId, isSchedule: isSchedule, trainingTopic: trainingTopic, year: year, startDate: startDate, endDate: endDate, otherDetails: otherDetails, hoursPerDay: hoursPerDay, venue: venue, amtPerHead: amtPerHead, organiser: organiser},
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response ?.message)

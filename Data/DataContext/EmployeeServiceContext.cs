@@ -21,6 +21,7 @@ namespace Data.DataContext
         public DbSet<AvalaibilityStatus> AvalaibilityStatus { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Courtesy> Courtesy { get; set; }
+        public DbSet<Document> Documents { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<DisciplinaryAction> DisciplinaryActions { get; set; }
         public DbSet<Division> Divisions { get; set; }

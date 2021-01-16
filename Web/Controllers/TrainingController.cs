@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Data.Entities;
 using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -51,10 +52,29 @@ namespace Web.Controllers
             return View(trainingViewModel);
         }
 
+        public class TrainingRequestModel
+        {
+            public Guid? NominationId { get; set; }
+            public bool? IsSchedule { get; set; }
+            public string TrainingTopic { get; set; }
+            public int? Year { get; set; }
+            public string StartDate { get; set; }
+            public string EndDate { get; set; }
+            public string OtherDetails { get; set; }
+            public int HoursPerDay { get; set; }
+            public string Venue { get; set; }
+            public decimal AmtPerHead { get; set; }
+            public string Organiser { get; set; }
+            public IFormFile AttachmentFile { get; set; }
+
+        }
+
+       // Guid? nominationId, bool? isSchedule, string trainingTopic, int? year, string startDate, string endDate, string otherDetails, int hoursPerDay, string venue, decimal amtPerHead, string organiser
+
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyTraining(Guid? nominationId, bool? isSchedule, string trainingTopic, int? year, string startDate, string endDate, string otherDetails, int hoursPerDay, string venue, decimal amtPerHead, string organiser)
+        public async Task<ActionResult> ApplyTraining(TrainingRequestModel model)
         {
             try
             {
@@ -75,10 +95,10 @@ namespace Web.Controllers
                         trainingApplication.Emp_No = authData.Emp_No;
                         trainingApplication.CreatedDate = DateTime.Now;
                         trainingApplication.Id = Guid.NewGuid();
-                        trainingApplication.IsScheduled = isSchedule.Value;
-                        if (nominationId != null)
+                        trainingApplication.IsScheduled = model.IsSchedule.Value;
+                        if (model.NominationId != null)
                         {
-                            var nominationDetail = await _trainingNominationService.GetById(nominationId.Value);
+                            var nominationDetail = await _trainingNominationService.GetById(model.NominationId.Value);
                             trainingApplication.StartDate = nominationDetail.TrainingCalender.StartDate.Value;
                             trainingApplication.EndDate = nominationDetail.TrainingCalender.EndDate.Value;
                             trainingApplication.TrainingTopic = nominationDetail.TrainingCalender.Topic.Title;
@@ -90,21 +110,21 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            var startingDate = DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                            var endingDate = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                            var startingDate = DateTime.ParseExact(model.StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                            var endingDate = DateTime.ParseExact(model.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                             trainingApplication.StartDate = startingDate;
                             trainingApplication.EndDate = endingDate;
-                            trainingApplication.TrainingTopic = trainingTopic;
-                            trainingApplication.TrainingYear = year.Value;
-                            trainingApplication.OtherDetails = otherDetails;
-                            trainingApplication.HoursPerDay = hoursPerDay;
-                            trainingApplication.Venue = venue;
-                            trainingApplication.AmtPerHead = amtPerHead;
-                            trainingApplication.Organizer = organiser;
+                            trainingApplication.TrainingTopic = model.TrainingTopic;
+                            trainingApplication.TrainingYear = model.Year.Value;
+                            trainingApplication.OtherDetails = model.OtherDetails;
+                            trainingApplication.HoursPerDay = model.HoursPerDay;
+                            trainingApplication.Venue = model.Venue;
+                            trainingApplication.AmtPerHead = model.AmtPerHead;
+                            trainingApplication.Organizer = model.Organiser;
                         }
-                        var response = await _trainingService.Create(trainingApplication, nominationId);
-                        if (nominationId != null)
-                            await _trainingNominationService.UpdateStatus(nominationId.Value, true);
+                        var response = await _trainingService.Create(trainingApplication, model.NominationId);
+                        if (model.NominationId != null)
+                            await _trainingNominationService.UpdateStatus(model.NominationId.Value, true);
                         return Json(new
                         {
                             status = response.Status,

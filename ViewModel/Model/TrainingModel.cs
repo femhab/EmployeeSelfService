@@ -14,6 +14,7 @@ namespace ViewModel.Model
         public DateTime EndDate { get; set; }
         public bool IsScheduled { get; set; }
         public string OtherDetails { get; set; }
+        public string PictureUrl { get; set; }
     }
 
     public class TrainingViewModel: AuthDataModel

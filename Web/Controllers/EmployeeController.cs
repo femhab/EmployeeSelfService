@@ -3,14 +3,17 @@ using Business.Interfaces;
 using Data.Entities;
 using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Utilities.Helper;
 using ViewModel.Model;
 using ViewModel.ResponseModel;
 using Web.Helper.JWT;
@@ -37,9 +40,11 @@ namespace Web.Controllers
         private readonly IUserRoleService _userRoleService;
         private readonly IRelationshipService _relationshipService;
         private readonly ISectionService _sectionService;
+        private readonly IDocumentService _documentService;
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService, IDivisionService divisionService,ISectionService sectionService, IApprovalBoardService approvalBoardService)
+        public EmployeeController(IEmployeeService employeeService, IMapper mapper, IRoleService roleService, IDepartmentService departmentService, IAuthService authService, IApprovalWorkItemService approvalWorkItemService, IEmployeeNOKDetailService employeeNOKDetailService, IEmployeeAddressService employeeAddressService, IRelationshipService relationshipService, IEmployeeFamilyDependentService employeeFamilyDependentService, IEmployeeApprovalConfigService employeeApprovalConfigService, IUserRoleService userRoleService, IEmployeeEducationalDetailService employeeEducationalDetailService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService, IDivisionService divisionService,ISectionService sectionService, IApprovalBoardService approvalBoardService, IDocumentService documentService, IHostingEnvironment hostingEnvironment)
         {
             _employeeService = employeeService;
             _approvalWorkItemService = approvalWorkItemService;
@@ -55,10 +60,12 @@ namespace Web.Controllers
             _educationalLevelService = educationalLevelService;
             _educationalQualificationService = educationalQualificationService;
             _roleService = roleService;
+            _hostingEnvironment = hostingEnvironment;
             _userRoleService = userRoleService;
             _sectionService = sectionService;
             _relationshipService = relationshipService;
             _approvalBoardService = approvalBoardService;
+            _documentService = documentService;
             _mapper = mapper;
         }
 
@@ -124,6 +131,11 @@ namespace Web.Controllers
                 var approvalWorkItem = await _approvalWorkItemService.GetAll();
                 var relationshipList = await _relationshipService.GetAll();
                 var nokList = await _employeeNOKDetailService.GetByEmployee(authData.Id);
+                foreach (var item in nokList)
+                {
+                    var document = await _documentService.GetByReference(item.Id, DocumentType.NextOfKin);
+                    item.PictureUrl = (document != null) ?  $"{Request.Scheme}://{Request.Host}{document.DocumentUrl}": null;
+                }
                 var dependentList = await _employeeFamilyDependentService.GetByEmployee(authData.Id);
                 var userRoles = await _userRoleService.GetAll();
                 var workItems = await _approvalWorkItemService.GetAll();
@@ -254,6 +266,23 @@ namespace Web.Controllers
                         CreatedDate = DateTime.Now,
                         IsEmergencyContact = model.IsEmergency
                     };
+
+                    var path = $"wwwroot/Uploads/Documents/NextOfKin/{nokDetail.Id}/";
+                    var upload = await FileUpload.UploadFile(model.NokPic, null, false, path);
+
+
+                    if (!string.IsNullOrEmpty(upload))
+                    {
+                        var data = new Document()
+                        {
+                            RerenceId = nokDetail.Id,
+                            Type = DocumentType.NextOfKin,
+                            DocumentUrl = upload,
+                            Id = Guid.NewGuid(),
+                            CreatedDate = DateTime.Now
+                        };
+                        var status = await _documentService.CreateOrUpdate(data);
+                    }
 
                     BaseResponse response = await _employeeNOKDetailService.Create(nokDetail);
                    

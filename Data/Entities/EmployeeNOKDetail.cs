@@ -19,5 +19,6 @@ namespace Data.Entities
         public Relationship Relationship { get; set; }
         public ApprovalStatus Status { get; set; }
         public bool IsEmergencyContact { get; set; }
+        public string PictureUrl { get; set; }
     }
 }

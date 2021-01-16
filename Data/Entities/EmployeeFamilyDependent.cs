@@ -17,5 +17,6 @@ namespace Data.Entities
         public Guid RelationshipId { get; set; }
         public Relationship Relationship { get; set; }
         public ApprovalStatus Status { get; set; }
+        public string PictureUrl { get; set; }
     }
 }

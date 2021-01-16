@@ -70,6 +70,7 @@ namespace Business.DIExtension
             services.AddTransient<IPayslipService, PayslipService>();
             services.AddTransient<ISendGridProvider, SendGridProvider>();
             services.AddTransient<IBulkSmsProvider, BulkSmsProvider>();
+            services.AddTransient<IDocumentService, DocumentService>();
 
 
             return services;

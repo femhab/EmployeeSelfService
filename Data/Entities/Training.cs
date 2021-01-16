@@ -18,5 +18,6 @@ namespace Data.Entities
         public string Organizer { get; set; }
         public int? HoursPerDay { get; set; }
         public decimal AmtPerHead { get; set; }
+        public string PictureUrl { get; set; }
     }
 }

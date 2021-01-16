@@ -16,5 +16,6 @@ namespace ViewModel.Model
         public Guid RelationshipId { get; set; }
         public RelationshipModel Relationship { get; set; }
         public ApprovalStatusEnum Status { get; set; }
+        public string PictureUrl { get; set; }
     }
 }

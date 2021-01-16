@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Entities;
 using Data.Enums;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ViewModel.ResponseModel;
@@ -21,14 +23,18 @@ namespace Business.Services
         private readonly INotificationService _notificationService;
         private readonly SqlConnection _sqlConnection;
         private readonly IConfiguration _configuration;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IDocumentService _documentService;
 
-        public EmployeeNOKDetailService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, INotificationService notificationService, IConfiguration configuration)
+        public EmployeeNOKDetailService(IUnitOfWork unitOfWork, IApprovalBoardService approvalBoardService, INotificationService notificationService, IConfiguration configuration, IHostingEnvironment hostingEnvironment, IDocumentService documentService)
         {
             _configuration = configuration;
             _unitOfWork = unitOfWork;
             _approvalBoardService = approvalBoardService;
             _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
             _notificationService = notificationService;
+            _hostingEnvironment = hostingEnvironment;
+            _documentService = documentService;
         }
 
         public async Task<BaseResponse> Create(EmployeeNOKDetail model)

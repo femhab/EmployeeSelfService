@@ -19,6 +19,7 @@ namespace ViewModel.Model
         public RelationshipModel Relationship { get; set; }
         public ApprovalStatusEnum Status { get; set; }
         public bool IsEmergencyContact { get; set; }
+        public string PictureUrl { get; set; }
     }
 
     public class NokRequestModel

@@ -2,6 +2,8 @@
 {
     public enum DocumentType
     {
-        NextOfKin
+        NextOfKin,
+        FamilyDependent,
+        Training
     }
 }
