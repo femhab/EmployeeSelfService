@@ -21,6 +21,8 @@ namespace Data.DataContext
         public DbSet<AvalaibilityStatus> AvalaibilityStatus { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Courtesy> Courtesy { get; set; }
+        public DbSet<ContractObjective> ContractObjectives { get; set; }
+        public DbSet<ContractItem> ContractItems { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<DisciplinaryAction> DisciplinaryActions { get; set; }
@@ -51,6 +53,8 @@ namespace Data.DataContext
         public DbSet<MaritalStatus> MaritalStatus { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<PaymentAdvance> PaymentAdvances { get; set; }
+        public DbSet<PIP> PIP { get; set; }
+        public DbSet<PIPItem> PIPItems { get; set; }
         public DbSet<PaymentAdvanceTrack> PaymentAdvanceTracks { get; set; }
         public DbSet<Relationship> Relationships { get; set; }
         public DbSet<Role> RoleType { get; set; }

@@ -39,13 +39,17 @@ namespace Business.Services
             await _unitOfWork.SaveChangesAsync();
             if (sendExtraNotification || !sendExtraNotification)
             {
-                //send email
-                await _sendGridProvider.SendEmail("asbusari@gmail.com", title, message);
-                await _sendGridProvider.SendEmail("ftrufai@gmail.com", title, message);
-
-                //send sms
-                await _bulkSmsProvider.SendSms("2348023130626", message);
-                await _bulkSmsProvider.SendSms("2348023130648", message);
+                var employee = await _unitOfWork.GetRepository<Employee>().GetFirstOrDefaultAsync(predicate: x => x.Id == employeeId);
+                if (!string.IsNullOrEmpty(employee.EmailAddress))
+                {
+                    //send email
+                    await _sendGridProvider.SendEmail(employee.EmailAddress, title, message);
+                }
+                if (!string.IsNullOrEmpty(employee.PhoneNumber))
+                {
+                    //send sms
+                    await _bulkSmsProvider.SendSms(employee.PhoneNumber, message);
+                }
             }
         }
 

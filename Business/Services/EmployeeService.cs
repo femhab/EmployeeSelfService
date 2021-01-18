@@ -75,6 +75,7 @@ namespace Business.Services
                                 StatusCode = reader["StatusCode"].ToString(),
                                 CountryCode = reader["CountryCode"].ToString(),
                                 StateCode = reader["StateCode"].ToString(),
+                                report_to = reader["report_to"].ToString(),
                                 LGACode = reader["LGACode"].ToString(),
                                 LocationCode = reader["LocationCode"].ToString(),
                                 CourtesyCode = reader["CourtesyCode"].ToString(),
@@ -118,6 +119,7 @@ namespace Business.Services
                     model.DOB = DateTime.ParseExact(hrData.date_birth, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     model.EmploymentDate = DateTime.ParseExact(hrData.date_Emp, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     model.DateConf = DateTime.ParseExact(hrData.date_conf, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    model.ReportToLineManager = hrData.report_to;
                     model.EffectiveDate = DateTime.ParseExact(hrData.effectiveDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     model.PreAppDate = DateTime.ParseExact(hrData.preAppDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     model.ProRetireDate = DateTime.ParseExact(hrData.projRetireDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
@@ -406,6 +408,30 @@ namespace Business.Services
                     hod = await GetById(department.HOD.Value);
             }
             return hod;
+        }
+
+        //grade level 8 - 14
+        public async Task<IEnumerable<Employee>> GetContractTargetedEmployee(string empNo)
+        {
+            var data = await _unitOfWork.GetRepository<Employee>().GetAllAsync(predicate: x => x.GradeLevel.GradeCode == "GL08" || x.GradeLevel.GradeCode == "GL09" || x.GradeLevel.GradeCode == "GL10" || x.GradeLevel.GradeCode == "GL11" || x.GradeLevel.GradeCode == "GL12" || x.GradeLevel.GradeCode == "GL13" || x.GradeLevel.GradeCode == "GL14" || x.GradeLevel.GradeCode == "GLDR");
+
+            var lineList = new List<Employee>();
+
+            foreach(var item in data)
+            {
+                if(!string.IsNullOrEmpty(item.ReportToLineManager) && item.ReportToLineManager.ToLower() == empNo.ToLower())
+                {
+                    lineList.Add(item);
+                }
+            }
+
+            return lineList;
+        }
+
+        public async Task<IEnumerable<Employee>> GetLineEmployee(string empNo, Guid departmentId)
+        {
+            var data = await _unitOfWork.GetRepository<Employee>().GetAllAsync(predicate: x => x.ReportToLineManager.ToLower() == empNo.ToLower() && x.DepartmentId == departmentId);
+            return data;
         }
     }
 }

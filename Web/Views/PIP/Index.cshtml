@@ -1,0 +1,124 @@
+﻿@model ViewModel.Model.PIPViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Performance Improvement Plan</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Performance</a></li>
+                    <li class="breadcrumb-item active"> Issue Performance Improvement Plan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <select class="select" id="pipemployeeid" onchange="OnSelect()">
+                                        <option value="">Select Employee</option>
+                                        @if (Model.Employee != null)
+                                        {
+                                            @foreach (var item in Model.Employee)
+                                            {
+                                                <option value="@item.Emp_No">@item.LastName @item.FirstName - @item.Emp_No</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" placeholder="EmployeeId" readonly class="form-control" id="pipemployeeno">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Performance in need of improvement <span class="text-danger">*</span></label>
+                            <textarea rows="5" class="form-control summernote" id="pipsubject"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Expected Result <span class="text-danger">*</span></label>
+                            <textarea rows="5" class="form-control summernote" id="pipmessage"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Deate of Review <span class="text-danger">*</span></label>
+                            <input type="text" placeholder="" class="form-control datetimepicker" id="pipdate">
+                        </div>
+                        <div class="form-group mb-0" onclick="SubmitPIPDetail()">
+                            <div class="text-center">
+                                <div class="btn btn-primary"><span>Initiate PIP</span> <i class="fa fa-send m-l-5"></i></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var selectedId;
+       //on select of unregisterd nam action
+        var lowGradeList = JSON.parse('@Json.Serialize(@Model.Employee)');
+
+        function OnSelect() {
+            let selectedUser = $("#pipemployeeid option:selected").val();
+            lowGradeList.forEach(function (entry) {
+               if (entry.emp_No == selectedUser) {
+                   $("#pipemployeeno").val(entry.emp_No);
+                   selectedId = entry.id;
+                }
+            });
+        }
+
+        function SubmitPIPDetail()
+        {
+            var pipemployeeid = $("#pipemployeeid").val();
+            var pipsubject = $("#pipsubject").val();
+            var pipmessage = $("#pipmessage").val();
+            var pipdate = $("#pipdate").val();
+
+            sendPIPForm(pipemployeeid, pipsubject, pipmessage, pipdate);
+        }
+
+        function sendPIPForm(empNo, subject, message, date) {
+            $.ajax({
+                url: '@Url.Action("AddPIP", "PIP")',
+                type: 'POST',
+                dataType: 'json',
+                data: { empNo: empNo, subject: subject, message: message, date: date },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message);
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}

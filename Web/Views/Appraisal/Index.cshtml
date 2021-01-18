@@ -77,6 +77,7 @@
     </div>
 </div>
 <!-- /Page Content -->
+
 <!-- Add Performance Appraisal Modal -->
 <div id="add_appraisal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -87,6 +88,31 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            @if (Model.Employee.StaffType == "STDEMP")
+            {
+                <div style="text-align:center">
+                    <a href="~/Guides/STDAppraisalGuide.docx">Click for the detail instruction</a>
+                </div>
+            }
+            else if (Model.Employee.StaffType == "DRVEMP")
+            {
+                <div style="text-align:center">
+                    <a href="~/Guides/DRVAppraisalGuide.docx">Click for the detail instruction</a>
+                </div>
+            }
+            else if (Model.Employee.StaffType == "BTOEMP")
+            {
+                <div style="text-align:center">
+                    <a href="~/Guides/BTOAppraisalGuide.docx">Click for the detail instruction</a>
+                </div>
+            }
+            else
+            {
+                <div style="text-align:center">
+                    <a href="~/Guides/UnknownAppraisalGuide.docx">Click for the detail instruction</a>
+                </div>
+            }
+
             <div class="modal-body">
                 <form>
                     <div class="row">

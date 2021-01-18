@@ -24,9 +24,10 @@ namespace Web.Controllers
         private readonly IAppraisalPeriodService _appraisalPeriodService;
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IEmployeeService _employeeService;
+        private readonly IContractService _contractService;
         private readonly IMapper _mapper;
 
-        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService, IEmployeeAppraisalService employeeAppraisalService, IAppraisalItemService appraisalItemService, IApprovalBoardService approvalBoardService)
+        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService, IEmployeeAppraisalService employeeAppraisalService, IAppraisalItemService appraisalItemService, IApprovalBoardService approvalBoardService, IContractService contractService)
         {
             _appraisalRatingService = appraisalRatingService;
             _appraisalCategoryService = appraisalCategoryService;
@@ -37,6 +38,7 @@ namespace Web.Controllers
             _approvalBoardService = approvalBoardService;
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _employeeAppraisalService = employeeAppraisalService;
+            _contractService = contractService;
             _mapper = mapper;
         }
 
@@ -52,15 +54,31 @@ namespace Web.Controllers
 
                 AppraisalViewModel appraisalViewModel = new AppraisalViewModel();
                 var ratingList = await _appraisalRatingService.GetAll();
-                var categoryList = await _appraisalCategoryService.GetAll();
-                var categoryItemList = await _appraisalCategoryItemService.GetAll();
-                var employeeList = await _employeeService.GetAll();
                 var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
+                var categoryList = await _appraisalCategoryService.GetAll();
+                var categoryItemList = (await _appraisalCategoryItemService.GetAll()).Where(x => x.StaffType.ToLower() == employee.StaffType.ToLower());
+                var employeeList = await _employeeService.GetAll();
                 var employeeAppraisal =await _employeeAppraisalService.GetByEmployee(authData.Id);
+                var extractedCategory = new List<AppraisalCategory>();
+                foreach (var item in categoryItemList)
+                {
+                    if(extractedCategory.Count() > 0)
+                    {
+                        if (extractedCategory.Where(x => x.AppraisalCategoryCode.ToLower() == item.AppraisalCategoryCode.ToLower()).Count() < 1)
+                        {
+                            extractedCategory.Add(item.AppraisalCategory);
+                        }
+                    }
+                    else
+                    {
+                        extractedCategory.Add(item.AppraisalCategory);
+                    }
+                    
+                }
 
                 appraisalViewModel = _mapper.Map<AppraisalViewModel>(authData);
                 appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
-                appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(categoryList);
+                appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(extractedCategory);
                 appraisalViewModel.AppraisalCategoryItems = _mapper.Map<IEnumerable<AppraisalCategoryItemModel>>(categoryItemList);
                 appraisalViewModel.EmployeeList = _mapper.Map<IEnumerable<EmployeeModel>>(employeeList);
                 appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
@@ -87,14 +105,25 @@ namespace Web.Controllers
                 AppraisalViewModel appraisalViewModel = new AppraisalViewModel();
                 var ratingList = await _appraisalRatingService.GetAll();
                 var categoryList = await _appraisalCategoryService.GetAll();
-                var categoryItemList = await _appraisalCategoryItemService.GetAll();
-                var employeeList = await _employeeService.GetAll();
                 var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
+                var categoryItemList = (await _appraisalCategoryItemService.GetAll()).Where(x => x.StaffType.ToLower() == employee.StaffType.ToLower());
+                var extractedCategory = new List<AppraisalCategory>();
+                foreach(var item in categoryItemList )
+                {
+                    foreach(var category in categoryList)
+                    {
+                        if(item.AppraisalCategoryCode.ToLower() == category.AppraisalCategoryCode.ToLower())
+                        {
+                            extractedCategory.Add(category);
+                        }
+                    }
+                }
+                var employeeList = await _employeeService.GetAll();
                 var employeeAppraisal = await _employeeAppraisalService.GetByProcessor(authData.Emp_No);
                 var appraisalItems = await _appraisalItemService.GetAll();
 
                 appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
-                appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(categoryList);
+                appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(extractedCategory);
                 appraisalViewModel.AppraisalCategoryItems = _mapper.Map<IEnumerable<AppraisalCategoryItemModel>>(categoryItemList);
                 appraisalViewModel.EmployeeList = _mapper.Map<IEnumerable<EmployeeModel>>(employeeList);
                 appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
@@ -127,7 +156,9 @@ namespace Web.Controllers
                     //get first level approver
                     var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "appraisal", Level.FirstLevel);
                     var appraisalPeriod = await _appraisalPeriodService.GetActivePeriod();
-                    if(appraisalPeriod == null)
+                    var ratingList = await _appraisalRatingService.GetAll();
+                    var categoryItemList = await _appraisalCategoryItemService.GetAll();
+                    if (appraisalPeriod == null)
                     {
 
                     }
@@ -145,6 +176,7 @@ namespace Web.Controllers
                             AppraisalPeriodId = appraisalPeriod.Id,
                             Id = Guid.NewGuid(),
                             CreatedDate = DateTime.Now,
+                            TotalScore = 0
                         };
 
                         var appraisalItemList = new List<AppraisalItem>();
@@ -156,6 +188,24 @@ namespace Web.Controllers
                             Guid rating = Guid.Parse(item.Split("/")[2]);
 
                             appraisalItemList.Add(new AppraisalItem() { AppraisalCategoryId = category, AppraisalCategoryItemId = categoryItem, AppraisalRatingId = rating, EmployeeAppraisalId = employeeAppraisal.Id, Id = Guid.NewGuid(), CreatedDate = DateTime.Now });
+
+                            var ratingScore = 0;
+                            var itemScore = 0;
+                            foreach (var ratingItem in ratingList)
+                            {
+                                if(rating == ratingItem.Id)
+                                {
+                                    ratingScore = ratingItem.Weight;
+                                }
+                            }
+                            foreach (var catItem in categoryItemList)
+                            {
+                                if (categoryItem == catItem.Id)
+                                {
+                                    itemScore = catItem.Weight;
+                                }
+                            }
+                            employeeAppraisal.TotalScore = employeeAppraisal.TotalScore + (itemScore * ratingScore);
                         }
 
                         var appraisalCreate = await _employeeAppraisalService.Create(employeeAppraisal);
@@ -204,10 +254,13 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
+                    var ratingList = await _appraisalRatingService.GetAll();
+                    var categoryItemList = await _appraisalCategoryItemService.GetAll();
+
                     //get first level approver
                     var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "appraisal", Level.FirstLevel);
                     var appraisalPeriod = (await _appraisalPeriodService.GetActivePeriod());
-                    if(appraisalPeriod == null || appraisalPeriod.StartDate > DateTime.Now)
+                    if(appraisalPeriod == null || appraisalPeriod.StartDate > DateTime.Now || DateTime.Now > appraisalPeriod.EndDate)
                     {
                         return Json(new
                         {
@@ -227,7 +280,8 @@ namespace Web.Controllers
                             NextRatingManagerName = approverConfig.Employee.LastName + approverConfig.Employee.FirstName,
                             AppraisalPeriodId = appraisalPeriod.Id,
                             Id = Guid.NewGuid(),
-                            CreatedDate = DateTime.Now
+                            CreatedDate = DateTime.Now,
+                            TotalScore = 0
                         };
 
                         var appraisalItemList = new List<AppraisalItem>();
@@ -239,6 +293,24 @@ namespace Web.Controllers
                             Guid rating = Guid.Parse(item.Split("/")[2]);
 
                             appraisalItemList.Add(new AppraisalItem() { AppraisalCategoryId = category, AppraisalCategoryItemId = categoryItem, AppraisalRatingId = rating, EmployeeAppraisalId = employeeAppraisal.Id, Id = Guid.NewGuid(), CreatedDate = DateTime.Now });
+
+                            var ratingScore = 0;
+                            var ratingHighScore = 0;
+                            var itemScore = 0;
+                            foreach (var ratingItem in ratingList)
+                            {
+                                if (rating == ratingItem.Id)
+                                {
+                                    ratingScore = ratingItem.Weight;
+                                    if (ratingItem.Weight > ratingHighScore)
+                                        ratingHighScore = ratingItem.Weight;
+                                }
+                            }
+                            var selectedItem = categoryItemList.Where(x => x.Id == categoryItem).FirstOrDefault();
+                            itemScore = selectedItem.Weight;
+
+                            employeeAppraisal.TotalScore = employeeAppraisal.TotalScore + (itemScore * ratingScore);
+                            employeeAppraisal.TotalNetScore = employeeAppraisal.TotalNetScore + (itemScore * ratingHighScore);
                         }
 
                         var appraisalCreate = await _employeeAppraisalService.Create(employeeAppraisal);
@@ -288,6 +360,8 @@ namespace Web.Controllers
                     var empAppraisal = new EmployeeAppraisal();
                     var board = new ApprovalBoard();
                     var unsignedBoard = new ApprovalBoard();
+                    var categoryList = await _appraisalCategoryService.GetAll();
+
                     if (isAppraisalView == false)
                     {
                         board = await _approvalBoardService.GetById(appraisalId); //get board detail
@@ -300,12 +374,31 @@ namespace Web.Controllers
                         unsignedBoard = await _approvalBoardService.GetUnsignedAppraisal(appraisalId);
                         empAppraisal = await _employeeAppraisalService.GetById(appraisalId);
                     }
+                    var contractReview = (await _contractService.GetByEmployee(empAppraisal.EmployeeId)).Where(x => x.CreatedDate.Year == DateTime.Now.AddYears(-1).Year && board.Emp_No.ToLower() == empAppraisal.Emp_No.ToLower()).FirstOrDefault();
+                    var contractItem = (contractReview != null) ? await _contractService.GetItemByObjectiveId(contractReview.Id): null;
+
+                    var extractedCategory = new List<AppraisalCategory>();
+                    foreach (var item in response)
+                    {
+                        if (extractedCategory.Count() > 0)
+                        {
+                            if (extractedCategory.Where(x => x.AppraisalCategoryCode.ToLower() == item.AppraisalCategory.AppraisalCategoryCode.ToLower()).Count() < 1)
+                            {
+                                extractedCategory.Add(item.AppraisalCategory);
+                            }
+                        }
+                        else
+                        {
+                            extractedCategory.Add(item.AppraisalCategory);
+                        }
+
+                    }
 
                     return Json(new
                     {
                         status = (response != null) ? true : false,
-                        data = new { detail = response, level = board.ApprovalLevel, serviceId = board.ServiceId, unsigned = (unsignedBoard != null) ? true: false, apparaisalid = appraisalId, strenght = empAppraisal.Strenght, weekness = empAppraisal.Weekness, development = empAppraisal.Development, counselling = empAppraisal.Counselling, redeployment = empAppraisal.Redeployment, action = empAppraisal.DisciplinaryAction, training = empAppraisal.Training, promotion = empAppraisal.Promotion, others = empAppraisal.OtherDetail}
-                    });
+                        data = new { detail = response, level = board.ApprovalLevel, serviceId = board.ServiceId, unsigned = (unsignedBoard != null) ? true : false, apparaisalid = appraisalId, strenght = empAppraisal.Strenght, weekness = empAppraisal.Weekness, development = empAppraisal.Development, counselling = empAppraisal.Counselling, redeployment = empAppraisal.Redeployment, action = empAppraisal.DisciplinaryAction, training = empAppraisal.Training, promotion = empAppraisal.Promotion, others = empAppraisal.OtherDetail, categories = extractedCategory, appraisalScore = empAppraisal, contract = (contractReview != null) ? contractReview: null , objectiveItem = contractItem }
+                    }) ;
 
                 }
                 return Json(new

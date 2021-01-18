@@ -28,13 +28,13 @@ namespace Business.Services
 
         public async Task<IEnumerable<AppraisalCategoryItem>> GetAll(Expression<Func<AppraisalCategoryItem, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<AppraisalCategoryItem>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.AppraisalCategoryCode));
+            var model = await _unitOfWork.GetRepository<AppraisalCategoryItem>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.AppraisalCategoryCode), include);
             return model;
         }
 
         public async Task<IEnumerable<AppraisalCategoryItem>> GetAll()
         {
-            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()));
+            var data = await GetAll(x => !string.IsNullOrEmpty(x.Id.ToString()), "AppraisalCategory");
             return data;
         }
 
@@ -72,9 +72,11 @@ namespace Business.Services
                 {
                     var check = await _unitOfWork.GetRepository<AppraisalCategoryItem>().GetFirstOrDefaultAsync(predicate: x => x.AppraisalCategoryItemID == item.AppraisalCategoryItemID);
 
+                    var category = await _unitOfWork.GetRepository<AppraisalCategory>().GetFirstOrDefaultAsync(predicate: x => x.AppraisalCategoryCode.ToLower() == item.AppraisalCategoryCode.ToLower());
+
                     if (check == null)
                     {
-                        var appraisalCategoryItem = new AppraisalCategoryItem() { AppraisalCategoryCode = item.AppraisalCategoryCode, Description = item.Desccription, Weight = item.Weight, AppraisalCategoryItemID = item.AppraisalCategoryItemID, StaffType = item.TypeCode, CreatedDate = DateTime.Now, Id = Guid.NewGuid() };
+                        var appraisalCategoryItem = new AppraisalCategoryItem() { AppraisalCategoryCode = item.AppraisalCategoryCode, AppraisalCategoryId = (category != null) ? category.Id : Guid.Empty, Description = item.Desccription, Weight = item.Weight, AppraisalCategoryItemID = item.AppraisalCategoryItemID, StaffType = item.TypeCode, CreatedDate = DateTime.Now, Id = Guid.NewGuid() };
 
                         _unitOfWork.GetRepository<AppraisalCategoryItem>().Insert(appraisalCategoryItem);
                     }

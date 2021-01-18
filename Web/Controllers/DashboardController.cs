@@ -21,10 +21,11 @@ namespace Web.Controllers
         private readonly IEmployeeAppraisalService _employeeAppraisalService;
         private readonly IAppraisalItemService _appraisalItemService;
         private readonly IDashboardService _dashboardService;
+        private readonly IAppraisalCategoryItemService _appraisalCategoryItemService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public DashboardController(IApprovalBoardService approvalBoardService, IMapper mapper, IDashboardService dashboardService, IAppraisalCategoryService appraisalCategoryService, IAppraisalRatingService appraisalRatingService, IEmployeeAppraisalService employeeAppraisalService, IUnitOfWork unitOfWork, IAppraisalItemService appraisalItemService)
+        public DashboardController(IApprovalBoardService approvalBoardService, IMapper mapper, IDashboardService dashboardService, IAppraisalCategoryService appraisalCategoryService, IAppraisalRatingService appraisalRatingService, IEmployeeAppraisalService employeeAppraisalService, IUnitOfWork unitOfWork, IAppraisalItemService appraisalItemService, IAppraisalCategoryItemService appraisalCategoryItemService)
         {
             _appraisalRatingService = appraisalRatingService;
             _approvalBoardService = approvalBoardService;
@@ -32,6 +33,7 @@ namespace Web.Controllers
             _employeeAppraisalService = employeeAppraisalService;
             _appraisalItemService = appraisalItemService;
             _dashboardService = dashboardService;
+            _appraisalCategoryItemService = appraisalCategoryItemService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -119,6 +121,40 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
+        public async Task<ActionResult> ApprovalBoardLeaveAction(bool status, Level approvalLevel, Guid serviceId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("recall"));
+                    var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        //action section
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult> ApprovalBoardAppraisalAction(bool status, Level approvalLevel, Guid serviceId, List<string> categoryItemUpdate, string strenght, string weekness, string counselling, string redeployment, string development, string disciplinaryAction, string training, string promotion, string otherDetail)
         {
             try
@@ -130,7 +166,19 @@ namespace Web.Controllers
                     {
                         return RedirectToAction("Signout", "Employee");
                     }
+                    if (string.IsNullOrEmpty(strenght) || string.IsNullOrEmpty(weekness) || string.IsNullOrEmpty(counselling) || string.IsNullOrEmpty(redeployment) || string.IsNullOrEmpty(development) || string.IsNullOrEmpty(disciplinaryAction) || string.IsNullOrEmpty(training) || string.IsNullOrEmpty(otherDetail))
+                    {
+                        return Json(new
+                        {
+                            status = false,
+                            message = "None of the exctra recommendation field can be empty"
+                        });
+                    }
+                    var ratingList = await _appraisalRatingService.GetAll();
+                    var categoryItemList = await _appraisalCategoryItemService.GetAll();
+
                     var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("appraisal"));
+                    var updatedAppraisal = await _employeeAppraisalService.GetById(serviceId);
                     //if approved update catgoryitem weight
                     var updateList = new List<AppraisalItemUpdateModel>();
                     var appraisalId = new Guid();
@@ -147,9 +195,31 @@ namespace Web.Controllers
                                 updateList.Add(new AppraisalItemUpdateModel() { EmployeeAppraisalId = empAppraisal, CategoryItemId = categoryItem, RatingId = rating });
                             }
                             appraisalId = empAppraisal;
+
+                            var ratingScore = 0;
+                            var ratingHighScore = 0;
+                            var itemScore = 0;
+                            foreach (var ratingItem in ratingList)
+                            {
+                                if (rating == ratingItem.Id)
+                                {
+                                    ratingScore = ratingItem.Weight;
+                                    if (ratingItem.Weight > ratingHighScore)
+                                        ratingHighScore = ratingItem.Weight;
+                                }
+                            }
+                            foreach (var catItem in categoryItemList)
+                            {
+                                if (categoryItem == catItem.Id)
+                                {
+                                    itemScore = catItem.Weight;
+                                }
+                            }
+                            updatedAppraisal.TotalScore = updatedAppraisal.TotalScore + (itemScore * ratingScore);
+                            updatedAppraisal.TotalNetScore = updatedAppraisal.TotalNetScore + (itemScore * ratingHighScore);
                         }
                     }
-                    var updatedAppraisal = await _employeeAppraisalService.GetById(serviceId);
+                    
                     if(updatedAppraisal != null)
                     {
                         updatedAppraisal.Strenght = strenght;

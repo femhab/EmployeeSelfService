@@ -28,6 +28,9 @@
         public const string SignOffSuccessful = "The service was signed off successfully for next approval";
         public const string MaxNokReached = "You are only allowed to have 2 Next of Kin";
         public const string MaxEmerReached = "You are only allowed to have 2 Emergency Contact";
+
+        public const string ContractCreated = "You have successfully created a contract for the employee";
+        public const string ContractDatePersist = "You cannot update timeline to outside the set contract objectives else create a new item for the new year";
     }
 
     public class NotificationAction

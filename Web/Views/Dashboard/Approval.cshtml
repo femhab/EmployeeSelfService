@@ -90,6 +90,10 @@
                                             {
                                                 <a class="dropdown-item" id="@item.Id" onclick="OnLeaveSelect(this.id)" data-toggle="modal" data-target="#leave_review"><i class="fa fa-list m-r-5"></i>Leave Detail</a>
                                             }
+                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("recall"))
+                                            {
+                                                <a class="dropdown-item" id="@item.Id" onclick="OnLeaveRecallSelect(this.id)" data-toggle="modal" data-target="#leaverecall_review"><i class="fa fa-list m-r-5"></i>Leave Recall Detail</a>
+                                            }
                                             @if (item.ApprovalWorkItem.Name.ToLower().Contains("loan"))
                                             {
                                                 <a class="dropdown-item" id="@item.Id" onclick="OnLoanSelect(this.id)" data-toggle="modal" data-target="#loan_review"><i class="fa fa-list m-r-5"></i>Loan Detail</a>
@@ -198,6 +202,66 @@
     </div>
 </div>
 <!-- /Review Leave Modal -->
+<!-- Review Leave RecallModal -->
+<div id="leaverecall_review" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Leave Recall Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Leave Type <span class="text-danger">*</span></label>
+                        <div>
+                            <input class="form-control" readonly type="text" id="recallleavetypeid">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>From <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="recalldatefrom">
+                        </div>
+                    </div>
+                    <div class="form-group" id="datetodiv">
+                        <label>To <span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" readonly type="text" id="recalldateto">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of days <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" readonly id="leavenoofdays">
+                    </div>
+                    <div class="form-group">
+                        <label>Number of recall days <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" readonly id="recallnoofdays">
+                    </div>
+                    <div class="form-group" hidden>
+                        <label><span class="text-danger">*</span></label>
+                        <div class="cal-icon">
+                            <input class="form-control" readonly type="text" id="recalllevel">
+                            <input class="form-control" readonly type="text" id="recallserviceid">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6" onclick="RejectLeaveRecallAction()">
+                            <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
+                        </div>
+                        <div class="col-6" onclick="ApprovedLeaveRecallAction()">
+                            <a class="btn btn-primary continue-btn">Approve <i class="fa fa-check text-success"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Review Leave Recall Modal -->
 <!-- Review Performance Appraisal Modal -->
 <div id="review_appraisal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -212,6 +276,44 @@
                 <form>
                     <div class="row" id="appendAppraisal">
                         @*Here goes attachments*@
+                    </div>
+                    <div>
+                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                            <strong>Total Appraisal Score:</strong> <div id="totalappraisalscore"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">Contract Objectives for @DateTime.Now.AddYears(-1).Year</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Smart Objectives</th>
+                                                <th>Criteria</th>
+                                                <th>TimeLine</th>
+                                                <th>Weighing</th>
+                                                <th>Achieved-Score</th>
+                                                <th>Weighted-Score</th>
+                                                <th>Remark</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="contractitemlist">
+                                            @*here goes contract item attachment*@
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                        <strong>Total Weighed Score:</strong> <div id="totalweight"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label><span>Discussions</span></label>
@@ -449,7 +551,6 @@
     </div>
 </div>
 <!-- /Review Payment Advance Modal -->
-
 <!-- Review Transfer Modal -->
 <div id="transfer_review" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -562,6 +663,10 @@
             getLeaveById(leaveId);
         }
 
+        function OnLeaveRecallSelect(recallId) {
+            getRecallLeaveById(recallId);
+        }
+
         function OnTrainingSelect(trainingId) {
             getTrainingById(trainingId);
         }
@@ -613,12 +718,14 @@
                 data: { appraisalId: appraisalId },
                 success: function (response) {
                     if (response.status) {
-                        for (var i = 0; i < appraisalList.length; i++) {
+
+                        for (var i = 0; i < response?.data?.categories?.length; i++) {
+                            console.log(response?.data.categories);
                             appraisalView = `
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header" style="background-color:#daa520">
-                                            <h4 class="card-title mb-0" id="categorydescription">${appraisalList[i].description}</h4>
+                                            <h4 class="card-title mb-0" id="categorydescription">${response?.data?.categories[i].description}</h4>
                                         </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
@@ -631,7 +738,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        ${PrintCategoryItem(response?.data?.detail, appraisalList[i].id)}
+                                                        ${PrintCategoryItem(response?.data?.detail, response?.data?.categories[i].id)}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -653,6 +760,26 @@
                         $("#appraisaltraining").val(response?.data?.training);
                         $("#appraisalpromotion").val(response?.data?.promotion);
                         $("#appraisaldetail").val(response?.data?.others);
+                        //$("#totalweight").val(response?.data?.contract.totalWeightedSore);
+                        //document.getElementById('totalweight').innerHTML = response?.data?.contract.totalWeightedSore;
+                        document.getElementById('totalappraisalscore').innerHTML = response?.data?.appraisalScore.totalScore + "/" + response?.data?.appraisalScore.totalNetScore;
+                         //weight = $("#totalappraisalscore").val(response?.data?.appraisalScore);
+                        //console.log(weight);
+
+                        for (var j = 0; j < response?.data?.objectiveItem?.length; j++) {
+                            contractItem = `
+                                <tr>
+                                    <th>${response?.data?.objectiveItem[j].smartObjective}</th>
+                                    <th>${response?.data?.objectiveItem[j].evaluationCiteria}</th>
+                                    <th>${response?.data?.objectiveItem[j].timeline}</th>
+                                    <th>${response?.data?.objectiveItem[j].weighting}</th>
+                                    <th>${response?.data?.objectiveItem[j].scoreAchieved}</th>
+                                    <th>${response?.data?.objectiveItem[j].weightedSore}</th>
+                                    <th>${response?.data?.objectiveItem[j].remark}</th>
+                                </tr>
+                                `;
+                            $("#contractitemlist").append(contractItem);
+                        }
                     }
                     else {
                     }
@@ -680,6 +807,32 @@
                         $("#isallowanceadded").val(response?.data?.isAllowance);
                         $("#serviceid").val(response?.data?.serviceId);
                         $("#level").val(response?.data?.level);
+                    }
+                    else {
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function getRecallLeaveById(recallId) {
+            $.ajax({
+                url: '@Url.Action("GetRecallLeaveById", "Leave")',
+                type: 'POST',
+                dataType: 'json',
+                data: { recallId: recallId },
+                success: function (response) {
+                    if (response.status) {
+                        $("#recallleavetypeid").val(response?.data?.leaveType?.class);
+                        $("#recalldatefrom").val(response?.data?.dateFrom);
+                        $("#recalldateto").val(response?.data?.dateTo);
+                        $("#leavenoofdays").val(response?.data?.noOfLeaveDays);
+                        $("#recallnoofdays").val(response?.data?.noOfDays);
+                        $("#recallserviceid").val(response?.data?.serviceId);
+                        $("#recalllevel").val(response?.data?.level);
                     }
                     else {
                     }
@@ -809,6 +962,18 @@
             ApprovalAction(false, level, serviceid);
         }
 
+        function ApprovedLeaveRecallAction() {
+            level = $("#recalllevel").val();
+            serviceid = $("#recallserviceid").val();
+            ApprovalRecallAction(true, level, serviceid);
+        }
+
+        function RejectLeaveRecallAction() {
+            level = $("#recalllevel").val();
+            serviceid = $("#recallserviceid").val();
+            ApprovalRecallAction(false, level, serviceid);
+        }
+
         function ApprovedAppraisalAction() {
             var dict = [];
             $('select[id=appraisalrating]').each(function () {
@@ -905,6 +1070,29 @@
                         toastr.success(response?.message)
                         $('#leave_review').modal('hide');
                         $('#review_appraisal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function ApprovalRecallAction(status, approvalLevel, serviceId) {
+            $.ajax({
+                url: '@Url.Action("ApprovalBoardLeaveAction", "Dashboard")',
+                type: 'POST',
+                dataType: 'json',
+                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#leaverecall_review').modal('hide');
                         location.reload();
                     }
                     else {

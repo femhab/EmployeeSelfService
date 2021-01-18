@@ -71,6 +71,8 @@ namespace Business.DIExtension
             services.AddTransient<ISendGridProvider, SendGridProvider>();
             services.AddTransient<IBulkSmsProvider, BulkSmsProvider>();
             services.AddTransient<IDocumentService, DocumentService>();
+            services.AddTransient<IContractService, ContractService>();
+            services.AddTransient<IPIPService, PIPService>();
 
 
             return services;

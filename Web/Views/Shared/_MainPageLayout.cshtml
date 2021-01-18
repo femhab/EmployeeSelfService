@@ -221,11 +221,24 @@
                         <li class="submenu">
                             <a href="#"><i class="la la-graduation-cap"></i> <span> Appraisal </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">
+                                <li><a href="#"> Half Year Appraisal </a></li>
                                 <li><a asp-controller="Appraisal" asp-action="Index"> Self Appraisal </a></li>
-                                @*<li><a asp-controller="Appraisal" asp-action="PerformanceReview"> Performance Review </a></li>*@
                             </ul>
                         </li>
-
+                        <li class="submenu">
+                            <a href="#"><i class="la la-hand-o-up"></i> <span> Performance Improvement Plan </span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a asp-controller="PIP" asp-action="Index"> Initiate PIP</a></li>
+                                <li><a asp-controller="PIP" asp-action="ViewPIP"> View PIP</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="la la-crosshairs"></i> <span> Contract Objective </span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a asp-controller="Contract" asp-action="Index"> Contract Objective </a></li>
+                                <li><a asp-controller="Contract" asp-action="ViewContract"> View Objectives </a></li>
+                            </ul>
+                        </li>
                         <li class="submenu">
                             <a href="#"><i class="la la-edit"></i> <span> Training </span> <span class="menu-arrow"></span></a>
                             <ul style="display: none;">

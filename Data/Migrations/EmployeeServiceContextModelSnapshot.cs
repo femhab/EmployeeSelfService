@@ -424,6 +424,78 @@ namespace Data.Migrations
                     b.ToTable("AvalaibilityStatus");
                 });
 
+            modelBuilder.Entity("Data.Entities.ContractItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("ContractObjectiveId");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("EvaluationCiteria");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("Remark");
+
+                    b.Property<int>("ScoreAchieved");
+
+                    b.Property<string>("SmartObjective");
+
+                    b.Property<DateTime>("Timeline");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.Property<decimal>("WeightedSore");
+
+                    b.Property<int>("Weighting");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContractObjectiveId");
+
+                    b.ToTable("ContractItems");
+                });
+
+            modelBuilder.Entity("Data.Entities.ContractObjective", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Emp_No");
+
+                    b.Property<Guid>("EmployeeId");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<bool>("IsSignedOff");
+
+                    b.Property<string>("LineManager");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<DateTime?>("SignedOffDate");
+
+                    b.Property<decimal>("TotalWeightedSore");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("ContractObjectives");
+                });
+
             modelBuilder.Entity("Data.Entities.Country", b =>
                 {
                     b.Property<Guid>("Id")
@@ -735,11 +807,15 @@ namespace Data.Migrations
 
                     b.Property<string>("PensionNo");
 
+                    b.Property<string>("PhoneNumber");
+
                     b.Property<DateTime?>("PreAppDate");
 
                     b.Property<DateTime?>("ProRetireDate");
 
                     b.Property<byte[]>("ProfilePhoto");
+
+                    b.Property<string>("ReportToLineManager");
 
                     b.Property<Guid?>("SectionId");
 
@@ -868,6 +944,10 @@ namespace Data.Migrations
                     b.Property<string>("Redeployment");
 
                     b.Property<string>("Strenght");
+
+                    b.Property<decimal>("TotalNetScore");
+
+                    b.Property<decimal>("TotalScore");
 
                     b.Property<string>("Training");
 
@@ -1335,13 +1415,15 @@ namespace Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("ApprovalStatus");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<DateTime>("DateFrom");
+                    b.Property<string>("Emp_No");
 
-                    b.Property<DateTime>("DateTo");
+                    b.Property<Guid>("EmployeeId");
 
                     b.Property<bool>("IsDeleted");
 
@@ -1351,13 +1433,11 @@ namespace Data.Migrations
 
                     b.Property<int>("NoOfDays");
 
-                    b.Property<DateTime>("RecallDate");
-
-                    b.Property<DateTime>("ResumptionDate");
-
                     b.Property<DateTime?>("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("LeaveId");
 
@@ -1548,6 +1628,72 @@ namespace Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("Data.Entities.PIP", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<DateTime>("DateOfReview");
+
+                    b.Property<string>("Emp_No");
+
+                    b.Property<Guid>("EmployeeId");
+
+                    b.Property<bool>("IsClosed");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<bool>("IsSignedOff");
+
+                    b.Property<string>("LineManager");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("PIPMessage");
+
+                    b.Property<string>("PIPSubject");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("PIP");
+                });
+
+            modelBuilder.Entity("Data.Entities.PIPItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Comment");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<Guid>("PIPId");
+
+                    b.Property<string>("PublishBy");
+
+                    b.Property<DateTime?>("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PIPId");
+
+                    b.ToTable("PIPItems");
                 });
 
             modelBuilder.Entity("Data.Entities.PaymentAdvance", b =>
@@ -2188,6 +2334,22 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Data.Entities.ContractItem", b =>
+                {
+                    b.HasOne("Data.Entities.ContractObjective", "ContractObjective")
+                        .WithMany()
+                        .HasForeignKey("ContractObjectiveId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Data.Entities.ContractObjective", b =>
+                {
+                    b.HasOne("Data.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Data.Entities.DisciplinaryAction", b =>
                 {
                     b.HasOne("Data.Entities.Employee", "Employee")
@@ -2390,6 +2552,11 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.LeaveRecall", b =>
                 {
+                    b.HasOne("Data.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Data.Entities.Leave", "Leave")
                         .WithMany()
                         .HasForeignKey("LeaveId")
@@ -2422,6 +2589,22 @@ namespace Data.Migrations
                     b.HasOne("Data.Entities.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId");
+                });
+
+            modelBuilder.Entity("Data.Entities.PIP", b =>
+                {
+                    b.HasOne("Data.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Data.Entities.PIPItem", b =>
+                {
+                    b.HasOne("Data.Entities.PIP", "PIP")
+                        .WithMany()
+                        .HasForeignKey("PIPId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Data.Entities.PaymentAdvance", b =>

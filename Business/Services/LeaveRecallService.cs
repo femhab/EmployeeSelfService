@@ -36,25 +36,27 @@ namespace Business.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("leave"));
-                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.Leave.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
+                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == check.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
                 try
                 {
+                    var approvalWorkLeaveItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("recall"));
+
                     var enlistBoard = new ApprovalBoard()
                     {
-                        EmployeeId = model.Leave.EmployeeId,
+                        EmployeeId = check.EmployeeId,
                         ApprovalLevel = Level.FirstLevel,
-                        Emp_No = model.Leave.Emp_No,
-                        ApprovalWorkItemId = approvalWorkItem.Id,
+                        Emp_No = check.Emp_No,
+                        ApprovalWorkItemId = approvalWorkLeaveItem.Id,
                         ApprovalProcessorId = approvalProcessor.ProcessorIId.Value,
                         ApprovalProcessor = approvalProcessor.Processor,
                         ServiceId = model.Id,
                         Status = ApprovalStatus.Pending,
                         CreatedDate = DateTime.Now,
                         Id = Guid.NewGuid(),
-                        CreatedBy = model.Leave.Emp_No
+                        CreatedBy = check.Emp_No
                     };
                     await _approvalBoardService.Create(enlistBoard);
-                    await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
+                    await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkLeaveItem.Id, model.Id, Level.FirstLevel);
                 }
                 catch (Exception ex)
                 {
@@ -64,6 +66,12 @@ namespace Business.Services
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.LeaveRecallExecuted };
+        }
+
+        public async Task<LeaveRecall> GetById(Guid id)
+        {
+            var model = await _unitOfWork.GetRepository<LeaveRecall>().GetFirstOrDefaultAsync(predicate: c => c.Id == id, null, include: e => e.Include(i => i.Leave).Include(i => i.Leave.LeaveType));
+            return model;
         }
     }
 }

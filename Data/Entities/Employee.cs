@@ -50,6 +50,8 @@ namespace Data.Entities
         public DateTime? EffectiveDate { get; set; }
         public DateTime? PreAppDate { get; set; }
         public DateTime? ProRetireDate { get; set; }
+        public string ReportToLineManager { get; set; }
+        public string PhoneNumber { get; set; }
     }
 
     public class AppliedNameUpdate : BaseObject

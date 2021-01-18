@@ -134,7 +134,8 @@ namespace Web.Controllers
                 foreach (var item in nokList)
                 {
                     var document = await _documentService.GetByReference(item.Id, DocumentType.NextOfKin);
-                    item.PictureUrl = (document != null) ?  $"{Request.Scheme}://{Request.Host}{document.DocumentUrl}": null;
+                    item.PictureUrl = (document != null) ?  $"{Request.Scheme}://{Request.Host}" +
+                        $"{document.DocumentUrl}": null;
                 }
                 var dependentList = await _employeeFamilyDependentService.GetByEmployee(authData.Id);
                 var userRoles = await _userRoleService.GetAll();

@@ -24,6 +24,8 @@ namespace Business.Interfaces
         Task<BaseResponse> UpdateAccessType(Guid employeeId, AccessType accessType);
         Task<IEnumerable<Employee>> GetAll(Expression<Func<Employee, bool>> predicate, string include = null, bool includeDeleted = false);
         Task<BaseResponse> Delete(Guid id);
-        Task<Employee> GetHOD(Guid employeeId); 
+        Task<Employee> GetHOD(Guid employeeId);
+        Task<IEnumerable<Employee>> GetContractTargetedEmployee(string empNo);
+        Task<IEnumerable<Employee>> GetLineEmployee(string empNo, Guid departmentId);
     }
 }

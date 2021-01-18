@@ -1,0 +1,190 @@
+﻿@model ViewModel.Model.PIPViewModel
+@{
+    ViewData["Title"] = "ViewPIP";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Performance Improvement Plan</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a >Performance</a></li>
+                    <li class="breadcrumb-item active"> View Performance Improvement Plan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped custom-table mb-0 datatable">
+                    <thead>
+                        <tr>
+                            <th>PIP By</th>
+                            <th>PIP To</th>
+                            <th>Created Date</th>
+                            <th>Review Deadline</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.PIPQuery)
+                        {
+                        <tr>
+                            <td>@item.LineManager</td>
+                            <td>@item.Employee.LastName @item.Employee.FirstName - @item.Emp_No</td>
+                            <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
+                            <td>@item.DateOfReview.ToString("dd MMMM yyyy")</td>
+                            <td>@item.IsSignedOff</td>
+                            <td class="text-right">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right" id="@item.Id" onclick="OnSelect(this.id)">
+                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#comment_pipquery"><i class="fa fa-pencil m-r-5"></i> View</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+<div id="comment_pipquery" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">PIP Comments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Performance in need of improvement <span class="text-danger">*</span></label>
+                        <textarea rows="3" class="form-control" id="pipquerysubject" readonly disabled></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Result <span class="text-danger">*</span></label>
+                        <textarea rows="3" class="form-control" id="pipqueryresult" readonly disabled></textarea>
+                    </div>
+                    <div id="pipitemattach">
+                        @*attach items here*@
+                    </div>
+                    
+                    <div class="form-group" id="queryreplydiv" >
+                        <textarea rows="5" class="form-control summernote" id="pipquerycomment" placeholder="Reply to pip here"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-0" onclick="SubmitReplyPIPDetail()" id="querysubmit">
+                                <div class="text-center">
+                                    <div class="btn btn-primary"><span>Comment/SignOff</span> <i class="fa fa-send m-l-5"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" id="linemanager" hidden>
+                            <div class="form-group mb-0" onclick="">
+                                <div class="text-center">
+                                    <div class="btn btn-primary"><span>Close</span> <i class="fa fa-send m-l-5"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var selectedId;
+        var createdDate;
+
+        var queryList = JSON.parse('@Json.Serialize(@Model.PIPQueryItem)');
+
+        function OnSelect(itemId) {
+            GetPipById(itemId)
+            selectedId = itemId;
+        }
+
+        function SubmitReplyPIPDetail()
+        {
+            var pipqueryreply = $("#pipquerycomment").val();
+            sendReplyPIPForm(selectedId, pipqueryreply);
+        }
+
+        function GetPipById(pipId) {
+            $.ajax({
+                url: '@Url.Action("GetPipById", "PIP")',
+                type: 'POST',
+                dataType: 'json',
+                data: { pipId: pipId },
+                success: function (response) {
+                    if (response.status) {
+                        $("#pipquerysubject").val(response?.data?.pip.pipSubject);
+                        $("#pipqueryresult").val(response?.data?.pip.pipMessage);
+                        //$("#updateempno").val(response?.data?.objectives.emp_No);
+                        for (var i = 0; i < response?.data?.pipitem.length; i++) {
+                            pipItem = `
+                                <div class="form-group">
+                                    <label>Comment by ${response?.data?.pipitem[i].publishBy} on ${response?.data?.pipitem[i].createdDate} <span class="text-danger">*</span></label>
+                                    <textarea rows="3" class="form-control"  readonly disabled> ${response?.data?.pipitem[i].comment}</textarea>
+                                </div>
+                                `;
+                            $("#pipitemattach").append(pipItem);
+                            if (response?.data?.isLineManager) {
+                                document.getElementById('linemanager').removeAttribute("hidden");
+                            }
+                        }
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function sendReplyPIPForm(pipId, reply) {
+            $.ajax({
+                url: '@Url.Action("UpdatePIP", "PIP")',
+                type: 'POST',
+                dataType: 'json',
+                data: { pipId: pipId, comment: reply },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#comment_pipquery').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+    </script>
+}

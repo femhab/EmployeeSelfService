@@ -43,5 +43,6 @@ namespace ViewModel.ServiceModel
         public string effectiveDate { get; set; }
         public string preAppDate { get; set; }
         public string projRetireDate { get; set; }
+        public string report_to { get; set; }
     }
 }

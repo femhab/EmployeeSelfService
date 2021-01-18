@@ -1,5 +1,4 @@
 ﻿using Data.Entities.Common;
-using Data.Enums;
 using System;
 
 namespace Data.Entities
@@ -24,6 +23,8 @@ namespace Data.Entities
         public string Training { get; set; }
         public string Promotion { get; set; }
         public string OtherDetail { get; set; }
+        public decimal TotalScore { get; set; }
+        public decimal TotalNetScore { get; set; }
     }
 
     public class AppraisalItem: BaseObject

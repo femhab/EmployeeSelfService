@@ -140,7 +140,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyRecallLeave(Guid leaveId, string recallDate, string dateFrom, string dateTo, string resumptionDate, int recallNoOfDays)
+        public async Task<ActionResult> ApplyRecallLeave(Guid leaveId, int recallNoOfDays)
         {
             try
             {
@@ -152,19 +152,11 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
-                    var recallStartDate = DateTime.ParseExact(recallDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var startDate = DateTime.ParseExact(dateFrom, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var endDate = DateTime.ParseExact(dateTo, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var resumeDate = DateTime.ParseExact(resumptionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
                     var model = new LeaveRecall()
                     {
                         LeaveId = leaveId,
-                        RecallDate = recallStartDate,
-                        DateFrom = startDate,                      
-                        DateTo = endDate,
+                        ApprovalStatus = ApprovalStatus.Pending,
                         NoOfDays = recallNoOfDays,
-                        ResumptionDate = resumeDate,
                         Id = Guid.NewGuid(),
                         CreatedDate = DateTime.Now
                     };
@@ -210,6 +202,42 @@ namespace Web.Controllers
                     {
                         status = (response != null) ? true : false,
                         data = new { resumptionDate = response.ResumptionDate?.ToString("dddd, dd MMMM yyyy"), dateFrom = response.DateFrom.ToString("dddd, dd MMMM yyyy"), dateTo = response.DateTo.ToString("dddd, dd MMMM yyyy"), noOfDays = response.NoOfDays, leaveType = response.LeaveType, isAllowance = response.IsAllowanceRequested? "Yes":"No", serviceId = response.Id, level = board.ApprovalLevel }
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetRecallLeaveById(Guid recallId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var board = await _approvalBoardService.GetById(recallId);
+
+                    var response = await _leaveRecallService.GetById(board.ServiceId);
+                    return Json(new
+                    {
+                        status = (response != null) ? true : false,
+                        data = new { dateFrom = response.Leave.DateFrom.ToString("dddd, dd MMMM yyyy"), dateTo = response.Leave.DateTo.ToString("dddd, dd MMMM yyyy"), noOfDays = response.NoOfDays, noOfLeaveDays = response.Leave.NoOfDays, leaveType = response.Leave.LeaveType, serviceId = response.Id, level = board.ApprovalLevel }
                     });
 
                 }

@@ -1,0 +1,138 @@
+﻿@model ViewModel.Model.ContractViewModel
+@{
+    ViewData["Title"] = "ViewContract";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Contract Objectives</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Services</a></li>
+                    <li class="breadcrumb-item active">View Objectives</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped custom-table mb-0 datatable">
+                    <thead>
+                        <tr>
+                            <th>Employee Id</th>
+                            <th>Total Score</th>
+                            <th>Created  Date</th>
+                            <th>SignOff  Status</th>
+                            <th>SignOff  Date</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ContractObjective)
+                        {
+                            <tr>
+                                <td>@item.Emp_No - @item.Employee.LastName @item.Employee.FirstName</td>
+                                <td>@item.TotalWeightedSore</td>
+                                <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
+                                <td>@item.IsSignedOff</td>
+                                <td>@item.SignedOffDate?.ToString("dd MMMM yyyy")</td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right" id="@item.Id" onclick="">
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#contract_view_modal"><i class="fa fa-pencil m-r-5"></i> View/SignOff</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+<!-- Contract Item Update Modal -->
+<div id="contract_view_modal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"> Contract Objectives</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" placeholder="EmployeeId" readonly class="form-control" id="updateempno">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-scroll" id="appendcontractitem">
+                        @*from here*@
+                        <div class="card">
+                                <div class="card-body">
+                                    <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Smart objectives <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label> Evaluation Citerias <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Timeline <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control datetimepicker" id="" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Weighting <span class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" id="" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Score Achieved <span class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" id="" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Remark <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         @*to here*@
+                    </div>
+                    <div class="submit-section" onclick="">
+                        <div class="btn btn-primary submit-btn">Sign Offs</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Contract Item Update Modal -->

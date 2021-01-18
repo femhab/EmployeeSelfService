@@ -41,6 +41,8 @@ namespace Business.Mapping
             CreateMap<AuthDataModel, DashboardModel>().ReverseMap();
             CreateMap<AuthDataModel, TrainingViewModel>().ReverseMap();
             CreateMap<AuthDataModel, PayrollViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, ContractViewModel>().ReverseMap();
+            CreateMap<AuthDataModel, PIPViewModel>().ReverseMap();
             CreateMap<DashboardResponseModel, DashboardModel>().ReverseMap();
         }
     }

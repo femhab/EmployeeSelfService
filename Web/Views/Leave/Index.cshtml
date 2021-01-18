@@ -205,7 +205,7 @@
                             <input class="form-control" type="text" readonly id="recallleavetype">
                         </div>
                     </div>
-                    <div class="form-group">
+                    @*<div class="form-group">
                         <label>Recall Date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
                             <input class="form-control datetimepicker" id="recalldate" type="text">
@@ -216,26 +216,10 @@
                         <div class="cal-icon">
                             <input class="form-control datetimepicker" id="recalldatefrom" type="text">
                         </div>
-                    </div>
+                    </div>*@
                     <div class="form-group">
                         <label>Number of days <span class="text-danger">*</span></label>
                         <input class="form-control" id="recallnoofdays" type="text">
-                    </div>
-                    <div class="form-group" id="recalldatetodiv" hidden>
-                        <label>To <span class="text-danger">*</span></label>
-                        <div class="cal-icon">
-                            <input class="form-control datetimepicker" id="recalldateto" readonly type="text">
-                        </div>
-                    </div>
-                    <div class="form-group" id="recallresumptiondatediv" hidden>
-                        <label>Resumption Date <span class="text-danger">*</span></label>
-                        <div class="cal-icon">
-                            <input class="form-control datetimepicker" id="recallresumptiondate" readonly type="text">
-                        </div>
-                    </div>
-                    <div class="form-group" hidden id="remainingrecalldaysdiv">
-                        <label>Remaining Leave Days <span class="text-danger">*</span></label>
-                        <input class="form-control"  id="remainingrecalldays" readonly type="text">
                     </div>
                     <div class="submit-section" onclick="RunRecallLeaveValidation()" id="validaterecallleave">
                         <div class="btn btn-primary submit-btn">Validate</div>
@@ -372,45 +356,22 @@
             }
             else {
                 toastr.warning("Your input is greater than available days or you entered 0 day");
-            }       
+            }
         }
 
         function RunRecallLeaveValidation() {
-            var recalldate = $("#recalldate").val();
             var recallnoofdays = $("#recallnoofdays").val();
-            recalldate = stringToDate(recalldate);
 
             var selectedleave = $("#selectedleave").val();
             var leaveSelected = queryLeave.find(x => x.id == selectedleave);
-            //enddate
-            var leaveenddate = leaveSelected.dateTo;
-            recalldate = new Date(recalldate);
-            leaveenddate = new Date(leaveenddate);
-            var diff = new Date(leaveenddate.getTime() - recalldate.getTime());
-            var fulldaysdiff = Math.floor(diff / (1000 * 3600 * 24));
-            var weekenddivision = (fulldaysdiff / 7).toFixed(0);
-            var realdiff = fulldaysdiff - (2 * weekenddivision);
-            //startdate
-            var leavestartdate = leaveSelected.dateFrom;
-            leavestartdate = new Date(leavestartdate);
-            var difference = new Date(recalldate.getTime() - leavestartdate.getTime());
-            var fullstartdaysdiff = Math.floor(difference / (1000 * 3600 * 24));
-            var weekendstartdivision = (fullstartdaysdiff / 7).toFixed(0);
-            var realstartdiff = fullstartdaysdiff - (2 * weekendstartdivision);
-
-            if (realdiff > 0 && realstartdiff > 0 && realdiff >= recallnoofdays) {
-                OnRecallDaysEntered();
-                $("#remainingrecalldays").val(realdiff);
-                document.getElementById('recalldatetodiv').removeAttribute("hidden");
-                document.getElementById('recallresumptiondatediv').removeAttribute("hidden");
-                document.getElementById('remainingrecalldaysdiv').removeAttribute("hidden");
+            console.log(leaveSelected);
+            if (recallnoofdays <= leaveSelected.noOfDays) {
                 document.getElementById('submitrecallleave').removeAttribute("hidden");
                 document.getElementById('validaterecallleave').setAttribute("hidden", true);
             }
             else {
-                toastr.warning("You have to enter a date between last leave session and days requested can not be greater than available days from recall date")
+                toastr.warning("Days requested can not be greater than available days from recall date")
             }
-            
         }
 
         function SubmitLeaveApplication()
@@ -426,14 +387,10 @@
 
         function SubmitRecallLeaveApplication()
         {
-            var selectedleave = $("#selectedleave").val();
-            var recalldatefrom = $("#recalldatefrom").val();
             var recallnoofdays = $("#recallnoofdays").val();
-            var recalldateto = $("#recalldateto").val();
-            var recalldate = $("#recalldate").val();
-            var recallresumptiondate = $("#recallresumptiondate").val();
+            var selectedleave = $("#selectedleave").val();
 
-            sendRecallLeaveForm(selectedleave, recalldate, recalldatefrom, recalldateto, recallresumptiondate, recallnoofdays);
+            sendRecallLeaveForm(selectedleave, recallnoofdays);
         }
 
         function sendLeaveForm(leaveTypeId,dateFrom,dateTo,resumptionDate,noOfDays,isAllowanceAdded, remainingDays ) {
@@ -459,12 +416,12 @@
             });
         }
 
-        function sendRecallLeaveForm(leaveId, recallDate, dateFrom, dateTo, resumptionDate, recallNoOfDays ) {
+        function sendRecallLeaveForm(leaveId, recallNoOfDays ) {
             $.ajax({
                 url: '@Url.Action("ApplyRecallLeave", "Leave")',
                 type: 'POST',
                 dataType: 'json',
-                data: { leaveId: leaveId, recallDate: recallDate, dateFrom: dateFrom ,dateTo: dateTo,resumptionDate: resumptionDate, recallNoOfDays: recallNoOfDays },
+                data: { leaveId: leaveId, recallNoOfDays: recallNoOfDays },
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)
