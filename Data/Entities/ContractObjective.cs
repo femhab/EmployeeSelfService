@@ -10,8 +10,10 @@ namespace Data.Entities
         public string Emp_No { get; set; }
         public decimal TotalWeightedSore { get; set; }
         public bool IsSignedOff { get; set; }
+        public bool IsHRSignedOff { get; set; }
         public DateTime? SignedOffDate { get; set; }
         public string LineManager { get; set; }
+        public string Comment { get; set; }
     }
 
     public class ContractItem: BaseObject

@@ -13,5 +13,6 @@ namespace Business.Interfaces
         Task<IEnumerable<PIP>> GetByEmployee(string employeeNo);
         Task<IEnumerable<PIPItem>> GetByPIP(Guid pipId);
         Task<PIP> GetById(Guid id);
+        Task<BaseResponse> ClosePIP(Guid pipId);
     }
 }

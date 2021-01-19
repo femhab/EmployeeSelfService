@@ -57,6 +57,7 @@ namespace Business.Services
                     };
                     await _approvalBoardService.Create(enlistBoard);
                     await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkLeaveItem.Id, model.Id, Level.FirstLevel);
+
                 }
                 catch (Exception ex)
                 {

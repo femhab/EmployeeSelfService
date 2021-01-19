@@ -12,10 +12,12 @@ namespace Business.Services
     public class ContractService: IContractService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
         
-        public ContractService(IUnitOfWork unitOfWork)
+        public ContractService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse> Create(ContractObjective model, List<ContractItem> items)
@@ -24,18 +26,25 @@ namespace Business.Services
             {
                 try
                 {
-                    _unitOfWork.GetRepository<ContractObjective>().Insert(model);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    foreach (var item in items)
+                    var check = await _unitOfWork.GetRepository<ContractObjective>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId && x.CreatedDate.Year == DateTime.Now.Year);
+                    if(check == null)
                     {
-                        if (!string.IsNullOrEmpty(item.SmartObjective))
+                        _unitOfWork.GetRepository<ContractObjective>().Insert(model);
+                        await _unitOfWork.SaveChangesAsync();
+
+                        foreach (var item in items)
                         {
-                            _unitOfWork.GetRepository<ContractItem>().Insert(item);
-                            await _unitOfWork.SaveChangesAsync();
+                            if (!string.IsNullOrEmpty(item.SmartObjective))
+                            {
+                                _unitOfWork.GetRepository<ContractItem>().Insert(item);
+                                await _unitOfWork.SaveChangesAsync();
+                            }
                         }
+                        await _notificationService.CreateNotification(NotificationAction.ObjectiveCreateTitle, NotificationAction.ObjectiveCreateMessage, model.EmployeeId, false, false);
+
+                        return new BaseResponse() { Status = true, Message = ResponseMessage.ContractCreated };
                     }
-                    return new BaseResponse() { Status = true, Message = ResponseMessage.ContractCreated };
+                    return new BaseResponse() { Status = false, Message = ResponseMessage.ContractExist };
                 }
                 catch (Exception ex)
                 {
@@ -107,6 +116,33 @@ namespace Business.Services
         {
             var data = await _unitOfWork.GetRepository<ContractObjective>().GetAllAsync(predicate: x => x.EmployeeId == employeeId, null, "Employee");
             return data;
+        }
+
+        public async Task<BaseResponse> SignOffContract(Guid contractId)
+        {
+            var data = await _unitOfWork.GetRepository<ContractObjective>().GetFirstOrDefaultAsync(predicate: x => x.Id == contractId);
+            if(data != null)
+            {
+                data.IsSignedOff = true;
+                data.SignedOffDate = DateTime.Now;
+                _unitOfWork.GetRepository<ContractObjective>().Update(data);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
+        }
+
+        public async Task<ContractItem> GetContractItemById(Guid itemId)
+        {
+            var data = await _unitOfWork.GetRepository<ContractItem>().GetFirstOrDefaultAsync(predicate: x => x.Id == itemId);
+            return data;
+        }
+
+        public async Task<BaseResponse> UpdateContractItem(List<ContractItem> model)
+        {
+            _unitOfWork.GetRepository<ContractItem>().Update(model);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
         }
     }
 }

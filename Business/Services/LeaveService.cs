@@ -35,7 +35,7 @@ namespace Business.Services
         public async Task<BaseResponse> Create(Leave model)
         {
             //check if there is an existing leave
-            var check = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.CreatedDate.Year == DateTime.Now.Year && x.LeaveStatus != LeaveStatus.Rejected && x.EmployeeId == model.EmployeeId);
+            var check = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.CreatedDate.Year == DateTime.Now.Year && x.EmployeeId == model.EmployeeId);
             if(check == null)
             {
                 _unitOfWork.GetRepository<Leave>().Insert(model);
@@ -69,7 +69,10 @@ namespace Business.Services
                 }
 
                 await _notificationService.CreateNotification(NotificationAction.LeaveCreateTitle, NotificationAction.LeaveCreateMessage, model.EmployeeId, false, false);
-
+                if (approvalProcessor != null)
+                {
+                    await _notificationService.CreateNotification(NotificationAction.NewApprovalCreateTitle, NotificationAction.ApprovalCreateMessage, approvalProcessor.ProcessorIId.Value, false, false);
+                }
                 return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
             }
             return new BaseResponse() { Status = false, Message = ResponseMessage.LeaveExist };

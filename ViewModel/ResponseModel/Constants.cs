@@ -13,6 +13,7 @@
         public const string MaximumLeaveReached = "Maximum allowed leave days reached";
         public const string MaximumPaymentAdvanceApplied = "“You cannot take more than 3 salary advance in a fiscal year”.";
         public const string PaymentAdvanceExist = "You already requested an advance for the month";
+        public const string ContractExist = "You already have a contract objectives for this year.";
         public const string LeaveExecuted = "No record found/ leave process already executed";
         public const string LeaveRecallExecuted = "No record found/ leave recall already requested";
         public const string RecordExist = "Record already exist";
@@ -36,6 +37,9 @@
     public class NotificationAction
     {
         public const string RoleCreateTitle = "New Role Added";
+        public const string NewApprovalCreateTitle = "New Approval Required";
+        public const string ObjectiveCreateTitle = "New Contract Objective Added";
+        public const string PIPCreateTitle = "You have a new PIP message";
         public const string FeedbackCreateTitle = "New Feedback";
         public const string DisciplinaryCreateTitle = "New query";
         public const string AppraisalCreateTitle = "New Appraisal";
@@ -50,10 +54,13 @@
         public const string AppraisalCreateMessage = "You just submitted a new appraisal. Please not that you are to signoff after every review ny the approval manager";
         public const string AdvanceCreateMessage = "You just requested for a payment advance... Exercise patient while the managers see to the request approval";
         public const string DisciplinaryCreateMessage = "You just issued a query to a lower grade staff.";
+        public const string ApprovalCreateMessage = "A new approval has is waiting your confirmation, please check your baord.";
         public const string LeaveCreateMessage = "Your leave request was recieved successfully";
         public const string NOKCreateMessage = "You just added a next of kin. Wait while it is reviewed for approval";
         public const string LoanCreateMessage = "You just requested for a loan... Exercise patient while the managers see to the request approval";
         public const string TrainingCreateMessage = "You just applied to partake in a training";
+        public const string ObjectiveCreateMessage = "You just got a new contract objective for the year from your line manager, please check your account";
+        public const string PIPCreateMessage = "You just recieved a PIP message, login to see what it entails";
         public const string TransferCreateMessage = "You just applied for a new transfer";
         public const string DependentCreateMessage = "You just added a dependent. Wait while it is reviewed for approval";
         public const string RoleDeletedTitle = "A Role Deleted";

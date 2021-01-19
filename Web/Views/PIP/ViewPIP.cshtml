@@ -88,7 +88,7 @@
                     <div class="form-group" id="queryreplydiv" >
                         <textarea rows="5" class="form-control summernote" id="pipquerycomment" placeholder="Reply to pip here"></textarea>
                     </div>
-                    <div class="row">
+                    <div class="row" id="sethidden">
                         <div class="col-md-6">
                             <div class="form-group mb-0" onclick="SubmitReplyPIPDetail()" id="querysubmit">
                                 <div class="text-center">
@@ -97,7 +97,7 @@
                             </div>
                         </div>
                         <div class="col-md-6" id="linemanager" hidden>
-                            <div class="form-group mb-0" onclick="">
+                            <div class="form-group mb-0" onclick="ClosePiP()">
                                 <div class="text-center">
                                     <div class="btn btn-primary"><span>Close</span> <i class="fa fa-send m-l-5"></i></div>
                                 </div>
@@ -154,6 +154,10 @@
                                 document.getElementById('linemanager').removeAttribute("hidden");
                             }
                         }
+                        if (response?.data?.pip.isClosed) {
+                            document.getElementById('sethidden').setAttribute("hidden", true);
+                        }
+                        
                     }
                     else {
                         toastr.warning(response ?.message);
@@ -171,6 +175,32 @@
                 type: 'POST',
                 dataType: 'json',
                 data: { pipId: pipId, comment: reply },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#comment_pipquery').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function ClosePiP() {
+            SubmitClosePIP(selectedId);
+        }
+
+        function SubmitClosePIP(pipId) {
+            $.ajax({
+                url: '@Url.Action("ClosePIP", "PIP")',
+                type: 'POST',
+                dataType: 'json',
+                data: { pipId: pipId},
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)

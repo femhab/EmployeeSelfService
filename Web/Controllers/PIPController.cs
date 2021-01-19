@@ -199,5 +199,38 @@ namespace Web.Controllers
                 return ErrorPage(ex);
             }
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ClosePIP(Guid pipId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var response = await _pipService.ClosePIP(pipId);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        data = response.Message
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
     }
 }

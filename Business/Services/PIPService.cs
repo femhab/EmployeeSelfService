@@ -11,16 +11,20 @@ namespace Business.Services
     public class PIPService: IPIPService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
 
-        public PIPService(IUnitOfWork unitOfWork)
+        public PIPService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse> CreatePIP(PIP model)
         {
             _unitOfWork.GetRepository<PIP>().Insert(model);
             await _unitOfWork.SaveChangesAsync();
+            await _notificationService.CreateNotification(NotificationAction.PIPCreateTitle, NotificationAction.PIPCreateMessage, model.EmployeeId, false, false);
+            
             return new BaseResponse() { Status = true, Message = ResponseMessage.CreatedSuccessful };
         }
 
@@ -47,6 +51,18 @@ namespace Business.Services
         {
             var data = await _unitOfWork.GetRepository<PIP>().GetFirstOrDefaultAsync(predicate: x => x.Id == id);
             return data;
+        }
+
+        public async Task<BaseResponse> ClosePIP(Guid pipId)
+        {
+            var data = await _unitOfWork.GetRepository<PIP>().GetFirstOrDefaultAsync(predicate: x => x.Id == pipId);
+            if(data != null)
+            {
+                data.IsClosed = true;
+                _unitOfWork.GetRepository<PIP>().Update(data);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            return new BaseResponse { Status = true, Message = ResponseMessage.UpdatedSuccessful };
         }
     }
 }

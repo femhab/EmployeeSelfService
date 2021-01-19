@@ -82,6 +82,10 @@ namespace Business.Services
                 //boardactivelevel
                 await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
                 await _notificationService.CreateNotification(NotificationAction.LoanCreateTitle, NotificationAction.LoanCreateMessage, model.EmployeeId, false, false);
+                if (approvalProcessor != null)
+                {
+                    await _notificationService.CreateNotification(NotificationAction.NewApprovalCreateTitle, NotificationAction.ApprovalCreateMessage, approvalProcessor.ProcessorIId.Value, false, false);
+                }
 
                 return new BaseResponse() { Status = true, Message = ResponseMessage.LoanCreatedSuccessfully };
             }         

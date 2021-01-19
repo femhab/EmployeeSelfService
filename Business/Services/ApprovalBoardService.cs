@@ -23,9 +23,10 @@ namespace Business.Services
         private readonly SqlConnection _sqlConnection;
         private readonly SqlConnection _prSqlConnection;
         private readonly IConfiguration _configuration;
+        private readonly INotificationService _notificationService;
 
 
-        public ApprovalBoardService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, IConfiguration configuration)
+        public ApprovalBoardService(IUnitOfWork unitOfWork, IEmployeeApprovalConfigService employeeApprovalConfigService, IApprovalBoardActiveLevelService approvalBoardActiveLevelService, IConfiguration configuration, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
@@ -33,6 +34,7 @@ namespace Business.Services
             _approvalBoardActiveLevelService = approvalBoardActiveLevelService;
             _sqlConnection = new SqlConnection(_configuration["ConnectionStrings:HRServerConnection"]);
             _prSqlConnection = new SqlConnection(_configuration["ConnectionStrings:PRServerConnection"]);
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse> ApprovalAction(Guid ProcessorId, ApprovalStatus status, Level approvalLevel, Guid serviceId, Guid approvalWorkItemId)
@@ -120,7 +122,11 @@ namespace Business.Services
                     {
                         throw ex;
                     }
-                    
+                    await _notificationService.CreateNotification(NotificationAction.LeaveCreateTitle, NotificationAction.LeaveCreateMessage, enlistBoard.EmployeeId, false, false);
+                    if (approvalProcessor != null)
+                    {
+                        await _notificationService.CreateNotification(NotificationAction.NewApprovalCreateTitle, NotificationAction.ApprovalCreateMessage, approvalProcessor.ProcessorIId.Value, false, false);
+                    }
                 }
 
                 await _unitOfWork.SaveChangesAsync();
@@ -303,8 +309,8 @@ namespace Business.Services
                     cmd.Connection = _prSqlConnection;
                     cmd.CommandType = CommandType.Text;
 
-                    cmd.CommandText = @"INSERT INTO PRLNAPRV(emp_no,start_date,end_date,amt_rqst,amt_aprv,no_of_pay,mon_ded,hrstatus,FromDate,ToDate,ValueDate,Insertusername,InsertTransacDate,InsertTransacType, status) 
-                                VALUES(@param1,@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14, @param15)"; 
+                    cmd.CommandText = @"INSERT INTO PRLNAPRV(emp_no,start_date,end_date,amt_rqst,amt_aprv,no_of_pay,mon_ded,hrstatus,FromDate,ToDate,ValueDate,Insertusername,InsertTransacDate,InsertTransacType, status, prz_lntypeCode, prz_entityCode, prz_arrearsCode, cur_ln_ar, prv_ln_ar, cur_int, prv_int, active, aprv_no, aprv_date, per_int, ded_to_dat, loan_bal, mon_int, int_to_dat, loan_gl, int_gl, cur_loan, loan_to_dt, cost, main, sub, element,int_cost, int_sub, int_main, int_ele ) 
+                                VALUES(@param1,@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14, @param15, @param16, @param17, @param18, @param19,@param20,@param21,@param22,@param23,@param24,@param25,@param26,@param27,@param28,@param29,@param30,@param31,@param32, @param33, @param34, @param35, @param36, @param37,@param38,@param39,@param40,@param41,@param42)"; 
                     cmd.Parameters.AddWithValue("@param1", loan.Emp_No);
                     cmd.Parameters.AddWithValue("@param2", loan.StartDate);
                     cmd.Parameters.AddWithValue("@param3", loan.EndDate);
@@ -320,6 +326,33 @@ namespace Business.Services
                     cmd.Parameters.AddWithValue("@param13", DateTime.Now);
                     cmd.Parameters.AddWithValue("@param14", "Insert");
                     cmd.Parameters.AddWithValue("@param15", 1);
+                    cmd.Parameters.AddWithValue("@param16", "EMERGE");
+                    cmd.Parameters.AddWithValue("@param17", "001");
+                    cmd.Parameters.AddWithValue("@param18", "1");
+                    cmd.Parameters.AddWithValue("@param19", 0);
+                    cmd.Parameters.AddWithValue("@param20", 0);
+                    cmd.Parameters.AddWithValue("@param21", 0);
+                    cmd.Parameters.AddWithValue("@param22", 0);
+                    cmd.Parameters.AddWithValue("@param23", "Y");
+                    cmd.Parameters.AddWithValue("@param24", "");
+                    cmd.Parameters.AddWithValue("@param25", loan.StartDate);
+                    cmd.Parameters.AddWithValue("@param26", 0);
+                    cmd.Parameters.AddWithValue("@param27", 0);
+                    cmd.Parameters.AddWithValue("@param28", loan.AmountRequested);
+                    cmd.Parameters.AddWithValue("@param29", 0);
+                    cmd.Parameters.AddWithValue("@param30", 0);
+                    cmd.Parameters.AddWithValue("@param31", 0);
+                    cmd.Parameters.AddWithValue("@param32", 0);
+                    cmd.Parameters.AddWithValue("@param33", 0);
+                    cmd.Parameters.AddWithValue("@param34", 0);
+                    cmd.Parameters.AddWithValue("@param35", "");
+                    cmd.Parameters.AddWithValue("@param36", "");
+                    cmd.Parameters.AddWithValue("@param37", "");
+                    cmd.Parameters.AddWithValue("@param38", "");
+                    cmd.Parameters.AddWithValue("@param39", "");
+                    cmd.Parameters.AddWithValue("@param40", "");
+                    cmd.Parameters.AddWithValue("@param41", "");
+                    cmd.Parameters.AddWithValue("@param42", "");
 
                     _prSqlConnection.Open();
                     cmd.ExecuteNonQuery();
@@ -381,8 +414,8 @@ namespace Business.Services
                     cmd.Connection = _prSqlConnection;
                     cmd.CommandType = CommandType.Text;
 
-                    cmd.CommandText = @"INSERT INTO PRLNAPRV(emp_no,start_date,end_date,amt_rqst,amt_aprv,no_of_pay,mon_ded,hrstatus,FromDate,ToDate,ValueDate,Insertusername,InsertTransacDate,InsertTransacType, status) 
-                                VALUES(@param1,@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14, @param15)";
+                    cmd.CommandText = @"INSERT INTO PRLNAPRV(emp_no,start_date,end_date,amt_rqst,amt_aprv,no_of_pay,mon_ded,hrstatus,FromDate,ToDate,ValueDate,Insertusername,InsertTransacDate,InsertTransacType, status, prz_lntypeCode,prz_entityCode, prz_arrearsCode, cur_ln_ar, prv_ln_ar, cur_int, prv_int, active, aprv_no, aprv_date, per_int, ded_to_dat, loan_bal, mon_int, int_to_dat, loan_gl, int_gl, cur_loan, loan_to_dt, cost, main, sub, element,int_cost, int_sub, int_main, int_ele) 
+                                VALUES(@param1,@param2,@param3,@param4,@param5,@param6,@param7,@param8,@param9,@param10,@param11,@param12,@param13,@param14, @param15, @param16, @param17, @param18, @param19,@param20,@param21,@param22,@param23,@param24,@param25,@param26,@param27,@param28,@param29,@param30,@param31,@param32, @param33, @param34, @param35, @param36, @param37,@param38,@param39,@param40,@param41,@param42)";
                     cmd.Parameters.AddWithValue("@param1", advance.Emp_No);
                     cmd.Parameters.AddWithValue("@param2", startDate);
                     cmd.Parameters.AddWithValue("@param3", endDate);
@@ -398,6 +431,33 @@ namespace Business.Services
                     cmd.Parameters.AddWithValue("@param13", DateTime.Now);
                     cmd.Parameters.AddWithValue("@param14", "Insert");
                     cmd.Parameters.AddWithValue("@param15", 1);
+                    cmd.Parameters.AddWithValue("@param16", "ADV");
+                    cmd.Parameters.AddWithValue("@param17", "001");
+                    cmd.Parameters.AddWithValue("@param18", "1");
+                    cmd.Parameters.AddWithValue("@param19", 0);
+                    cmd.Parameters.AddWithValue("@param20", 0);
+                    cmd.Parameters.AddWithValue("@param21", 0);
+                    cmd.Parameters.AddWithValue("@param22", 0);
+                    cmd.Parameters.AddWithValue("@param23", "Y");
+                    cmd.Parameters.AddWithValue("@param24", "");
+                    cmd.Parameters.AddWithValue("@param25", startDate);
+                    cmd.Parameters.AddWithValue("@param26", 0);
+                    cmd.Parameters.AddWithValue("@param27", 0);
+                    cmd.Parameters.AddWithValue("@param28", advance.Amount);
+                    cmd.Parameters.AddWithValue("@param29", 0);
+                    cmd.Parameters.AddWithValue("@param30", 0);
+                    cmd.Parameters.AddWithValue("@param31", 0);
+                    cmd.Parameters.AddWithValue("@param32", 0);
+                    cmd.Parameters.AddWithValue("@param33", 0);
+                    cmd.Parameters.AddWithValue("@param34", 0);
+                    cmd.Parameters.AddWithValue("@param35", "");
+                    cmd.Parameters.AddWithValue("@param36", "");
+                    cmd.Parameters.AddWithValue("@param37", "");
+                    cmd.Parameters.AddWithValue("@param38", "");
+                    cmd.Parameters.AddWithValue("@param39", "");
+                    cmd.Parameters.AddWithValue("@param40", "");
+                    cmd.Parameters.AddWithValue("@param41", "");
+                    cmd.Parameters.AddWithValue("@param42", "");
 
                     _prSqlConnection.Open();
                     cmd.ExecuteNonQuery();

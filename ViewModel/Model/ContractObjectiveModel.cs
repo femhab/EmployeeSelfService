@@ -17,6 +17,7 @@ namespace ViewModel.Model
     public class ContractViewModel: AuthDataModel
     {
         public IEnumerable<EmployeeModel> Employee { get; set; }
+        public bool IsContractible { get; set; }
         public IEnumerable<ContractObjectiveModel> ContractObjective { get; set; }
     }
 }

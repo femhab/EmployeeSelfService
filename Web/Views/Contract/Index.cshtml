@@ -18,9 +18,6 @@
                     <li class="breadcrumb-item active">Contract Objectives</li>
                 </ul>
             </div>
-            <div class="col-auto float-right ml-auto">
-                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#contract_info_modal"><i class="fa fa-plus"></i> Add Contract Objective</a>
-            </div>
         </div>
     </div>
     <!-- /Page Header -->
@@ -65,400 +62,6 @@
     </div>
 </div>
 <!-- /Page Content -->
-<!-- Contract Item Info Modal -->
-<div id="contract_info_modal" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"> Contract Objectives</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <select class="select" id="contractemployeeid" onchange="OnSelect()">
-                                    <option value="">Select Employee</option>
-                                    @if (Model.Employee != null)
-                                    {
-                                        @foreach (var item in Model.Employee)
-                                        {
-                                            <option value="@item.Emp_No">@item.LastName @item.FirstName - @item.Emp_No</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <input type="text" placeholder="EmployeeId" readonly class="form-control" id="contractemployeeno">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-scroll">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj1">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri1">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time1">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control" id="weight1">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv1" onclick="AddMore(1)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv2">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj2">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri2">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time2">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight2">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv2" onclick="AddMore(2)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv3">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj3">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri3">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time3">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight3">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv3" onclick="AddMore(3)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv4">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj4">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri4">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time4">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight4">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv4" onclick="AddMore(4)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv5">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj5">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri5">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time5">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight5">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv5" onclick="AddMore(5)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv6">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj6">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri6">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time6">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight6">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv6" onclick="AddMore(6)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv7">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj7">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri7">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time7">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight7">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv7" onclick="AddMore(7)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv8">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj8">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri8">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time8">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight8">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv8" onclick="AddMore(8)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv9">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj9">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri9">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time9">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight9">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv9" onclick="AddMore(9)">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-
-                        <div class="card" hidden id="carddiv10">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="obj10">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="cri10">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="time10">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="weight10">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-more" id="adddiv10">
-                                <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-section" onclick="SubmitContract()">
-                        <div class="btn btn-primary submit-btn">Submit</div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Contract Item Info Modal -->
-
 
 <!-- Contract Item Update Modal -->
 <div id="contract_update_modal" class="modal custom-modal fade" role="dialog">
@@ -525,7 +128,7 @@
                         </div>*@
 
                     </div>
-                    <div class="submit-section" onclick="">
+                    <div class="submit-section" onclick="submitUpdateContract()">
                         <div class="btn btn-primary submit-btn">Submit Accessment Result</div>
                     </div>
                 </form>
@@ -539,138 +142,6 @@
     <script type="text/javascript">
 
         var selectedId;
-       //on select of unregisterd nam action
-        var targetGradeList = JSON.parse('@Json.Serialize(@Model.Employee)');
-
-        function OnSelect() {
-            let selectedUser = $("#contractemployeeid option:selected").val();
-            console.log(selectedUser);
-            targetGradeList.forEach(function (entry) {
-               if (entry.emp_No == selectedUser) {
-                   $("#contractemployeeno").val(entry.emp_No);
-                }
-            });
-        }
-
-        function AddMore(divNo) {
-            if (divNo == 1) {
-                if ($("#obj1").val().trim().length && $("#cri1").val().trim().length && $("#time1").val().trim().length && $("#weight1").val().trim().length) {
-                    document.getElementById('carddiv2').removeAttribute("hidden");
-                    document.getElementById('adddiv1').setAttribute("hidden", true);
-                }
-                else {
-                    toastr.warning("All previous field must be filled");
-                }
-            }
-            else if (divNo == 2) {
-                if ($("#obj1").val().trim().length && $("#cri1").val().trim().length && $("#time1").val().trim().length && $("#weight1").val().trim().length && $("#obj2").val().trim().length && $("#cri2").val().trim().length && $("#time2").val().trim().length && $("#weight2").val().trim().length) {
-                    document.getElementById('carddiv3').removeAttribute("hidden");
-                    document.getElementById('adddiv2').setAttribute("hidden", true);
-                }
-                else {
-                    toastr.warning("All previous field must be filled");
-                }
-            }
-            else if (divNo == 3) {
-                document.getElementById('carddiv4').removeAttribute("hidden");
-                document.getElementById('adddiv3').setAttribute("hidden", true);
-            }
-            else if (divNo == 4) {
-                document.getElementById('carddiv5').removeAttribute("hidden");
-                document.getElementById('adddiv4').setAttribute("hidden", true);
-            }
-            else if (divNo == 5) {
-                document.getElementById('carddiv6').removeAttribute("hidden");
-                document.getElementById('adddiv5').setAttribute("hidden", true);
-            }
-            else if (divNo == 6) {
-                document.getElementById('carddiv7').removeAttribute("hidden");
-                document.getElementById('adddiv6').setAttribute("hidden", true);
-            }
-            else if (divNo == 7) {
-                document.getElementById('carddiv8').removeAttribute("hidden");
-                document.getElementById('adddiv7').setAttribute("hidden", true);
-            }
-            else if (divNo == 8) {
-                document.getElementById('carddiv9').removeAttribute("hidden");
-                document.getElementById('adddiv8').setAttribute("hidden", true);
-            }
-            else if (divNo == 9) {
-                document.getElementById('carddiv10').removeAttribute("hidden");
-                document.getElementById('adddiv9').setAttribute("hidden", true);
-            }
-        }
-
-        function SubmitContract() {
-            var dict = [];
-
-            if ($("#obj1").val().trim().length) {
-                contract1 = $("#obj1").val() + "|" + $("#cri1").val() + "|" + $("#time1").val() + "|" + $("#weight1").val()
-                dict.push(contract1);
-            }
-            if ($("#obj2").val().trim().length) {
-                contract2 = $("#obj2").val() + "|" + $("#cri2").val() + "|" + $("#time2").val() + "|" + $("#weight2").val()
-                dict.push(contract2);
-            }
-            if ($("#obj3").val().trim().length) {
-                contract3 = $("#obj3").val() + "|" + $("#cri3").val() + "|" + $("#time3").val() + "|" + $("#weight3").val()
-                dict.push(contract3);
-            }
-            if ($("#obj4").val().trim().length) {
-                contract4 = $("#obj4").val() + "|" + $("#cri4").val() + "|" + $("#time4").val() + "|" + $("#weight4").val()
-                dict.push(contract4);
-            }
-            if ($("#obj5").val().trim().length) {
-                contract5 = $("#obj5").val() + "|" + $("#cri5").val() + "|" + $("#time5").val() + "|" + $("#weight5").val()
-                dict.push(contract5);
-            }
-            if ($("#obj6").val()) {
-                contract6 = $("#obj6").val() + "|" + $("#cri6").val() + "|" + $("#time6").val() + "|" + $("#weight6").val()
-                dict.push(contract6);
-            }
-            if ($("#obj7").val().trim().length) {
-                contract7 = $("#obj7").val() + "|" + $("#cri7").val() + "|" + $("#time7").val() + "|" + $("#weight7").val()
-                dict.push(contract7);
-            }
-            if ($("#obj8").val().trim().length) {
-                contract8 = $("#obj8").val() + "|" + $("#cri8").val() + "|" + $("#time8").val() + "|" + $("#weight8").val()
-                dict.push(contract8);
-            }
-            if ($("#obj9").val().trim().length) {
-                contract9= $("#obj9").val() + "|" + $("#cri9").val() + "|" + $("#time9").val() + "|" + $("#weight9").val()
-                dict.push(contract9);
-            }
-            if ($("#obj10").val().trim().length) {
-                contract10 = $("#obj10").val() + "|" + $("#cri10").val() + "|" + $("#time10").val()+ "|" + $("#weight10").val()
-                dict.push(contract10);
-            }
-
-            var employeeno = $("#contractemployeeid").val()
-
-            AddContract(dict, employeeno);
-        }
-
-        function AddContract(contractItems, empNo) {
-            $.ajax({
-                url: '@Url.Action("AddAppraisal", "Contract")',
-                type: 'POST',
-                dataType: 'json',
-                data: { contractItem: contractItems, empNo: empNo},
-                success: function (response) {
-                    if (response.status) {
-                        toastr.success(response ?.message)
-                        $('#contract_info_modal').modal('hide');
-                        location.reload();
-                    }
-                    else {
-                        toastr.error(response ?.message)
-                    }
-                    return;
-                }, error: function () {
-                    alerty("danger", "Opps", "request Failed");
-                }
-            });
-        }
 
         function getItem(objectiveId) {
             getContractByObjective(objectiveId);
@@ -718,13 +189,14 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Score Achieved <span class="text-danger">*</span></label>
-                                                    <input type="number" class="form-control" id="scoreachieved">
+                                                    <input type="number" value="${response?.data?.item[i].scoreAchieved}" class="form-control" id="scoreachieved">
+                                                    <input type="text" value='${response?.data?.item[i].id}' hidden class="form-control" id="contractitemidentity">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Remark <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="remark">
+                                                    <input type="text" value="${response?.data?.item[i].remark}" class="form-control" id="remark">
                                                 </div>
                                             </div>
                                         </div>
@@ -740,6 +212,48 @@
                     else {
                     }
 
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function submitUpdateContract() {
+            var dictid = [];
+            var dictscore = [];
+            var dictremark = [];
+
+            $('input[id=contractitemidentity]').each(function () {
+                dictid.push(this.value);
+            });
+
+            $('input[id=scoreachieved]').each(function () {
+                dictscore.push(this.value);
+            });
+
+            $('input[id=remark]').each(function () {
+                dictremark.push(this.value);
+            });
+
+            UpdateContract(dictid, dictscore, dictremark);
+        }
+
+        function UpdateContract(contractItems, scores, remarks) {
+            $.ajax({
+                url: '@Url.Action("UpdateContract", "Contract")',
+                type: 'POST',
+                dataType: 'json',
+                data: { contractItems: contractItems, scores: scores, remarks: remarks},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message)
+                        $('#contract_info_modal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response ?.message)
+                    }
                     return;
                 }, error: function () {
                     alerty("danger", "Opps", "request Failed");

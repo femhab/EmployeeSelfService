@@ -63,6 +63,10 @@ namespace Business.Services
                 await _approvalBoardService.Create(enlistBoard);
                 await _approvalBoardActiveLevelService.CreateOrUpdate(approvalWorkItem.Id, model.Id, Level.FirstLevel);
                 await _notificationService.CreateNotification(NotificationAction.TrainingCreateTitle, NotificationAction.TrainingCreateMessage, model.EmployeeId, false, false);
+                if (approvalProcessor != null)
+                {
+                    await _notificationService.CreateNotification(NotificationAction.NewApprovalCreateTitle, NotificationAction.ApprovalCreateMessage, approvalProcessor.ProcessorIId.Value, false, false);
+                }
             }
             catch (Exception ex)
             {
