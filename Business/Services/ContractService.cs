@@ -42,6 +42,8 @@ namespace Business.Services
                         }
                         await _notificationService.CreateNotification(NotificationAction.ObjectiveCreateTitle, NotificationAction.ObjectiveCreateMessage, model.EmployeeId, false, false);
 
+                        //send text to the line manager
+
                         return new BaseResponse() { Status = true, Message = ResponseMessage.ContractCreated };
                     }
                     return new BaseResponse() { Status = false, Message = ResponseMessage.ContractExist };
@@ -131,6 +133,26 @@ namespace Business.Services
             return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
         }
 
+        public async Task<BaseResponse> LMSignOffContract(Guid contractId)
+        {
+            var data = await _unitOfWork.GetRepository<ContractObjective>().GetFirstOrDefaultAsync(predicate: x => x.Id == contractId);
+            if (data != null)
+            {
+                data.IsHRSignedOff = true;
+                data.SignedOffDate = DateTime.Now;
+                _unitOfWork.GetRepository<ContractObjective>().Update(data);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
+        }
+
+
+        public async Task<ContractObjective> GetById(Guid id)
+        {
+            var data = await _unitOfWork.GetRepository<ContractObjective>().GetFirstOrDefaultAsync(predicate: x => x.Id == id);
+            return data;
+        }
+
         public async Task<ContractItem> GetContractItemById(Guid itemId)
         {
             var data = await _unitOfWork.GetRepository<ContractItem>().GetFirstOrDefaultAsync(predicate: x => x.Id == itemId);
@@ -140,6 +162,14 @@ namespace Business.Services
         public async Task<BaseResponse> UpdateContractItem(List<ContractItem> model)
         {
             _unitOfWork.GetRepository<ContractItem>().Update(model);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
+        }
+
+        public async Task<BaseResponse> UpdateContractObjective(ContractObjective model)
+        {
+            _unitOfWork.GetRepository<ContractObjective>().Update(model);
             await _unitOfWork.SaveChangesAsync();
 
             return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };

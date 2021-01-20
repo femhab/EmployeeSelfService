@@ -15,7 +15,10 @@ namespace Business.Interfaces
         Task<IEnumerable<ContractObjective>> GetByLineManager(string lineManagerNo);
         Task<IEnumerable<ContractObjective>> GetByEmployee(Guid employeeId);
         Task<BaseResponse> SignOffContract(Guid contractId);
+        Task<BaseResponse> LMSignOffContract(Guid contractId);
         Task<ContractItem> GetContractItemById(Guid itemId);
         Task<BaseResponse> UpdateContractItem(List<ContractItem> model);
+        Task<ContractObjective> GetById(Guid id);
+        Task<BaseResponse> UpdateContractObjective(ContractObjective model);
     }
 }

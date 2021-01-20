@@ -31,8 +31,8 @@
                             <th>Employee Id</th>
                             <th>Total Score</th>
                             <th>Created  Date</th>
-                            <th>SignOff  Status</th>
-                            <th>SignOff  Date</th>
+                            <th>Employee SignOff  Status</th>
+                            <th>Last SignOff  Date</th>
                             <th class="text-right">Actions</th>
                         </tr>
                     </thead>
@@ -75,61 +75,74 @@
             </div>
             <div class="modal-body" >
                 <form>
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <input type="text" placeholder="EmployeeId" readonly class="form-control" id="updateempno">
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" placeholder="Total Score" readonly class="form-control" id="totalscoreaccess">
+                            </div>
+                        </div>
                     </div>
                     <div class="form-scroll" id="appendcontractitem">
                         @*<div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Smart objectives <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label> Evaluation Citerias <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Timeline <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control datetimepicker" id="" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Weighting <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control" id="" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Score Achieved <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control" id="">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Remark <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="">
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="card-body">
+                    <h3 class="card-title">Contract Item <a href="javascript:void(0);"></a></h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Smart objectives <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="" readonly>
                             </div>
-                        </div>*@
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label> Evaluation Citerias <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Timeline <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control datetimepicker" id="" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Weighting <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Score Achieved <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Remark <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
 
                     </div>
-                    <div class="submit-section" onclick="submitUpdateContract()">
+                    <div class="form-group" hidden id="commentdiv">
+                        <label>Employee Comment <span class="text-danger">*</span></label>
+                        <textarea type="text" readonly placeholder="No Comment Yet" disabled class="form-control" id="empcomment"></textarea>
+                    </div>
+                    <div class="submit-section" onclick="submitUpdateContract()" id="submitupdate">
                         <div class="btn btn-primary submit-btn">Submit Accessment Result</div>
+                    </div>
+                    <div class="submit-section" onclick="LMSignOffContract()" hidden id="setaccesssignoff">
+                        <div class="btn btn-primary submit-btn">Signoff</div>
                     </div>
                 </form>
             </div>
@@ -206,8 +219,19 @@
                             $("#appendcontractitem").append(contractView);
                         }
 
-                       // $("#updateemployeeid").val(response?.data?.objectives?.employee?.lastName);
+                        $("#empcomment").val(response?.data?.objectives?.comment);
+                        $("#totalscoreaccess").val(response?.data?.objectives?.totalWeightedSore);
                         $("#updateempno").val(response?.data?.objectives.emp_No);
+                        if (response?.data?.objectives.isSignedOff) {
+                            document.getElementById('submitupdate').setAttribute("hidden", true);
+                            document.getElementById('setaccesssignoff').removeAttribute("hidden");
+                        }
+                        if (response?.data?.objectives.isAccessed) {
+                            document.getElementById('commentdiv').removeAttribute("hidden");
+                        }
+                        if (response?.data?.objectives.isHRSignedOff) {
+                            document.getElementById('setaccesssignoff').setAttribute("hidden", true);
+                        }
                     }
                     else {
                     }
@@ -253,6 +277,32 @@
                     }
                     else {
                         toastr.error(response ?.message)
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function LMSignOffContract() {
+            LMSignOff(selectedId);
+        }
+
+        function LMSignOff(contractId) {
+            $.ajax({
+                url: '@Url.Action("LMSignOffContract", "Contract")',
+                type: 'POST',
+                dataType: 'json',
+                data: { contractId: contractId},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        //$('#comment_pipquery').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.warning(response ?.message);
                     }
                     return;
                 }, error: function () {

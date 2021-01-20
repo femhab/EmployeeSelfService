@@ -36,8 +36,8 @@
                             <th>Employee Id</th>
                             <th>Total Score</th>
                             <th>Created  Date</th>
-                            <th>SignOff  Status</th>
-                            <th>SignOff  Date</th>
+                            <th>Employee SignOff  Status</th>
+                            <th>Last SignOff  Date</th>
                             <th class="text-right">Actions</th>
                         </tr>
                     </thead>
@@ -301,6 +301,12 @@
                             </div>
                         </div>
                     </div>
+                    <div style="text-align:center">
+                        <a>
+                            Smart Objectives: Specific, Measurable, Achievable, Result oriented, Timeline | Evaluation Criteria: Cost, Quantity, Quality, Time | Weighting*: Relative to other
+                            objectives | Achieved Score: Score obtained on a 1 – 50 basis | Weighted Score:  (Weighting * Achieved Score) / 100
+                        </a>
+                    </div>
                     <div class="submit-section" onclick="SubmitContract()">
                         <div class="btn btn-primary submit-btn">Submit</div>
                     </div>
@@ -329,15 +335,34 @@
                                 <input type="text" placeholder="EmployeeId" readonly class="form-control" id="updateempno">
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" placeholder="Total Score" readonly class="form-control" id="totalscoreemp">
+                            </div>
+                        </div>
                     </div>
                     <div class="form-scroll" id="appendviewcontractitem">
                         @*from here*@
 
                         @*to here*@
                     </div>
-                    <div class="submit-section" onclick="SignOffContract()" id="setsignoff">
-                        <div class="btn btn-primary submit-btn">Sign Offs</div>
+                    <div class="form-group" hidden id="commentdiv">
+                        <label>Employee Comment <span class="text-danger">*</span></label>
+                        <textarea type="text" placeholder="No Comment Yet" class="form-control" id="commentonobjective"></textarea>
                     </div>
+                    <div class="row" id="accessdiv" hidden>
+                        <div class="col-md-6">
+                            <div class="submit-section" onclick="submitReAccess()" id="">
+                                <div class="btn btn-primary submit-btn">Re-access</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="submit-section" onclick="SignOffContract()" id="setsignoff">
+                                <div class="btn btn-primary submit-btn">Sign Offs</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </div>
@@ -439,7 +464,7 @@
                 contract6 = $("#obj6").val() + "|" + $("#cri6").val() + "|" + $("#time6").val() + "|" + $("#weight6").val()
                 dict.push(contract6);
             }
-            
+
             var employeeno = $("#contractemployeeid").val()
 
             AddContract(dict, employeeno);
@@ -508,13 +533,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Score Achieved <span class="text-danger">*</span></label>
-                                                    <input type="number" value="${response?.data?.item[i].scoreAchieved}" class="form-control" id="scoreachieved">
+                                                    <input type="number" readonly value="${response?.data?.item[i].scoreAchieved}" class="form-control" id="scoreachieved">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Remark <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" value="${response?.data?.item[i].remark}" id="remark">
+                                                    <input type="text" class="form-control" readonly value="${response?.data?.item[i].remark}" id="remark">
                                                 </div>
                                             </div>
                                         </div>
@@ -524,11 +549,16 @@
                             $("#appendviewcontractitem").append(contractView);
                         }
 
-                       // $("#updateemployeeid").val(response?.data?.objectives?.employee?.lastName);setsignoff
+                        $("#commentonobjective").val(response?.data?.objectives?.comment);
+                        $("#totalscoreemp").val(response?.data?.objectives?.totalWeightedSore);
                         $("#updateempno").val(response?.data?.objectives.emp_No);
                         if (response?.data?.objectives.isSignedOff) {
                             document.getElementById('setsignoff').setAttribute("hidden", true);
-                        } IsSignedOff
+                        }
+                        if (response?.data?.objectives.isAccessed && !response?.data?.objectives.isSignedOff) {
+                            document.getElementById('accessdiv').removeAttribute("hidden");
+                            document.getElementById('commentdiv').removeAttribute("hidden");
+                        }
                     }
                     else {
                     }
@@ -558,6 +588,34 @@
                     }
                     else {
                         toastr.warning(response ?.message);
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function submitReAccess() {
+            var comment = $("#commentonobjective").val()
+
+            ReAccessContract(selectedId, comment);
+        }
+
+        function ReAccessContract(objectiveId, comment) {
+            $.ajax({
+                url: '@Url.Action("CommentOnContract", "Contract")',
+                type: 'POST',
+                dataType: 'json',
+                data: { objectiveId: objectiveId, comment: comment},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response ?.message)
+                        $('#contract_info_modal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response ?.message)
                     }
                     return;
                 }, error: function () {

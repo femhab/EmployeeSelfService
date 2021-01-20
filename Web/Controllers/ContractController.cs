@@ -96,7 +96,7 @@ namespace Web.Controllers
 
                     var targetEmployee = await _employeeService.GetByEmployerIdOrEmail(empNo);
 
-                    var contactObjective = new ContractObjective() { EmployeeId = targetEmployee.Id, Emp_No = empNo, Id = Guid.NewGuid(), IsSignedOff = false, TotalWeightedSore = 0, CreatedDate = DateTime.Now, LineManager = authData.Emp_No };
+                    var contactObjective = new ContractObjective() { EmployeeId = targetEmployee.Id, Emp_No = empNo, Id = Guid.NewGuid(), IsSignedOff = false, IsHRSignedOff = false, IsAccessed = false, TotalWeightedSore = 0, CreatedDate = DateTime.Now, LineManager = targetEmployee.ReportToLineManager };
 
                     var model = new List<ContractItem>();
                     var totalweight = 0;
@@ -223,6 +223,39 @@ namespace Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public async Task<ActionResult> LMSignOffContract(Guid contractId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var response = await _contractService.LMSignOffContract(contractId);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        data = response.Message
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult> UpdateContract(List<Guid> contractItems, List<int> scores, List<string> remarks)
         {
             try
@@ -237,10 +270,13 @@ namespace Web.Controllers
 
                     List<ContractItem> updatedList = new List<ContractItem>();
 
+                    decimal totalWeightedScore = 0;
+                    var objectiveId = Guid.Empty;
                     int len = contractItems.Count;
                     for (int i = 0; i < len; i++)
                     {
                         var contractItem = await _contractService.GetContractItemById(contractItems[i]);
+                        objectiveId = contractItem.ContractObjectiveId;
                         contractItem.ScoreAchieved = scores[i];
                         if(contractItem.ScoreAchieved > 50 || contractItem.ScoreAchieved < 0)
                         {
@@ -252,10 +288,56 @@ namespace Web.Controllers
                         }
                         contractItem.Remark = remarks[i];
                         contractItem.WeightedSore = (contractItem.ScoreAchieved * contractItem.Weighting)/100;
+                        totalWeightedScore = totalWeightedScore + contractItem.WeightedSore;
                         updatedList.Add(contractItem);
                     }
 
-                    var response = await _contractService.UpdateContractItem(updatedList);
+                    var responseItem = await _contractService.UpdateContractItem(updatedList);
+
+                    var objective = await _contractService.GetById(objectiveId);
+                    objective.IsAccessed = true;
+                    objective.TotalWeightedSore = totalWeightedScore;
+
+                    var response = await _contractService.UpdateContractObjective(objective);
+
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> CommentOnContract(Guid objectiveId, string comment)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var objective = await _contractService.GetById(objectiveId);
+                    objective.Comment = comment.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("<br>", string.Empty).Replace("</br>", string.Empty);
+
+                    var response = await _contractService.UpdateContractObjective(objective);
 
                     return Json(new
                     {
