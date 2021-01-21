@@ -38,6 +38,7 @@
     {
         public const string RoleCreateTitle = "New Role Added";
         public const string NewApprovalCreateTitle = "New Approval Required";
+        public const string NewApprovedTitle = "A request was just approved";
         public const string ObjectiveCreateTitle = "New Contract Objective Added";
         public const string PIPCreateTitle = "You have a new PIP message";
         public const string FeedbackCreateTitle = "New Feedback";
@@ -55,6 +56,7 @@
         public const string AdvanceCreateMessage = "You just requested for a payment advance... Exercise patient while the managers see to the request approval";
         public const string DisciplinaryCreateMessage = "You just issued a query to a lower grade staff.";
         public const string ApprovalCreateMessage = "A new approval has is waiting your confirmation, please check your baord.";
+        public const string ApprovedCreateMessage = "A request was approved, detail:";
         public const string LeaveCreateMessage = "Your leave request was recieved successfully";
         public const string NOKCreateMessage = "You just added a next of kin. Wait while it is reviewed for approval";
         public const string LoanCreateMessage = "You just requested for a loan... Exercise patient while the managers see to the request approval";

@@ -27,5 +27,6 @@ namespace Business.Interfaces
         Task<Employee> GetHOD(Guid employeeId);
         Task<IEnumerable<Employee>> GetContractTargetedEmployee(string empNo);
         Task<IEnumerable<Employee>> GetLineEmployee(string empNo, Guid departmentId);
+        Task RefreshEmployeeDetail();
     }
 }

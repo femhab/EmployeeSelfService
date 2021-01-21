@@ -13,6 +13,20 @@ namespace ViewModel.Model
         public string LastRatingManagerName { get; set; }
         public string NextRatingManagerId { get; set; }
         public string NextRatingManagerName { get; set; }
+        public string Strenght { get; set; }
+        public string Weekness { get; set; }
+        public string Counselling { get; set; }
+        public string Redeployment { get; set; }
+        public string Development { get; set; }
+        public string DisciplinaryAction { get; set; }
+        public string Training { get; set; }
+        public string Promotion { get; set; }
+        public string OtherDetail { get; set; }
+        public decimal TotalScore { get; set; }
+        public decimal TotalNetScore { get; set; }
+        public string AppraiseeComment { get; set; }
+        public string AreaOfImprovement { get; set; }
+        public string AppraisalTarget { get; set; }
     }
 
     public class AppraisalItemModel : BaseModel

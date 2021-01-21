@@ -4,14 +4,16 @@ using Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(EmployeeServiceContext))]
-    partial class EmployeeServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210120164316_orderNumberOnCategoryItem")]
+    partial class orderNumberOnCategoryItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -327,11 +329,7 @@ namespace Data.Migrations
 
                     b.Property<Guid>("EmployeeId");
 
-                    b.Property<bool>("EmployeeReview");
-
                     b.Property<bool>("IsDeleted");
-
-                    b.Property<bool>("ManagerSignOff");
 
                     b.Property<string>("ModifiedBy");
 
@@ -922,12 +920,6 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("AppraisalPeriodId");
-
-                    b.Property<string>("AppraisalTarget");
-
-                    b.Property<string>("AppraiseeComment");
-
-                    b.Property<string>("AreaOfImprovement");
 
                     b.Property<string>("Counselling");
 

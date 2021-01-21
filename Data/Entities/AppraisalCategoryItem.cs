@@ -11,6 +11,7 @@ namespace Data.Entities
         public string Description { get; set; }
         public string StaffType { get; set; }
         public int Weight { get; set; }
+        public int OrderNo { get; set; }
         public int AppraisalCategoryItemID { get; set; }
     }
 }

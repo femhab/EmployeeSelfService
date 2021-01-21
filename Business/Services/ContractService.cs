@@ -81,6 +81,8 @@ namespace Business.Services
                             itemLookUp.WeightedSore = (contractItem.ScoreAchieved * contractItem.Weighting)/100;
                             itemLookUp.Remark = contractItem.Remark;
                         }
+
+                        //send email to employee
                     }
                 }
                     
@@ -129,6 +131,7 @@ namespace Business.Services
                 data.SignedOffDate = DateTime.Now;
                 _unitOfWork.GetRepository<ContractObjective>().Update(data);
                 await _unitOfWork.SaveChangesAsync();
+                //update commnet
             }
             return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
         }

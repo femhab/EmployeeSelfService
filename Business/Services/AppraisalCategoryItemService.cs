@@ -28,7 +28,7 @@ namespace Business.Services
 
         public async Task<IEnumerable<AppraisalCategoryItem>> GetAll(Expression<Func<AppraisalCategoryItem, bool>> predicate, string include = null, bool includeDeleted = false)
         {
-            var model = await _unitOfWork.GetRepository<AppraisalCategoryItem>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.AppraisalCategoryCode), include);
+            var model = await _unitOfWork.GetRepository<AppraisalCategoryItem>().GetAllAsync(predicate, orderBy: source => source.OrderBy(c => c.OrderNo), include);
             return model;
         }
 
@@ -60,6 +60,7 @@ namespace Business.Services
                         AppraisalCategoryCode = reader["AppraisalCategoryCode"].ToString(),
                         TypeCode = reader["TypeCode"].ToString(),
                         Weight = reader.GetInt32(reader.GetOrdinal("Weight")),
+                        ItemOrderNo = reader.GetInt32(reader.GetOrdinal("ItemOrderNo")),
                         AppraisalCategoryItemID = reader.GetInt32(reader.GetOrdinal("AppraisalCategoryItemID"))
                     };
                     resource.Add(requester);
@@ -76,7 +77,7 @@ namespace Business.Services
 
                     if (check == null)
                     {
-                        var appraisalCategoryItem = new AppraisalCategoryItem() { AppraisalCategoryCode = item.AppraisalCategoryCode, AppraisalCategoryId = (category != null) ? category.Id : Guid.Empty, Description = item.Desccription, Weight = item.Weight, AppraisalCategoryItemID = item.AppraisalCategoryItemID, StaffType = item.TypeCode, CreatedDate = DateTime.Now, Id = Guid.NewGuid() };
+                        var appraisalCategoryItem = new AppraisalCategoryItem() { AppraisalCategoryCode = item.AppraisalCategoryCode, AppraisalCategoryId = (category != null) ? category.Id : Guid.Empty, Description = item.Desccription, Weight = item.Weight, OrderNo = item.ItemOrderNo, AppraisalCategoryItemID = item.AppraisalCategoryItemID, StaffType = item.TypeCode, CreatedDate = DateTime.Now, Id = Guid.NewGuid() };
 
                         _unitOfWork.GetRepository<AppraisalCategoryItem>().Insert(appraisalCategoryItem);
                     }

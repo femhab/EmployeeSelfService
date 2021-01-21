@@ -260,7 +260,7 @@ namespace Web.Controllers
                     //get first level approver
                     var approverConfig = await _employeeApprovalConfigService.GetByServiceLevel(authData.Id, "appraisal", Level.FirstLevel);
                     var appraisalPeriod = (await _appraisalPeriodService.GetActivePeriod());
-                    if(appraisalPeriod == null || appraisalPeriod.StartDate > DateTime.Now || DateTime.Now > appraisalPeriod.EndDate)
+                    if(appraisalPeriod == null || appraisalPeriod.StartDate > DateTime.Now)
                     {
                         return Json(new
                         {
@@ -302,9 +302,10 @@ namespace Web.Controllers
                                 if (rating == ratingItem.Id)
                                 {
                                     ratingScore = ratingItem.Weight;
-                                    if (ratingItem.Weight > ratingHighScore)
-                                        ratingHighScore = ratingItem.Weight;
+                                    
                                 }
+                                if (ratingItem.Weight > ratingHighScore)
+                                    ratingHighScore = ratingItem.Weight;
                             }
                             var selectedItem = categoryItemList.Where(x => x.Id == categoryItem).FirstOrDefault();
                             itemScore = selectedItem.Weight;
@@ -360,6 +361,7 @@ namespace Web.Controllers
                     var empAppraisal = new EmployeeAppraisal();
                     var board = new ApprovalBoard();
                     var unsignedBoard = new ApprovalBoard();
+                    var signedBoard = new ApprovalBoard();
                     var categoryList = await _appraisalCategoryService.GetAll();
 
                     if (isAppraisalView == false)
@@ -372,6 +374,7 @@ namespace Web.Controllers
                     {
                         response = (await _appraisalItemService.GetByAppraisal(appraisalId)).ToList();
                         unsignedBoard = await _approvalBoardService.GetUnsignedAppraisal(appraisalId);
+                        signedBoard = await _approvalBoardService.GetreviewedAppraisal(appraisalId);
                         empAppraisal = await _employeeAppraisalService.GetById(appraisalId);
                     }
                     var contractReview = (await _contractService.GetByEmployee(empAppraisal.EmployeeId)).Where(x => x.CreatedDate.Year == DateTime.Now.AddYears(-1).Year && board.Emp_No.ToLower() == empAppraisal.Emp_No.ToLower()).FirstOrDefault();
@@ -397,7 +400,7 @@ namespace Web.Controllers
                     return Json(new
                     {
                         status = (response != null) ? true : false,
-                        data = new { detail = response, level = board.ApprovalLevel, serviceId = board.ServiceId, unsigned = (unsignedBoard != null) ? true : false, apparaisalid = appraisalId, strenght = empAppraisal.Strenght, weekness = empAppraisal.Weekness, development = empAppraisal.Development, counselling = empAppraisal.Counselling, redeployment = empAppraisal.Redeployment, action = empAppraisal.DisciplinaryAction, training = empAppraisal.Training, promotion = empAppraisal.Promotion, others = empAppraisal.OtherDetail, categories = extractedCategory, appraisalScore = empAppraisal, contract = (contractReview != null) ? contractReview: null , objectiveItem = contractItem }
+                        data = new { detail = response, level = board.ApprovalLevel, serviceId = board.ServiceId, unsigned = (unsignedBoard != null) ? true : false, apparaisalid = appraisalId, strenght = empAppraisal.Strenght, weekness = empAppraisal.Weekness, development = empAppraisal.Development, counselling = empAppraisal.Counselling, redeployment = empAppraisal.Redeployment, action = empAppraisal.DisciplinaryAction, training = empAppraisal.Training, promotion = empAppraisal.Promotion, appraisalTarget = empAppraisal.AppraisalTarget, others = empAppraisal.OtherDetail, categories = extractedCategory, appraisalScore = empAppraisal, contract = (contractReview != null) ? contractReview: null , objectiveItem = contractItem, employeeReview = board.EmployeeReview, managerSignOff = (signedBoard != null)? signedBoard.ManagerSignOff:  false, appraiseeComment = empAppraisal.AppraiseeComment, areaOfImprovement  = empAppraisal.AreaOfImprovement}
                     }) ;
 
                 }
@@ -415,7 +418,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> SignOffAppraisal(Guid appraisalId)
+        public async Task<ActionResult> SignOffAppraisal(Guid appraisalId, string appraiseeComment, string appraiseeImprove)
         {
             try
             {
@@ -427,6 +430,10 @@ namespace Web.Controllers
                         return RedirectToAction("Signout", "Employee");
                     }
 
+                    var appraisal = await _employeeAppraisalService.GetById(appraisalId);
+                    appraisal.AppraiseeComment = appraiseeComment;
+                    appraisal.AreaOfImprovement = appraiseeImprove;
+                    var empUpdate = await _employeeAppraisalService.Update(appraisal);
                     var response = await _approvalBoardService.SignOffAppraisal(appraisalId);
 
                     return Json(new

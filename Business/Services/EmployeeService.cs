@@ -85,6 +85,7 @@ namespace Business.Services
                                 effectiveDate = Convert.ToDateTime(reader["effectiveDate"]).ToString("dd/MM/yyyy"),
                                 preAppDate = Convert.ToDateTime(reader["preAppDate"]).ToString("dd/MM/yyyy"),
                                 projRetireDate = Convert.ToDateTime(reader["projRetireDate"]).ToString("dd/MM/yyyy"),
+                                Employee_Email = reader["Employee_Email"].ToString()
                             };
                             hrData = requester;
                         }
@@ -124,6 +125,8 @@ namespace Business.Services
                     model.PreAppDate = DateTime.ParseExact(hrData.preAppDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     model.ProRetireDate = DateTime.ParseExact(hrData.projRetireDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     model.StaffType = hrData.TypeCode;
+                    model.EmailAddress = hrData.Employee_Email;
+                    model.PhoneNumber = "";
                     if (section != null) { model.SectionId = section.Id; }
                     if (title != null) { model.EmployeeTitleId = title.Id; }
                     if (maritalStatus != null) { model.MaritalStatusId = maritalStatus.Id; }
@@ -436,6 +439,108 @@ namespace Business.Services
         {
             var data = await _unitOfWork.GetRepository<Employee>().GetAllAsync(predicate: x => x.ReportToLineManager.ToLower() == empNo.ToLower() && x.DepartmentId == departmentId);
             return data;
+        }
+
+        public async Task RefreshEmployeeDetail()
+        {
+            var employees = await _unitOfWork.GetRepository<Employee>().GetAllAsync();
+
+            foreach(var item in employees)
+            {
+                var sql = $"select * from HREmpMst where Emp_No='{item.Emp_No}'";
+                SqlCommand query = new SqlCommand(sql, _sqlConnection);
+                HREmpMst hrData = new HREmpMst() { };
+                _sqlConnection.Open();
+                using (SqlDataReader reader = query.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        try
+                        {
+                            HREmpMst requester = new HREmpMst()
+                            {
+                                DepCode = reader["DepCode"].ToString(),
+                                DeptCode = reader["DeptCode"].ToString(),
+                                DivisionCode = reader["DivisionCode"].ToString(),
+                                UnitCode = reader["UnitCode"].ToString(),
+                                GradeCode = reader["GradeCode"].ToString(),
+                                Emp_No = reader["Emp_No"].ToString(),
+                                TypeCode = reader["TypeCode"].ToString(),
+                                SectionCode = reader["SectionCode"].ToString(),
+                                TitleCode = reader["TitleCode"].ToString(),
+                                MaritalCode = reader["MaritalCode"].ToString(),
+                                StatusCode = reader["StatusCode"].ToString(),
+                                CountryCode = reader["CountryCode"].ToString(),
+                                StateCode = reader["StateCode"].ToString(),
+                                report_to = reader["report_to"].ToString(),
+                                LGACode = reader["LGACode"].ToString(),
+                                LocationCode = reader["LocationCode"].ToString(),
+                                CourtesyCode = reader["CourtesyCode"].ToString(),
+                                date_Emp = Convert.ToDateTime(reader["date_Emp"]).ToString("dd/MM/yyyy"),
+                                date_birth = Convert.ToDateTime(reader["date_birth"]).ToString("dd/MM/yyyy"),
+                                date_conf = Convert.ToDateTime(reader["date_conf"]).ToString("dd/MM/yyyy"),
+                                effectiveDate = Convert.ToDateTime(reader["effectiveDate"]).ToString("dd/MM/yyyy"),
+                                preAppDate = Convert.ToDateTime(reader["preAppDate"]).ToString("dd/MM/yyyy"),
+                                projRetireDate = Convert.ToDateTime(reader["projRetireDate"]).ToString("dd/MM/yyyy"),
+                                Employee_Email = reader["Employee_Email"].ToString()
+                            };
+                            hrData = requester;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
+                    }
+                    _sqlConnection.Close();
+                }
+
+                if (hrData.Emp_No != null)
+                {
+                    var department = await _unitOfWork.GetRepository<Department>().GetFirstOrDefaultAsync(predicate: x => x.DeptCode.ToLower() == hrData.DeptCode.ToLower()) ?? null;
+                    var division = await _unitOfWork.GetRepository<Division>().GetFirstOrDefaultAsync(predicate: x => x.DivisonCode.ToLower() == hrData.DivisionCode.ToLower()) ?? null;
+                    var unit = await _unitOfWork.GetRepository<Unit>().GetFirstOrDefaultAsync(predicate: x => x.UnitCode.ToLower() == hrData.UnitCode.ToLower()) ?? null;
+                    var gradeLevel = await _unitOfWork.GetRepository<GradeLevel>().GetFirstOrDefaultAsync(predicate: x => x.GradeCode.ToLower() == hrData.GradeCode.ToLower()) ?? null;
+                    var section = await _unitOfWork.GetRepository<Section>().GetFirstOrDefaultAsync(predicate: x => x.SectionCode.ToLower() == hrData.SectionCode.ToLower()) ?? null;
+                    var title = await _unitOfWork.GetRepository<EmployeeTitle>().GetFirstOrDefaultAsync(predicate: x => x.TitleCode.ToLower() == hrData.TitleCode.ToLower()) ?? null;
+                    var maritalStatus = await _unitOfWork.GetRepository<MaritalStatus>().GetFirstOrDefaultAsync(predicate: x => x.MaritalCode.ToLower() == hrData.MaritalCode.ToLower()) ?? null;
+                    var availability = await _unitOfWork.GetRepository<AvalaibilityStatus>().GetFirstOrDefaultAsync(predicate: x => x.StatusCode.ToLower() == hrData.StatusCode.ToLower()) ?? null;
+                    var country = await _unitOfWork.GetRepository<Country>().GetFirstOrDefaultAsync(predicate: x => x.CountryCode.ToLower() == hrData.CountryCode.ToLower()) ?? null;
+                    var state = await _unitOfWork.GetRepository<State>().GetFirstOrDefaultAsync(predicate: x => x.StateCode.ToLower() == hrData.StateCode.ToLower()) ?? null;
+                    var lga = await _unitOfWork.GetRepository<LGA>().GetFirstOrDefaultAsync(predicate: x => x.LGACode.ToLower() == hrData.LGACode.ToLower()) ?? null;
+                    var location = await _unitOfWork.GetRepository<Location>().GetFirstOrDefaultAsync(predicate: x => x.LocationCode.ToLower() == hrData.LocationCode.ToLower()) ?? null;
+                    var courtesy = await _unitOfWork.GetRepository<Courtesy>().GetFirstOrDefaultAsync(predicate: x => x.CourtesyCode.ToLower() == hrData.CourtesyCode.ToLower()) ?? null;
+
+                    if (department != null) { item.DepartmentId = department.Id; }
+                    if (division != null) { item.DivisionId = division.Id; }
+                    if (unit != null) { item.UnitId = unit.Id; }
+                    if (gradeLevel != null) { item.GradeLevelId = gradeLevel.Id; }
+                    item.DOB = DateTime.ParseExact(hrData.date_birth, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    item.EmploymentDate = DateTime.ParseExact(hrData.date_Emp, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    item.DateConf = DateTime.ParseExact(hrData.date_conf, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    item.ReportToLineManager = hrData.report_to;
+                    item.EffectiveDate = DateTime.ParseExact(hrData.effectiveDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    item.PreAppDate = DateTime.ParseExact(hrData.preAppDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    item.ProRetireDate = DateTime.ParseExact(hrData.projRetireDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    item.StaffType = hrData.TypeCode;
+                    if (section != null) { item.SectionId = section.Id; }
+                    if (title != null) { item.EmployeeTitleId = title.Id; }
+                    if (maritalStatus != null) { item.MaritalStatusId = maritalStatus.Id; }
+                    if (availability != null) { item.AvalaibilityStatusId = availability.Id; }
+                    if (country != null) { item.CountryId = country.Id; }
+                    if (state != null) { item.StateId = state.Id; }
+                    if (lga != null) { item.LGAId = lga.Id; }
+                    if (location != null) { item.LocationId = location.Id; }
+                    if (courtesy != null) { item.CourtesyId = courtesy.Id; }
+                }
+                item.Status = Status.Active;
+                item.AccessType = AccessType.Employee;
+                item.EmailAddress = hrData.Employee_Email;
+                item.PhoneNumber = "";
+                item.ReportToLineManager = hrData.report_to;
+
+                _unitOfWork.GetRepository<Employee>().Update(item);
+                await _unitOfWork.SaveChangesAsync();
+            }
         }
     }
 }

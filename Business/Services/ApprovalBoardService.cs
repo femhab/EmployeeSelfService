@@ -55,6 +55,8 @@ namespace Business.Services
 
                 _unitOfWork.GetRepository<ApprovalBoard>().Update(data);
 
+                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ApprovalWorkItemId);
+
                 if (status == ApprovalStatus.Approved)
                 {
                     //look for new approver for next level and assign the neccessary
@@ -76,13 +78,38 @@ namespace Business.Services
                         CreatedBy = data.Emp_No
                     };
 
+                    if(enlistBoard.ApprovalLevel == Level.SecondLevel)
+                    {
+                        enlistBoard.SignOff = true;
+                    }
+
                     await Create(enlistBoard);
+
+                    if (approvalWorkItem.Name.ToLower() == "leave")
+                    {
+                        var leave = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId, null, c => c.Include(i => i.LeaveType));
+                        leave.LastProccessedBy = data.ApprovalProcessor;
+                        if(enlistBoard.ApprovalLevel == Level.HR)
+                        {
+                            leave.LeaveStatus = LeaveStatus.Approved;
+                        }
+                        _unitOfWork.GetRepository<Leave>().Update(leave);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+                    else if (approvalWorkItem.Name.ToLower() == "loan")
+                    {
+                        var loan = await _unitOfWork.GetRepository<Loan>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
+                        loan.LastApprover = data.ApprovalProcessor;
+                        _unitOfWork.GetRepository<Loan>().Update(loan);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
                     try
                     {
                         await _approvalBoardActiveLevelService.CreateOrUpdate(data.ApprovalWorkItemId, data.ServiceId, (approvalProcessor != null) ? newApprovalLevel : Level.HR);
                         if(enlistBoard.ApprovalLevel == Level.HR)
                         {
-                            var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ApprovalWorkItemId);
+                            
                             if (approvalWorkItem.Name.ToLower() == "leave")
                             {
                                 var leave = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId, null, c => c.Include(i => i.LeaveType));
@@ -122,7 +149,7 @@ namespace Business.Services
                     {
                         throw ex;
                     }
-                    await _notificationService.CreateNotification(NotificationAction.LeaveCreateTitle, NotificationAction.LeaveCreateMessage, enlistBoard.EmployeeId, false, false);
+                    await _notificationService.CreateNotification(NotificationAction.NewApprovalCreateTitle, NotificationAction.ApprovedCreateMessage + approvalWorkItem.Description , enlistBoard.EmployeeId, false, false);
                     if (approvalProcessor != null)
                     {
                         await _notificationService.CreateNotification(NotificationAction.NewApprovalCreateTitle, NotificationAction.ApprovalCreateMessage, approvalProcessor.ProcessorIId.Value, false, false);
@@ -186,9 +213,23 @@ namespace Business.Services
             return model;
         }
 
+
+
         public async Task<ApprovalBoard> GetUnsignedAppraisal(Guid serviceId)
         {
             var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: c => c.ServiceId == serviceId && c.SignOff == false);
+            return model;
+        }
+
+        public async Task<ApprovalBoard> GetUnreviewedAppraisal(Guid serviceId)
+        {
+            var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: c => c.ServiceId == serviceId && c.ManagerSignOff == false);
+            return model;
+        }
+
+        public async Task<ApprovalBoard> GetreviewedAppraisal(Guid serviceId)
+        {
+            var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: c => c.ServiceId == serviceId && c.ManagerSignOff == true);
             return model;
         }
 
@@ -196,7 +237,21 @@ namespace Business.Services
         {
             var model = await GetUnsignedAppraisal(appraisalId);
             model.SignOff = true;
-            if(model != null)
+            model.EmployeeReview = true;
+            if (model != null)
+            {
+                _unitOfWork.GetRepository<ApprovalBoard>().Update(model);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            return new BaseResponse() { Status = true, Message = ResponseMessage.SignOffSuccessful };
+        }
+
+        public async Task<BaseResponse> ManagerSignOffAppraisal(Guid appraisalId)
+        {
+            var model = await GetUnreviewedAppraisal(appraisalId);
+            model.ManagerSignOff = true;
+            model.SignOff = false;
+            if (model != null)
             {
                 _unitOfWork.GetRepository<ApprovalBoard>().Update(model);
                 await _unitOfWork.SaveChangesAsync();

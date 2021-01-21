@@ -17,6 +17,7 @@ namespace ViewModel.Model
         public string ApprovalProcessor { get; set; } // processor employee no
         public ApprovalStatusEnum Status { get; set; } //new, pending
         public bool SignOff { get; set; }//applicable to only appraisal
+        public bool EmployeeReview { get; set; }//applicable to only appraisal
     }
 
     public class ApprovalBoardViewModel: AuthDataModel

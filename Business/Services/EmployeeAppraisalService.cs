@@ -82,5 +82,12 @@ namespace Business.Services
             var model = await _unitOfWork.GetRepository<EmployeeAppraisal>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
             return model;
         }
+
+        public async Task<BaseResponse> Update(EmployeeAppraisal model)
+        {
+            _unitOfWork.GetRepository<EmployeeAppraisal>().Update(model);
+            await _unitOfWork.SaveChangesAsync();
+            return new BaseResponse() { Status = true, Message = ResponseMessage.UpdatedSuccessful };
+        }
     }
 }

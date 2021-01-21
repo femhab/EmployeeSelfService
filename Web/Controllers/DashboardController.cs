@@ -155,7 +155,7 @@ namespace Web.Controllers
         //action section
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> ApprovalBoardAppraisalAction(bool status, Level approvalLevel, Guid serviceId, List<string> categoryItemUpdate, string strenght, string weekness, string counselling, string redeployment, string development, string disciplinaryAction, string training, string promotion, string otherDetail)
+        public async Task<ActionResult> ApprovalBoardAppraisalAction(bool status, Level approvalLevel, Guid serviceId)
         {
             try
             {
@@ -166,76 +166,8 @@ namespace Web.Controllers
                     {
                         return RedirectToAction("Signout", "Employee");
                     }
-                    if (string.IsNullOrEmpty(strenght) || string.IsNullOrEmpty(weekness) || string.IsNullOrEmpty(counselling) || string.IsNullOrEmpty(redeployment) || string.IsNullOrEmpty(development) || string.IsNullOrEmpty(disciplinaryAction) || string.IsNullOrEmpty(training) || string.IsNullOrEmpty(otherDetail))
-                    {
-                        return Json(new
-                        {
-                            status = false,
-                            message = "None of the exctra recommendation field can be empty"
-                        });
-                    }
-                    var ratingList = await _appraisalRatingService.GetAll();
-                    var categoryItemList = await _appraisalCategoryItemService.GetAll();
-
-                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("appraisal"));
-                    var updatedAppraisal = await _employeeAppraisalService.GetById(serviceId);
-                    //if approved update catgoryitem weight
-                    var updateList = new List<AppraisalItemUpdateModel>();
-                    var appraisalId = new Guid();
-                    foreach (var item in categoryItemUpdate)
-                    {
-                        if(item != null)
-                        {
-                            Guid empAppraisal = Guid.Parse(item.Split("/")[0]);
-                            Guid categoryItem = Guid.Parse(item.Split("/")[1]);
-                            Guid rating = string.IsNullOrEmpty(item.Split("/")[2]) ? Guid.Empty : Guid.Parse(item.Split("/")[2]);
-
-                            if (rating != Guid.Empty)
-                            {
-                                updateList.Add(new AppraisalItemUpdateModel() { EmployeeAppraisalId = empAppraisal, CategoryItemId = categoryItem, RatingId = rating });
-                            }
-                            appraisalId = empAppraisal;
-
-                            var ratingScore = 0;
-                            var ratingHighScore = 0;
-                            var itemScore = 0;
-                            foreach (var ratingItem in ratingList)
-                            {
-                                if (rating == ratingItem.Id)
-                                {
-                                    ratingScore = ratingItem.Weight;
-                                    if (ratingItem.Weight > ratingHighScore)
-                                        ratingHighScore = ratingItem.Weight;
-                                }
-                            }
-                            foreach (var catItem in categoryItemList)
-                            {
-                                if (categoryItem == catItem.Id)
-                                {
-                                    itemScore = catItem.Weight;
-                                }
-                            }
-                            updatedAppraisal.TotalScore = updatedAppraisal.TotalScore + (itemScore * ratingScore);
-                            updatedAppraisal.TotalNetScore = updatedAppraisal.TotalNetScore + (itemScore * ratingHighScore);
-                        }
-                    }
                     
-                    if(updatedAppraisal != null)
-                    {
-                        updatedAppraisal.Strenght = strenght;
-                        updatedAppraisal.Counselling = counselling;
-                        updatedAppraisal.Redeployment = redeployment;
-                        updatedAppraisal.Development = development;
-                        updatedAppraisal.DisciplinaryAction = disciplinaryAction;
-                        updatedAppraisal.Training = training;
-                        updatedAppraisal.Promotion = promotion;
-                        updatedAppraisal.OtherDetail = otherDetail;
-                        updatedAppraisal.Weekness = weekness;
-                        _unitOfWork.GetRepository<EmployeeAppraisal>().Update(updatedAppraisal);
-                        await _unitOfWork.SaveChangesAsync();
-                    }
-
-                    await _appraisalItemService.Update(updateList);
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("appraisal"));
                     var response = await _approvalBoardService.ApprovalAction(authData.Id, status ? ApprovalStatus.Approved : ApprovalStatus.Rejected, approvalLevel, serviceId, approvalWorkItem.Id);
                     return Json(new
                     {
@@ -372,6 +304,114 @@ namespace Web.Controllers
                         status = response.Status,
                         message = response.Message
                     });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ManagerSignOffAppraisal(Guid serviceId, List<string> categoryItemUpdate, string strenght, string weekness, string counselling, string redeployment, string development, string disciplinaryAction, string training, string promotion, string otherDetail, string nextTarget)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    if (string.IsNullOrEmpty(strenght) || string.IsNullOrEmpty(weekness) || string.IsNullOrEmpty(counselling) || string.IsNullOrEmpty(redeployment) || string.IsNullOrEmpty(development) || string.IsNullOrEmpty(disciplinaryAction) || string.IsNullOrEmpty(training) || string.IsNullOrEmpty(otherDetail) || string.IsNullOrEmpty(nextTarget))
+                    {
+                        return Json(new
+                        {
+                            status = false,
+                            message = "None of the exctra recommendation field can be empty"
+                        });
+                    }
+                    var ratingList = await _appraisalRatingService.GetAll();
+                    var categoryItemList = await _appraisalCategoryItemService.GetAll();
+
+                    var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("appraisal"));
+                    var updatedAppraisal = await _employeeAppraisalService.GetById(serviceId);
+                    //if approved update catgoryitem weight
+                    var updateList = new List<AppraisalItemUpdateModel>();
+                    var appraisalId = new Guid();
+                    foreach (var item in categoryItemUpdate)
+                    {
+                        if (item != null)
+                        {
+                            Guid empAppraisal = Guid.Parse(item.Split("/")[0]);
+                            Guid categoryItem = Guid.Parse(item.Split("/")[1]);
+                            Guid rating = string.IsNullOrEmpty(item.Split("/")[2]) ? Guid.Empty : Guid.Parse(item.Split("/")[2]);
+
+                            if (rating != Guid.Empty)
+                            {
+                                updateList.Add(new AppraisalItemUpdateModel() { EmployeeAppraisalId = empAppraisal, CategoryItemId = categoryItem, RatingId = rating });
+                            }
+                            appraisalId = empAppraisal;
+
+                            var ratingScore = 0;
+                            var ratingHighScore = 0;
+                            var itemScore = 0;
+                            foreach (var ratingItem in ratingList)
+                            {
+                                if (rating == ratingItem.Id)
+                                {
+                                    ratingScore = ratingItem.Weight;
+                                    
+                                }
+                                if (ratingItem.Weight > ratingHighScore)
+                                    ratingHighScore = ratingItem.Weight;
+                            }
+                            foreach (var catItem in categoryItemList)
+                            {
+                                if (categoryItem == catItem.Id)
+                                {
+                                    itemScore = catItem.Weight;
+                                }
+                            }
+                            updatedAppraisal.TotalScore = updatedAppraisal.TotalScore + (itemScore * ratingScore);
+                            updatedAppraisal.TotalNetScore = updatedAppraisal.TotalNetScore + (itemScore * ratingHighScore);
+                        }
+                    }
+
+                    if (updatedAppraisal != null)
+                    {
+                        updatedAppraisal.Strenght = strenght;
+                        updatedAppraisal.Counselling = counselling;
+                        updatedAppraisal.Redeployment = redeployment;
+                        updatedAppraisal.Development = development;
+                        updatedAppraisal.DisciplinaryAction = disciplinaryAction;
+                        updatedAppraisal.Training = training;
+                        updatedAppraisal.Promotion = promotion;
+                        updatedAppraisal.OtherDetail = otherDetail;
+                        updatedAppraisal.Weekness = weekness;
+                        updatedAppraisal.AppraisalTarget = nextTarget;
+                        _unitOfWork.GetRepository<EmployeeAppraisal>().Update(updatedAppraisal);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+                    var mresponse = await _approvalBoardService.ManagerSignOffAppraisal(appraisalId);
+
+                    var response = await _appraisalItemService.Update(updateList);
+                    
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        data = response.Message
+                    });
+
                 }
                 return Json(new
                 {

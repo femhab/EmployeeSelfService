@@ -12,5 +12,6 @@ namespace Business.Interfaces
         Task<IEnumerable<EmployeeAppraisal>> GetByEmployee(Guid employeeId);
         Task<IEnumerable<EmployeeAppraisal>> GetByProcessor(string processorId);//to use activelevel for trace
         Task<EmployeeAppraisal> GetById(Guid id);
+        Task<BaseResponse> Update(EmployeeAppraisal model);
     }
 }

@@ -17,5 +17,7 @@ namespace Business.Interfaces
         Task<ApprovalBoard> GetUnsignedAppraisal(Guid serviceId);
         Task<BaseResponse> SignOffAppraisal(Guid appraisalId);
         Task<ApprovalBoard> GetById(Guid id);
+        Task<BaseResponse> ManagerSignOffAppraisal(Guid appraisalId);
+        Task<ApprovalBoard> GetreviewedAppraisal(Guid serviceId);
     }
 }

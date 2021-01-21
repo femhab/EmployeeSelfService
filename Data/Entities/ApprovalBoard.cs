@@ -18,5 +18,7 @@ namespace Data.Entities
         public string ApprovalProcessor { get; set; } // processor employee no
         public ApprovalStatus Status { get; set; } //new, pending
         public bool SignOff { get; set; }//applicable to only appraisal
+        public bool EmployeeReview { get; set; }
+        public bool ManagerSignOff { get; set; }
     }
 }

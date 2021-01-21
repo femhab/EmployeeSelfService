@@ -25,8 +25,9 @@ namespace Business.Services
         private readonly IEducationalGradeService _educationalGradeService;
         private readonly IEducationalLevelService _educationalLevelService;
         private readonly IEducationalQualificationService _educationalQualificationService;
+        private readonly IEmployeeService _employeeService;
 
-        public RefreshingService(ICountryService countryService, IStateService stateService, ILGAService lgaService, ISectionService sectionService, ILocationService locationService, ICourtesyService courtesyService, IMaritalStatusService maritalStatusService, IEmployeeTitleService employeeTitleService, IAvailabilityStatusService availabilityStatusService, ITrainingService trainingService, IDepartmentService departmentService, IGradeLevelService gradeLevelService, ITrainingNominationService trainingNominationService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IDivisionService divisionService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService)
+        public RefreshingService(ICountryService countryService, IStateService stateService, ILGAService lgaService, ISectionService sectionService, ILocationService locationService, ICourtesyService courtesyService, IMaritalStatusService maritalStatusService, IEmployeeTitleService employeeTitleService, IAvailabilityStatusService availabilityStatusService, ITrainingService trainingService, IDepartmentService departmentService, IGradeLevelService gradeLevelService, ITrainingNominationService trainingNominationService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IDivisionService divisionService, IEducationalGradeService educationalGradeService, IEducationalLevelService educationalLevelService, IEducationalQualificationService educationalQualificationService, IEmployeeService employeeService)
         {
             _countryService = countryService;
             _stateService = stateService;
@@ -47,6 +48,7 @@ namespace Business.Services
             _educationalGradeService = educationalGradeService;
             _educationalLevelService = educationalLevelService;
             _educationalQualificationService = educationalQualificationService;
+            _employeeService = employeeService;
         }
 
         public async Task Refresh()
@@ -72,6 +74,7 @@ namespace Business.Services
                 await _educationalGradeService.Refresh();
                 await _educationalLevelService.Refresh();
                 await _educationalQualificationService.Refresh();
+                await _employeeService.RefreshEmployeeDetail();
             }
             catch(Exception ex)
             {

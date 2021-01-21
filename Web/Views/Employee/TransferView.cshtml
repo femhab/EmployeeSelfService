@@ -1,0 +1,199 @@
+﻿@model ViewModel.Model.EmployeeProfileViewModel
+@{
+    ViewData["Title"] = "TransferView";
+    Layout = "~/Views/Shared/_MainPageLayout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Profile</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a>Employee</a></li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="card mb-0">
+        <div class="card-body">
+            <form>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Employee Name<span class="text-danger">*</span></label>
+                            <input type="text" readonly value="@Model.Employee.LastName @Model.Employee.FirstName" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Employee Id <span class="text-danger">*</span></label>
+                            <input type="text" readonly value="@Model.Employee.Emp_No" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Current Division <span class="text-danger">*</span></label>
+                            <select class="select" disabled>
+                                @if (Model.Employee.Division != null)
+                                {
+                                    <option value="@Model.Employee.DivisionId" selected>@Model.Employee.Division.Descc</option>
+                                }
+                                else
+                                {
+                                    <option selected value="">Unverified</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Proposed Division <span class="text-danger">*</span></label>
+                            <select class="select" id="transferdivision">
+                                <option value="">Select</option>
+                                @foreach (var item in Model.Division)
+                                {
+                                    <option value="@item.Id">@item.Descc</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Current Department <span class="text-danger">*</span></label>
+                            <select class="select" disabled>
+                                @if (Model.Employee.Department != null)
+                                {
+                                    <option value="@Model.Employee.DepartmentId" selected>@Model.Employee.Department.Descc</option>
+                                }
+                                else
+                                {
+                                    <option selected value="">Unverified</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Proposed Department <span class="text-danger">*</span></label>
+                            <select class="select" id="transferdepartment">
+                                <option value="">Select</option>
+                                @foreach (var item in Model.Department)
+                                {
+                                    <option value="@item.Id">@item.Descc</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Current Section <span class="text-danger">*</span></label>
+                            <select class="select" disabled>
+                                @if (Model.Employee.Section != null)
+                                {
+                                    <option value="@Model.Employee.SectionId" selected>@Model.Employee.Section.Descc</option>
+                                }
+                                else
+                                {
+                                    <option selected value="">Unverified</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Proposed Section<span class="text-danger">*</span></label>
+                            <select class="select" id="transfersection">
+                                <option value="">Select</option>
+                                @if (Model.Section != null)
+                                {
+                                    @foreach (var item in Model.Section)
+                                    {
+                                        <option value="@item.Id">@item.Descc</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Current Unit <span class="text-danger">*</span></label>
+                            <select class="select" disabled>
+                                @if (Model.Employee.Unit != null)
+                                {
+                                    <option value="@Model.Employee.UnitId" selected>@Model.Employee.Unit.Descc</option>
+                                }
+                                else
+                                {
+                                    <option selected value="">Unverified</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Proposed Unit<span class="text-danger">*</span></label>
+                            <select class="select" id="transferunit">
+                                <option value="">Select</option>
+                                @if (Model.Unit != null)
+                                {
+                                    @foreach (var item in Model.Unit)
+                                    {
+                                        <option value="@item.Id">@item.Descc</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="submit-section" onclick="SubmitTransferRequest()">
+                    <button class="btn btn-primary submit-btn">Request Transfer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function SubmitTransferRequest()
+        {
+            var transferdivision = $("#transferdivision").val();
+            var transferdepartment = $("#transferdepartment").val();
+            var transferunit = $("#transferunit").val();
+            var transfersection = $("#transfersection").val();
+
+            RequestTransfer(transferdivision, transferdepartment, transfersection, transferunit);
+        }
+
+        function RequestTransfer(newDivision, newDepartment, newSection, newUnit ) {
+            $.ajax({
+                url: '@Url.Action("RequestTransfer", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: {newDivision: newDivision, newDepartment: newDepartment, newSection: newSection, newUnit: newUnit },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+    </script>
+}

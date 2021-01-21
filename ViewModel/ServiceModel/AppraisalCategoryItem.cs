@@ -7,5 +7,6 @@
         public string Desccription { get; set; }
         public string TypeCode { get; set; }
         public int Weight { get; set; }
+        public int ItemOrderNo { get; set; }
     }
 }

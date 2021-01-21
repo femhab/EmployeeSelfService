@@ -357,6 +357,18 @@
                         <label><span class="text-danger">Other Actions</span></label>
                         <textarea rows="5" class="form-control" id="appraisaldetail"></textarea>
                     </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">Set the Next Appraisal Period Targets</span></label>
+                        <textarea rows="5" class="form-control" id="appraisaltarget"></textarea>
+                    </div>
+                    <div class="form-group" id="appraisalcommentdiv">
+                        <label>Appraisee's Comment <span class="text-danger">*</span></label>
+                        <textarea type="text" readonly placeholder="No Comment Yet" disabled class="form-control" id="appraiseecomment"></textarea>
+                    </div>
+                    <div class="form-group" id="appraisalimprovdiv">
+                        <label>Area of improvement (Appraisee)<span class="text-danger">*</span></label>
+                        <textarea type="text" readonly placeholder="No Comment Yet" disabled class="form-control" id="appraiseeimprove"></textarea>
+                    </div>
                     <div class="form-group" hidden>
                         <label><span class="text-danger">*</span></label>
                         <div class="cal-icon">
@@ -364,7 +376,10 @@
                             <input class="form-control" readonly type="text" id="appraisalserviceid">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="col-12" onclick="submitManagerSignoff()" id="signoffdivsection">
+                        <a class="btn btn-primary cancel-btn">Approve for Signoff <i class="fa fa-check text-success"></i></a>
+                    </div>
+                    <div class="row" hidden id="approvaldivsection">
                         <div class="col-6" onclick="RejectAppraisalAction()">
                             <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
                         </div>
@@ -535,8 +550,7 @@
                             <input class="form-control" readonly type="text" id="advancelevel">
                             <input class="form-control" readonly type="text" id="advanceserviceid">
                         </div>
-                    </div>
-
+                    </div>                    
                     <div class="row">
                         <div class="col-6" onclick="RejectAdvanceAction()">
                             <a class="btn btn-primary cancel-btn">Reject <i class="fa fa-close text-danger"></i></a>
@@ -760,6 +774,13 @@
                         $("#appraisaltraining").val(response?.data?.training);
                         $("#appraisalpromotion").val(response?.data?.promotion);
                         $("#appraisaldetail").val(response?.data?.others);
+                        $("#appraisaltarget").val(response?.data?.appraisalTarget);
+                        $("#appraiseecomment").val(response?.data?.appraiseeComment);
+                        $("#appraiseeimprove").val(response?.data?.areaOfImprovement);
+                        if (response?.data?.employeeReview) {
+                            document.getElementById('approvaldivsection').removeAttribute("hidden");
+                            document.getElementById('signoffdivsection').setAttribute("hidden", true);
+                        }
                         //$("#totalweight").val(response?.data?.contract.totalWeightedSore);
                         //document.getElementById('totalweight').innerHTML = response?.data?.contract.totalWeightedSore;
                         document.getElementById('totalappraisalscore').innerHTML = response?.data?.appraisalScore.totalScore + "/" + response?.data?.appraisalScore.totalNetScore;
@@ -975,40 +996,16 @@
         }
 
         function ApprovedAppraisalAction() {
-            var dict = [];
-            $('select[id=appraisalrating]').each(function () {
-                dict.push(this.value);
-            });
-            //console.log(dict);
             level = $("#appraisallevel").val();
             serviceid = $("#appraisalserviceid").val();
-            appraisalstrenght = $.trim($("#appraisalstrenght").val());
-            appraisalweekness = $.trim($("#appraisalweekness").val());
-            appraisalcounselling = $.trim($("#appraisalcounselling").val());
-            appraisalredeployement = $.trim($("#appraisalredeployement").val());
-            appraisaldevelopment = $.trim($("#appraisaldevelopment").val());
-            appraisalaction = $.trim($("#appraisalaction").val());
-            appraisaltraining = $.trim($("#appraisaltraining").val());
-            appraisalpromotion = $.trim($("#appraisalpromotion").val());
-            appraisaldetail = $.trim($("#appraisaldetail").val());
-            console.log(appraisalstrenght + appraisalweekness + appraisalcounselling + appraisalredeployement + appraisaldevelopment + appraisalaction + appraisaltraining + appraisalpromotion + appraisaldetail)
-            ApprovalAppraisalAction(true, level, serviceid, dict, appraisalstrenght, appraisalweekness, appraisalcounselling, appraisalredeployement, appraisaldevelopment, appraisalaction, appraisaltraining, appraisalpromotion, appraisaldetail);
+            ApprovalAppraisalAction(true, level, serviceid);
         }
 
         function RejectAppraisalAction() {
             level = $("#appraisallevel").val();
             serviceid = $("#appraisalserviceid").val();
-            appraisalstrenght = $.trim($("#appraisalstrenght").val());
-            appraisalweekness = $.trim($("#appraisalweekness").val());
-            appraisalcounselling = $.trim($("#appraisalcounselling").val());
-            appraisalredeployement = $.trim($("#appraisalredeployement").val());
-            appraisaldevelopment = $.trim($("#appraisaldevelopment").val());
-            appraisalaction = $.trim($("#appraisalaction").val());
-            appraisaltraining = $.trim($("#appraisaltraining").val());
-            appraisalpromotion = $.trim($("#appraisalpromotion").val());
-            appraisaldetail = $.trim($("#appraisaldetail").val());
 
-            ApprovalAppraisalAction(false, level, serviceid, null, appraisalstrenght, appraisalweekness, appraisalcounselling, appraisalredeployement, appraisaldevelopment, appraisalaction, appraisaltraining, appraisalpromotion, appraisaldetail);
+            ApprovalAppraisalAction(false, level, serviceid);
         }
 
         function ApprovedTrainingAction() {
@@ -1106,12 +1103,12 @@
             });
         }
 
-        function ApprovalAppraisalAction(status, approvalLevel, serviceId, categoryItemUpdate, strenght, weekness, counselling, redeployment, development, disciplinaryAction, training, promotion, otherDetail) {
+        function ApprovalAppraisalAction(status, approvalLevel, serviceId) {
             $.ajax({
                 url: '@Url.Action("ApprovalBoardAppraisalAction", "Dashboard")',
                 type: 'POST',
                 dataType: 'json',
-                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId, categoryItemUpdate: categoryItemUpdate, strenght: strenght, weekness: weekness, counselling: counselling, redeployment: redeployment, development: development, disciplinaryAction: disciplinaryAction, training: training, promotion: promotion, otherDetail: otherDetail },
+                data: { status: status, approvalLevel: approvalLevel, serviceId: serviceId},
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)
@@ -1222,6 +1219,49 @@
             });
         }
 
+        function submitManagerSignoff() {
+            var dict = [];
+            $('select[id=appraisalrating]').each(function () {
+                dict.push(this.value);
+            });
+            //console.log(dict);
+            serviceid = $("#appraisalserviceid").val();
+            appraisalstrenght = $.trim($("#appraisalstrenght").val());
+            appraisalweekness = $.trim($("#appraisalweekness").val());
+            appraisalcounselling = $.trim($("#appraisalcounselling").val());
+            appraisalredeployement = $.trim($("#appraisalredeployement").val());
+            appraisaldevelopment = $.trim($("#appraisaldevelopment").val());
+            appraisalaction = $.trim($("#appraisalaction").val());
+            appraisaltraining = $.trim($("#appraisaltraining").val());
+            appraisalpromotion = $.trim($("#appraisalpromotion").val());
+            appraisaldetail = $.trim($("#appraisaldetail").val());
+            appraisaltarget = $.trim($("#appraisaltarget").val());
+
+            managerSignOff(serviceid, dict, appraisalstrenght, appraisalweekness, appraisalcounselling, appraisalredeployement, appraisaldevelopment, appraisalaction, appraisaltraining, appraisalpromotion, appraisaldetail, appraisaltarget);
+        }
+
+        function managerSignOff(serviceId, categoryItemUpdate, strenght, weekness, counselling, redeployment, development, disciplinaryAction, training, promotion, otherDetail, appraisaltarget) {
+            $.ajax({
+                url: '@Url.Action("ManagerSignOffAppraisal", "Dashboard")',
+                type: 'POST',
+                dataType: 'json',
+                data: { serviceId: serviceId, categoryItemUpdate: categoryItemUpdate, strenght: strenght, weekness: weekness, counselling: counselling, redeployment: redeployment, development: development, disciplinaryAction: disciplinaryAction, training: training, promotion: promotion, otherDetail: otherDetail, nextTarget: appraisaltarget },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#view_appraisal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message);
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
 
     </script>
 }

@@ -174,6 +174,39 @@ namespace Web.Controllers
             }
         }
 
+        //[Route("Profile")]
+        public async Task<ActionResult> TransferView()
+        {
+            try
+            {
+                var authData = JwtHelper.GetAuthData(Request);
+                if (authData == null)
+                {
+                    return RedirectToAction("Signout", "Employee");
+                }
+
+                EmployeeProfileViewModel profileViewModel = new EmployeeProfileViewModel();
+                var employee = await _employeeService.GetById(authData.Id);
+                var userRoles = await _userRoleService.GetAll();
+                var division = await _divisionService.GetAll();
+                var department = await _departmentService.GetAll();
+                var section = await _sectionService.GetAll();
+                //var unit = await _employeeApprovalConfigService.GetByEmployee(authData.Id);
+
+                profileViewModel = _mapper.Map<EmployeeProfileViewModel>(authData);
+                profileViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
+                profileViewModel.UserRoles = _mapper.Map<IEnumerable<UserRoleModel>>(userRoles);
+                profileViewModel.Division = _mapper.Map<IEnumerable<DivisionModel>>(division);
+                profileViewModel.Department = _mapper.Map<IEnumerable<DepartmentModel>>(department);
+                profileViewModel.Section = _mapper.Map<IEnumerable<SectionModel>>(section);
+                return View(profileViewModel);
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
         [Route("Transfer")]
         public IActionResult Transfer()
         {

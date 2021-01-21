@@ -218,6 +218,7 @@
                 </div>
             }*@
                     </div>
+
                     <div class="form-group">
                         <label><span>Discussions</span></label>
                     </div>
@@ -259,6 +260,18 @@
                     <div class="form-group">
                         <label><span class="text-danger">Other Actions</span></label>
                         <textarea rows="5" class="form-control" readonly disabled id="appraisaldetail"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Next Appraisal Period Target <span class="text-danger">*</span></label>
+                        <textarea type="text" readonly placeholder="No Comment Yet" disabled class="form-control" id="appraisaltarget"></textarea>
+                    </div>
+                    <div class="form-group" id="appraisalcommentdiv">
+                        <label>Appraisee's Comment (put your comment here) <span class="text-danger">*</span></label>
+                        <textarea type="text" readonly placeholder="No Comment Yet" class="form-control" id="appraisalempcomment"></textarea>
+                    </div>
+                    <div class="form-group" id="appraisalimprovediv">
+                        <label>What are the agreed means of redressing areas in need of improvement <span class="text-danger">*</span></label>
+                        <textarea type="text" readonly placeholder="No Comment Yet" class="form-control" id="appraisalempimprove"></textarea>
                     </div>
                     <div class="row" hidden id="showsignoff" onclick="SignOff()">
                         <input class="form-control" hidden type="text" id="appraisalid">
@@ -373,9 +386,21 @@
                         $("#appraisaltraining").val(response?.data?.training);
                         $("#appraisalpromotion").val(response?.data?.promotion);
                         $("#appraisaldetail").val(response?.data?.others);
+                        $("#appraisalempcomment").val(response?.data?.appraiseeComment);
+                        $("#appraisalempimprove").val(response?.data?.areaOfImprovement);
+                        $("#appraisaltarget").val(response?.data?.appraisalTarget);
 
                         if (response?.data?.unsigned) {
                             document.getElementById('showsignoff').removeAttribute("hidden");
+                        }
+                        if (response?.data?.employeeReview) {
+                            $("#appraisalempcomment").attr("readonly", true);
+                            $("#appraisalempimprove").attr("readonly", true);
+                        }
+                        if (response?.data?.managerSignOff) {
+                            $("#appraisalempcomment").attr("readonly", false);
+                            $("#appraisalempimprove").attr("readonly", false);
+                            //document.getElementById('appraisalempcomment').disabled = false;
                         }
                     }
                     else {
@@ -391,15 +416,17 @@
 
         function SignOff() {
             var appraisalid = $("#appraisalid").val();
-            submitSignOff(appraisalid);
+            var appraiseeecomment = $("#appraisalempcomment").val();
+            var appraisalempimprove = $("#appraisalempimprove").val();
+            submitSignOff(appraisalid, appraiseeecomment, appraisalempimprove);
         }
 
-        function submitSignOff(appraisalId) {
+        function submitSignOff(appraisalId, appraiseeecomment, appraisalempimprove) {
             $.ajax({
                 url: '@Url.Action("SignOffAppraisal", "Appraisal")',
                 type: 'POST',
                 dataType: 'json',
-                data: { appraisalId: appraisalId },
+                data: { appraisalId: appraisalId, appraiseeComment: appraiseeecomment, appraiseeImprove: appraisalempimprove },
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)

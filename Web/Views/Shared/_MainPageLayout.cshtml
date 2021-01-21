@@ -1,4 +1,4 @@
-﻿0996@model ViewModel.Model.AuthDataModel
+﻿@model ViewModel.Model.AuthDataModel
 <!DOCTYPE html>
 
 <html>
@@ -193,6 +193,12 @@
                             <ul style="display: none;">
                                 <li><a asp-controller="Payroll" asp-action="PaymentAdvance">Payment Advance</a></li>
                                 <li><a asp-controller="Payroll" asp-action="GeneratePayslip"> Payslip </a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#"><i class="la la-area-chart"></i> <span> Transfer</span><span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a asp-controller="Employee" asp-action="TransferView">Transfer Service</a></li>
                             </ul>
                         </li>
                         @*<li>
