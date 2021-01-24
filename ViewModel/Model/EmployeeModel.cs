@@ -88,5 +88,7 @@ namespace ViewModel.Model
         public IEnumerable<DepartmentModel> Department { get; set; }
         public IEnumerable<UnitModel> Unit { get; set; }
         public IEnumerable<SectionModel> Section { get; set; }
+        public IEnumerable<UserRoleModel> UserRole { get; set; }
+        public IEnumerable<RoleModel> Role { get; set; }
     }
 }

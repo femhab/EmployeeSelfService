@@ -28,5 +28,6 @@ namespace Data.Entities
         public int ScoreAchieved { get; set; }
         public decimal WeightedSore { get; set; } //weighiung * scoreachieved
         public string Remark { get; set; } //weighiung * scoreachieved
+        public int OrderNo { get; set; }
     }
 }

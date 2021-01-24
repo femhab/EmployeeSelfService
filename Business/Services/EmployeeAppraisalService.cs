@@ -31,12 +31,18 @@ namespace Business.Services
             var check = await _unitOfWork.GetRepository<EmployeeAppraisal>().GetFirstOrDefaultAsync(predicate: x => x.EmployeeId == model.EmployeeId && x.AppraisalPeriodId == model.AppraisalPeriodId);
             if(check == null)
             {
+                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("appraisal"));
+                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
+
+                if(approvalProcessor != null)
+                {
+                    model.NextRatingManagerId = approvalProcessor.Processor;
+                }
                 _unitOfWork.GetRepository<EmployeeAppraisal>().Insert(model);
                 await _unitOfWork.SaveChangesAsync();
 
                 //submit for approval
-                var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("appraisal"));
-                var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == model.EmployeeId && x.ApprovalLevel == Level.FirstLevel && x.ApprovalWorkItemId == approvalWorkItem.Id);
+                
                 var enlistBoard = new ApprovalBoard()
                 {
                     EmployeeId = model.EmployeeId,
@@ -79,7 +85,7 @@ namespace Business.Services
 
         public async Task<EmployeeAppraisal> GetById(Guid id)
         {
-            var model = await _unitOfWork.GetRepository<EmployeeAppraisal>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
+            var model = await _unitOfWork.GetRepository<EmployeeAppraisal>().GetFirstOrDefaultAsync(predicate: c => c.Id == id, null, include: c => c.Include(i => i.Employee).Include(i => i.Employee.GradeLevel));
             return model;
         }
 

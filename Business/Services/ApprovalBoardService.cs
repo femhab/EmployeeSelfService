@@ -85,24 +85,27 @@ namespace Business.Services
 
                     await Create(enlistBoard);
 
-                    if (approvalWorkItem.Name.ToLower() == "leave")
+                    if (approvalWorkItem.Name.ToLower().Contains("leave"))
                     {
                         var leave = await _unitOfWork.GetRepository<Leave>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId, null, c => c.Include(i => i.LeaveType));
                         leave.LastProccessedBy = data.ApprovalProcessor;
-                        if(enlistBoard.ApprovalLevel == Level.HR)
+                        leave.UpdatedDate = DateTime.Now;
+                        if (enlistBoard.ApprovalLevel == Level.HR)
                         {
                             leave.LeaveStatus = LeaveStatus.Approved;
                         }
                         _unitOfWork.GetRepository<Leave>().Update(leave);
                         await _unitOfWork.SaveChangesAsync();
                     }
-                    else if (approvalWorkItem.Name.ToLower() == "loan")
+                    else if (approvalWorkItem.Name.ToLower().Contains("loan"))
                     {
                         var loan = await _unitOfWork.GetRepository<Loan>().GetFirstOrDefaultAsync(predicate: x => x.Id == data.ServiceId);
                         loan.LastApprover = data.ApprovalProcessor;
+                        loan.UpdatedDate = DateTime.Now;
                         _unitOfWork.GetRepository<Loan>().Update(loan);
                         await _unitOfWork.SaveChangesAsync();
                     }
+                    
 
                     try
                     {
@@ -218,6 +221,12 @@ namespace Business.Services
         public async Task<ApprovalBoard> GetUnsignedAppraisal(Guid serviceId)
         {
             var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: c => c.ServiceId == serviceId && c.SignOff == false);
+            return model;
+        }
+
+        public async Task<ApprovalBoard> GetBoardLevel(Guid serviceId, Level level)
+        {
+            var model = await _unitOfWork.GetRepository<ApprovalBoard>().GetFirstOrDefaultAsync(predicate: c => c.ServiceId == serviceId && c.ApprovalLevel == level);
             return model;
         }
 

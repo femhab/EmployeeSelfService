@@ -95,5 +95,11 @@ namespace Business.Services
             var model = await _unitOfWork.GetRepository<UserRole>().GetFirstOrDefaultAsync(predicate: c => c.Id == id);
             return model;
         }
+
+        public async Task<IEnumerable<UserRole>> GetByEmployee(Guid employeeId)
+        {
+            var model = await _unitOfWork.GetRepository<UserRole>().GetAllAsync(predicate: c => c.EmployeeId == employeeId, null, "Role");
+            return model;
+        }
     }
 }

@@ -23,82 +23,14 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="table-responsive">
-                <table class="table table-striped custom-table mb-0 datatable">
-                    <thead>
-                        <tr>
-                            <th>Employee</th>
-                            <th>Designation</th>
-                            <th>Department</th>
-                            <th>Appraisal Date</th>
-                            <th>Status</th>
-                            <th class="text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.EmployeeAppraisal)
-                        {
-                        <tr>
-                            <td>
-                                <h2 class="table-avatar">
-                                    <a href="profile.html" class="avatar"><img alt="" src="assets/img/profiles/avatar-02.jpg"></a>
-                                    <a href="profile.html">@item.Employee.LastName @item.Employee.FirstName </a>
-                                </h2>
-                            </td>
-                            <td>Unverified</td>
-                            @if (@item.Employee.Department != null)
-                            {
-                                <td>@item.Employee.Department.Descc</td>
-                            }
-                            else
-                            {
-                                <td>Unverified</td>
-                            }
-                            <td>
-                                @item.CreatedDate.ToString("dd MMMM yyyy")
-                            </td>
-                            <td>
-                                <div class="dropdown action-label">
-                                    <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa fa-dot-circle-o text-success"></i> Active
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#add_appraisal"><i class="fa fa-pencil m-r-5"></i> Review</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        }
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Page Content -->
-<!-- Review Performance Appraisal Modal -->
-<div id="add_appraisal" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Give Performance Review</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
+            <form>
+                <div class="row">
+                    @foreach (var category in Model.AppraisalCategories)
+                    {
                         <div class="col-lg-12">
                             <div class="card">
-                                <div class="card-header" style="background-color:#daa520">
-                                    <h4 class="card-title mb-0" id="categorydescription">Category Description</h4>
+                                <div class="card-header" style="background-color:#01b8e2">
+                                    <h4 class="card-title mb-0">@category.Description</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -107,57 +39,199 @@
                                                 <tr>
                                                     <th>Indicator</th>
                                                     <th>Employee Value</th>
-                                                    <th>Supervisor Rating</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>CategoryItem Name</td>
-                                                    <td>Initial Value</td>
-                                                    <td>
-                                                        <select name="customer_experience" class="form-control">
-                                                            <option value="">Select New</option>
-                                                        </select>
-                                                    </td>
-                                                </tr>
+                                                @foreach (var categoryItem in Model.AppraisalItem.Where(x => x.AppraisalCategory.AppraisalCategoryCode.ToLower() == category.AppraisalCategoryCode.ToLower()))
+                                                {
+                                                    <tr>
+                                                        <td>@categoryItem.AppraisalCategoryItem.Description</td>
+                                                        <td>@categoryItem.AppraisalRating.Description</td>
+
+                                                    </tr>
+                                                }
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    }
+                </div>
+                <div>
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        <strong>Total Appraisal Score: @Model.TargetAppraisal.TotalScore/@Model.TargetAppraisal.TotalNetScore</strong> <div id="totalappraisalscore"></div>
                     </div>
+                </div>
+                @if (Model.IsContractible)
+                {
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">Contract Objectives for @DateTime.Now.AddYears(-1).Year</h4>
+                            </div>
+                            <div class="card-body">
 
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
+                                <div class="table-responsive">
+
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Smart Objectives</th>
+                                                <th>Criteria</th>
+                                                <th>TimeLine</th>
+                                                <th>Weighing</th>
+                                                <th>Achieved-Score</th>
+                                                <th>Weighted-Score</th>
+                                                <th>Remark</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="contractitemlist">
+                                            @*here goes contract item attachment*@
+                                            @if (Model.ContractItem != null)
+                                            {
+                                                @foreach (var item in Model.ContractItem)
+                                                {
+                                                    <tr>
+                                                        <th>@item.SmartObjective</th>
+                                                        <th>@item.EvaluationCiteria</th>
+                                                        <th>@item.Timeline</th>
+                                                        <th>@item.Weighting</th>
+                                                        <th>@item.ScoreAchieved</th>
+                                                        <th>@item.WeightedSore</th>
+                                                        <th>@item.Remark</th>
+                                                    </tr>
+                                                }
+                                            }
+
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                                <div>
+                                    @if (Model.ContractObjective != null)
+                                    {
+                                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                            <strong>Total Weighed Score: @Model.ContractObjective.TotalWeightedSore / 50</strong> <div id="totalweight"></div>
+                                        </div>
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
-                </form>
-            </div>
+                }
+                <div class="form-group">
+                    <label><span>Discussions</span></label>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Strenghts (Discuss staff’s strenghts from above)</span></label>
+                    <textarea rows="5" class="form-control" placeholder="@Model.TargetAppraisal.Strenght" readonly disabled id="appraisalstrenght"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Weaknesses (Discuss staff’s weaknesses from above)</span></label>
+                    <textarea rows="5" class="form-control" placeholder="@Model.TargetAppraisal.Weekness" readonly disabled id="appraisalweekness"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><span>Recommendations</span></label>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Further Counselling</span></label>
+                    <textarea rows="5" class="form-control" placeholder="@Model.TargetAppraisal.Counselling" readonly disabled id="appraisalcounselling"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Redeployment</span></label>
+                    <textarea rows="5" class="form-control" placeholder="@Model.TargetAppraisal.Redeployment" readonly disabled id="appraisalredeployement"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Career Development</span></label>
+                    <textarea rows="5" class="form-control" placeholder="@Model.TargetAppraisal.Development" readonly disabled id="appraisaldevelopment"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Disciplinary Action</span></label>
+                    <textarea rows="5" placeholder="@Model.TargetAppraisal.DisciplinaryAction" class="form-control" readonly disabled id="appraisalaction"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Training Needs</span></label>
+                    <textarea rows="5" placeholder="@Model.TargetAppraisal.Training" class="form-control" readonly disabled id="appraisaltraining"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Promotion</span></label>
+                    <textarea rows="5" placeholder="@Model.TargetAppraisal.Promotion" class="form-control" readonly disabled id="appraisalpromotion"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><span class="text-danger">Other Actions</span></label>
+                    <textarea rows="5" placeholder="@Model.TargetAppraisal.OtherDetail" class="form-control" readonly disabled id="appraisaldetail"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Next Appraisal Period Target <span class="text-danger">*</span></label>
+                    <textarea type="text" readonly placeholder="@Model.TargetAppraisal.AppraisalTarget" disabled class="form-control" id="appraisaltarget"></textarea>
+                </div>
+                <div class="form-group" id="appraisalcommentdiv">
+                    <label>Appraisee's Comment (put your comment here) <span class="text-danger">*</span></label>
+                    <textarea type="text" placeholder="@Model.TargetAppraisal.AppraiseeComment" class="form-control" id="appraisalempcomment"></textarea>
+                </div>
+                <div class="form-group" id="appraisalimprovediv">
+                    <label>What are the agreed means of redressing areas in need of improvement <span class="text-danger">*</span></label>
+                    <textarea type="text" placeholder="@Model.TargetAppraisal.AreaOfImprovement" class="form-control" id="appraisalempimprove"></textarea>
+                </div>
+                <div class="form-group" id="appraisalimprovediv">
+                    <label>Manager Comment <span class="text-danger">*</span></label>
+                    <textarea type="text" readonly placeholder="@Model.TargetAppraisal.ManagerComment" class="form-control" id=""></textarea>
+                </div>
+                <div class="form-group" hidden>
+                    <label><span class="text-danger">*</span></label>
+                    <div class="cal-icon">
+                        <input class="form-control" readonly type="text" value="@Model.TargetAppraisal.Id" id="appraisalid">
+                    </div>
+                </div>
+
+                @if (Model.TargetAppraisal.IsManagerSignOff && !Model.TargetAppraisal.IsEmployeeSignOff)
+                {
+                    <div class="submit-section" onclick="SignOff()">
+                        <div class="btn btn-primary submit-btn">Signoff</div>
+                    </div>
+                }
+            </form>
         </div>
     </div>
 </div>
-<!-- Review Performance Appraisal Modal -->
-<!-- Delete Performance Appraisal Modal -->
-<div class="modal custom-modal fade" id="delete_appraisal" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header">
-                    <h3>Delete Performance Appraisal List</h3>
-                    <p>Are you sure want to delete?</p>
-                </div>
-                <div class="modal-btn delete-action">
-                    <div class="row">
-                        <div class="col-6">
-                            <a href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Delete Performance Appraisal Modal -->
+<!-- /Page Content -->
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+       function SignOff() {
+            var appraisalid = $("#appraisalid").val();
+            var appraiseeecomment = $("#appraisalempcomment").val();
+            var appraisalempimprove = $("#appraisalempimprove").val();
+            submitSignOff(appraisalid, appraiseeecomment, appraisalempimprove);
+        }
+
+        function submitSignOff(appraisalId, appraiseeecomment, appraisalempimprove) {
+            $.ajax({
+                url: '@Url.Action("SignOffAppraisal", "Appraisal")',
+                type: 'POST',
+                dataType: 'json',
+                data: { appraisalId: appraisalId, appraiseeComment: appraiseeecomment, appraiseeImprove: appraisalempimprove },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#view_appraisal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error("record not found");
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+    </script>
+}

@@ -1,4 +1,5 @@
-﻿
+﻿@model ViewModel.Model.AdminViewModel
+
 @{
     ViewData["Title"] = "SetApprovalPeriod";
     Layout = "~/Views/Shared/_MainPageLayout.cshtml";
@@ -14,13 +15,6 @@
                 <li class="breadcrumb-item"><a href="index.html">Admin</a></li>
                 <li class="breadcrumb-item active">Appraisal Period</li>
             </ul>
-        </div>
-        <div class="col-auto float-right ml-auto">
-            <div class="btn-group btn-group-sm">
-                <button class="btn btn-white">CSV</button>
-                <button class="btn btn-white">PDF</button>
-                <button class="btn btn-white"><i class="fa fa-print fa-lg"></i> Print</button>
-            </div>
         </div>
     </div>
 </div>
@@ -49,6 +43,56 @@
                 </form>
             </div>
         </div>
+        <div class="card">
+            <div class="card-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Select Appraisal Period </label>
+                                <select class="select" id="appraisalperiodid">
+                                    <option value="">Select Period</option>
+                                    @foreach (var item in Model.AppraisalPeriod)
+                                    {
+                                        <option value="@item.Id">  @item.StartDate.ToString("dd MMMM yyyy")  to  @item.EndDate.ToString("dd MMMM yyyy") -  @item.IsActive</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Select Appraisal Period to Active</label>
+                                <select class="select" id="status">
+                                    <option value="true">True</option>
+                                    <option value="false">False</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Adjust Start Date <span class="text-danger">*</span></label>
+                                <div class="cal-icon">
+                                    <input class="form-control datetimepicker" id="startperiodext" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Adjust End Date <span class="text-danger">*</span></label>
+                                <div class="cal-icon">
+                                    <input class="form-control datetimepicker" id="endperiodext" type="text">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="submit-section" onclick="SubmitUpdateAppraisalPeriod()">
+                        <div class="btn btn-primary submit-btn">Reset/Extend/Update Appraisal Period</div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 <!-- /Page Content -->
@@ -68,6 +112,37 @@
                 type: 'POST',
                 dataType: 'json',
                 data: { startDate: startdate, endDate: enddate },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response ?.message);
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function SubmitUpdateAppraisalPeriod()
+        {
+            periodid = $("#appraisalperiodid").val();
+            status = $("#status").val();
+            datefrom = $("#startperiodext").val();
+            dateto = $("#endperiodext").val();
+
+            updatePeriodForm(periodid, status, datefrom, dateto);
+        }
+        function updatePeriodForm(periodid, status, startdate, enddate) {
+            $.ajax({
+                url: '@Url.Action("UpdateAppraisalPeriod", "Admin")',
+                type: 'POST',
+                dataType: 'json',
+                data: { periodid: periodid, status: status, startDate: startdate, endDate: enddate },
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)

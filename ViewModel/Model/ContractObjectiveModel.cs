@@ -24,4 +24,17 @@ namespace ViewModel.Model
         public bool IsContractible { get; set; }
         public IEnumerable<ContractObjectiveModel> ContractObjective { get; set; }
     }
+
+    public class ContractItemModel : BaseModel
+    {
+        public Guid ContractObjectiveId { get; set; }
+        public ContractObjectiveModel ContractObjective { get; set; }
+        public string SmartObjective { get; set; }
+        public string EvaluationCiteria { get; set; }
+        public DateTime Timeline { get; set; }
+        public int Weighting { get; set; }
+        public int ScoreAchieved { get; set; }
+        public decimal WeightedSore { get; set; } //weighiung * scoreachieved
+        public string Remark { get; set; } //weighiung * scoreachieved
+    }
 }

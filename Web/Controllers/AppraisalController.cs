@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ViewModel.Model;
+using ViewModel.ResponseModel;
 using Web.Helper.JWT;
 
 namespace Web.Controllers
@@ -25,9 +26,10 @@ namespace Web.Controllers
         private readonly IEmployeeApprovalConfigService _employeeApprovalConfigService;
         private readonly IEmployeeService _employeeService;
         private readonly IContractService _contractService;
+        private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
 
-        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService, IEmployeeAppraisalService employeeAppraisalService, IAppraisalItemService appraisalItemService, IApprovalBoardService approvalBoardService, IContractService contractService)
+        public AppraisalController(IAppraisalRatingService appraisalRatingService, IAppraisalCategoryService appraisalCategoryService, IAppraisalCategoryItemService appraisalCategoryItemService, IEmployeeService employeeService, IMapper mapper, IEmployeeApprovalConfigService employeeApprovalConfigService, IAppraisalPeriodService appraisalPeriodService, IEmployeeAppraisalService employeeAppraisalService, IAppraisalItemService appraisalItemService, IApprovalBoardService approvalBoardService, IContractService contractService, INotificationService notificationService)
         {
             _appraisalRatingService = appraisalRatingService;
             _appraisalCategoryService = appraisalCategoryService;
@@ -39,6 +41,7 @@ namespace Web.Controllers
             _employeeApprovalConfigService = employeeApprovalConfigService;
             _employeeAppraisalService = employeeAppraisalService;
             _contractService = contractService;
+            _notificationService = notificationService;
             _mapper = mapper;
         }
 
@@ -92,7 +95,7 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<ActionResult> PerformanceReview()
+        public async Task<ActionResult> PerformanceReview(Guid appraisalId)
         {
             try
             {
@@ -103,40 +106,126 @@ namespace Web.Controllers
                 }
 
                 AppraisalViewModel appraisalViewModel = new AppraisalViewModel();
-                var ratingList = await _appraisalRatingService.GetAll();
-                var categoryList = await _appraisalCategoryService.GetAll();
                 var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
-                var categoryItemList = (await _appraisalCategoryItemService.GetAll()).Where(x => x.StaffType.ToLower() == employee.StaffType.ToLower());
+                var categoryList = await _appraisalCategoryService.GetAll();
+                var ratingList = await _appraisalRatingService.GetAll();
+
+                var response = new List<AppraisalItem>();
+                var empAppraisal = new EmployeeAppraisal();
+                var board = new ApprovalBoard();
+                var unsignedBoard = new ApprovalBoard();
+                var signedBoard = new ApprovalBoard();
+
+                response = (await _appraisalItemService.GetByAppraisal(appraisalId)).ToList();
+                unsignedBoard = await _approvalBoardService.GetUnsignedAppraisal(appraisalId);
+                signedBoard = await _approvalBoardService.GetreviewedAppraisal(appraisalId);
+                empAppraisal = await _employeeAppraisalService.GetById(appraisalId);
+
+                var contractReview = (await _contractService.GetByEmployee(empAppraisal.EmployeeId)).Where(x => x.CreatedDate.Year == DateTime.Now.AddYears(-1).Year && unsignedBoard.Emp_No.ToLower() == empAppraisal.Emp_No.ToLower()).FirstOrDefault();
+                var contractItem = (contractReview != null) ? await _contractService.GetItemByObjectiveId(contractReview.Id) : null;
+
                 var extractedCategory = new List<AppraisalCategory>();
-                foreach(var item in categoryItemList )
+                foreach (var item in response)
                 {
-                    foreach(var category in categoryList)
+                    if (extractedCategory.Count() > 0)
                     {
-                        if(item.AppraisalCategoryCode.ToLower() == category.AppraisalCategoryCode.ToLower())
+                        if (extractedCategory.Where(x => x.AppraisalCategoryCode.ToLower() == item.AppraisalCategory.AppraisalCategoryCode.ToLower()).Count() < 1)
                         {
-                            extractedCategory.Add(category);
+                            extractedCategory.Add(item.AppraisalCategory);
                         }
                     }
+                    else
+                    {
+                        extractedCategory.Add(item.AppraisalCategory);
+                    }
+
                 }
-                var employeeList = await _employeeService.GetAll();
-                var employeeAppraisal = await _employeeAppraisalService.GetByProcessor(authData.Emp_No);
-                var appraisalItems = await _appraisalItemService.GetAll();
+
+                appraisalViewModel = _mapper.Map<AppraisalViewModel>(authData);
+
+                if (empAppraisal.Employee.GradeLevel.GradeCode == "GL08" || empAppraisal.Employee.GradeLevel.GradeCode == "GL09" || empAppraisal.Employee.GradeLevel.GradeCode == "GL10" || empAppraisal.Employee.GradeLevel.GradeCode == "GL11" || empAppraisal.Employee.GradeLevel.GradeCode == "GL12" || empAppraisal.Employee.GradeLevel.GradeCode == "GL13" || empAppraisal.Employee.GradeLevel.GradeCode == "GL14" || empAppraisal.Employee.GradeLevel.GradeCode == "GLDR")
+                {
+                    appraisalViewModel.IsContractible = true;
+                }
 
                 appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
                 appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(extractedCategory);
-                appraisalViewModel.AppraisalCategoryItems = _mapper.Map<IEnumerable<AppraisalCategoryItemModel>>(categoryItemList);
-                appraisalViewModel.EmployeeList = _mapper.Map<IEnumerable<EmployeeModel>>(employeeList);
                 appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
-                appraisalViewModel.EmployeeAppraisal = _mapper.Map<IEnumerable<EmployeeAppraisalModel>>(employeeAppraisal);
-                appraisalViewModel.AppraisalItem = _mapper.Map<IEnumerable<AppraisalItemModel>>(appraisalItems);
+                appraisalViewModel.TargetAppraisal = _mapper.Map<EmployeeAppraisalModel>(empAppraisal);
+                appraisalViewModel.AppraisalItem = _mapper.Map<IEnumerable<AppraisalItemModel>>(response);
+                appraisalViewModel.ContractItem = _mapper.Map<IEnumerable<ContractItemModel>>(contractItem);
+                appraisalViewModel.ContractObjective = _mapper.Map<ContractObjectiveModel>(contractReview);
 
-                return View(appraisalViewModel);
+                return View("PerformanceReview", appraisalViewModel);
             }
             catch (Exception ex)
             {
                 return ErrorPage(ex);
             }
         }
+
+        [Route("Appraisal-Access")]
+        public async Task<ActionResult> AccessAppraisal(Guid boardId)
+        {
+            var authData = JwtHelper.GetAuthData(Request);
+            if (authData == null)
+            {
+                return RedirectToAction("Signout", "Employee");
+            }
+
+            AppraisalViewModel appraisalViewModel = new AppraisalViewModel();
+            var employee = await _employeeService.GetByEmployerIdOrEmail(authData.Emp_No);
+            var categoryList = await _appraisalCategoryService.GetAll();
+            var ratingList = await _appraisalRatingService.GetAll();
+
+            var response = new List<AppraisalItem>();
+            var empAppraisal = new EmployeeAppraisal();
+            var board = new ApprovalBoard();
+            var unsignedBoard = new ApprovalBoard();
+            var signedBoard = new ApprovalBoard();
+
+            board = await _approvalBoardService.GetById(boardId); //get board detail
+            response = (await _appraisalItemService.GetByAppraisal(board.ServiceId)).ToList();
+            empAppraisal = await _employeeAppraisalService.GetById(board.ServiceId);
+            var contractReview = (await _contractService.GetByEmployee(empAppraisal.EmployeeId)).Where(x => x.CreatedDate.Year == DateTime.Now.AddYears(-1).Year && board.Emp_No.ToLower() == empAppraisal.Emp_No.ToLower()).FirstOrDefault();
+            var contractItem = (contractReview != null) ? await _contractService.GetItemByObjectiveId(contractReview.Id) : null;
+
+            var extractedCategory = new List<AppraisalCategory>();
+            foreach (var item in response)
+            {
+                if (extractedCategory.Count() > 0)
+                {
+                    if (extractedCategory.Where(x => x.AppraisalCategoryCode.ToLower() == item.AppraisalCategory.AppraisalCategoryCode.ToLower()).Count() < 1)
+                    {
+                        extractedCategory.Add(item.AppraisalCategory);
+                    }
+                }
+                else
+                {
+                    extractedCategory.Add(item.AppraisalCategory);
+                }
+
+            }
+
+            appraisalViewModel = _mapper.Map<AppraisalViewModel>(authData);
+
+            if (empAppraisal.Employee.GradeLevel.GradeCode == "GL08" || empAppraisal.Employee.GradeLevel.GradeCode == "GL09" || empAppraisal.Employee.GradeLevel.GradeCode == "GL10" || empAppraisal.Employee.GradeLevel.GradeCode == "GL11" || empAppraisal.Employee.GradeLevel.GradeCode == "GL12" || empAppraisal.Employee.GradeLevel.GradeCode == "GL13" || empAppraisal.Employee.GradeLevel.GradeCode == "GL14" || empAppraisal.Employee.GradeLevel.GradeCode == "GLDR")
+            {
+                appraisalViewModel.IsContractible = true;
+            }
+
+            appraisalViewModel.AppraisalRatings = _mapper.Map<IEnumerable<AppraisalRatingModel>>(ratingList);
+            appraisalViewModel.AppraisalCategories = _mapper.Map<IEnumerable<AppraisalCategoryModel>>(extractedCategory);
+            appraisalViewModel.Employee = _mapper.Map<EmployeeModel>(employee);
+            appraisalViewModel.TargetAppraisal = _mapper.Map<EmployeeAppraisalModel>(empAppraisal);
+            appraisalViewModel.TargetBoard = _mapper.Map<ApprovalBaordModel>(board);
+            appraisalViewModel.AppraisalItem = _mapper.Map<IEnumerable<AppraisalItemModel>>(response);
+            appraisalViewModel.ContractItem = _mapper.Map<IEnumerable<ContractItemModel>>(contractItem);
+            appraisalViewModel.ContractObjective = _mapper.Map<ContractObjectiveModel>(contractReview);
+
+            return View(appraisalViewModel);
+        }
+
 
         //action section
         [HttpPost]
@@ -172,7 +261,7 @@ namespace Web.Controllers
                             LastRatingManagerId = authData.Emp_No,
                             LastRatingManagerName = authData.LastName + authData.LastName,
                             NextRatingManagerId = approverConfig.Emp_No,
-                            NextRatingManagerName = approverConfig.Employee.LastName + approverConfig.Employee.FirstName,
+                            NextRatingManagerName = approverConfig.Employee.LastName + " " + approverConfig.Employee.FirstName,
                             AppraisalPeriodId = appraisalPeriod.Id,
                             Id = Guid.NewGuid(),
                             CreatedDate = DateTime.Now,
@@ -431,10 +520,13 @@ namespace Web.Controllers
                     }
 
                     var appraisal = await _employeeAppraisalService.GetById(appraisalId);
-                    appraisal.AppraiseeComment = appraiseeComment;
-                    appraisal.AreaOfImprovement = appraiseeImprove;
-                    var empUpdate = await _employeeAppraisalService.Update(appraisal);
-                    var response = await _approvalBoardService.SignOffAppraisal(appraisalId);
+                    appraisal.AppraiseeComment = (appraiseeComment == null) ? appraisal.AppraiseeComment : appraiseeComment;
+                    appraisal.AreaOfImprovement = (appraiseeImprove == null)? appraisal.AreaOfImprovement: appraiseeImprove;
+                    appraisal.IsEmployeeSignOff = true;
+                    var response = await _employeeAppraisalService.Update(appraisal);
+
+                    await _notificationService.CreateNotification(NotificationAction.SignOffTitle, NotificationAction.EmployeeSignOffMessage, authData.Id, false, false) ;
+                    //await _notificationService.CreateNotification(NotificationAction.SignOffTitle, NotificationAction.AdminSignOffRecieveMessage, authData.Id, false, false);
 
                     return Json(new
                     {

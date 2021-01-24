@@ -9,5 +9,6 @@ namespace ViewModel.Model
         public IEnumerable<DepartmentModel> DepartmentList { get; set; }
         public IEnumerable<DepartmentModel> ClearingDepartment { get; set; }
         public IEnumerable<ApprovalWorkItemModel> ApprovalWorkItem { get; set; }
+        public IEnumerable<AppraisalPeriodModel> AppraisalPeriod { get; set; }
     }
 }

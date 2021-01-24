@@ -131,6 +131,7 @@ namespace Web.Controllers
                 var approvalWorkItem = await _approvalWorkItemService.GetAll();
                 var relationshipList = await _relationshipService.GetAll();
                 var nokList = await _employeeNOKDetailService.GetByEmployee(authData.Id);
+                var employeeRoles = await _userRoleService.GetByEmployee(authData.Id);
                 foreach (var item in nokList)
                 {
                     var document = await _documentService.GetByReference(item.Id, DocumentType.NextOfKin);
@@ -139,6 +140,7 @@ namespace Web.Controllers
                 }
                 var dependentList = await _employeeFamilyDependentService.GetByEmployee(authData.Id);
                 var userRoles = await _userRoleService.GetAll();
+                var roles = await _roleService.GetAll();
                 var workItems = await _approvalWorkItemService.GetAll();
                 var eduLevel = await _educationalLevelService.GetAll();
                 var eduGrade = await _educationalGradeService.GetAll();
@@ -157,6 +159,7 @@ namespace Web.Controllers
                 profileViewModel.NOKDetails = _mapper.Map<IEnumerable<EmployeeNOKDetailModel>>(nokList);
                 profileViewModel.Dependents = _mapper.Map<IEnumerable<EmployeeFamilyDependentModel>>(dependentList);
                 profileViewModel.UserRoles = _mapper.Map<IEnumerable<UserRoleModel>>(userRoles);
+                profileViewModel.UserRole = _mapper.Map<IEnumerable<UserRoleModel>>(employeeRoles);
                 profileViewModel.ApprovalWorkItem = _mapper.Map<IEnumerable<ApprovalWorkItemModel>>(workItems);
                 profileViewModel.EducationalGrade = _mapper.Map<IEnumerable<EducationalGradeModel>>(eduGrade);
                 profileViewModel.EducationalLevel = _mapper.Map<IEnumerable<EducationalLevelModel>>(eduLevel);
@@ -166,6 +169,7 @@ namespace Web.Controllers
                 profileViewModel.Division = _mapper.Map<IEnumerable<DivisionModel>>(division);
                 profileViewModel.Department = _mapper.Map<IEnumerable<DepartmentModel>>(department);
                 profileViewModel.Section = _mapper.Map<IEnumerable<SectionModel>>(section);
+                profileViewModel.Role = _mapper.Map<IEnumerable<RoleModel>>(roles);
                 return View(profileViewModel);
             }
             catch(Exception ex)
@@ -739,6 +743,127 @@ namespace Web.Controllers
                     {
                         status = (response != null) ? true : false,
                         data = new { currentDivision = employee.Division.Descc, currentDepartment = employee.Department.Descc, currentSection = employee.Section.Descc, currentUnit = (employee.Unit != null) ? employee.Unit.Descc : "", newDivision = response.Division.Descc, newDepartment = response.Department.Descc, newSection = response.Section.Descc, newUnit = (response.Unit != null) ? response.Unit.Descc : "", serviceId = response.Id, level = board.ApprovalLevel, employeeId = employee.Emp_No, employeeName = employee.LastName + " " + employee.FirstName }
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> RequestPasswordChange(string currentPassword,string newPassword,string confirmPassword)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    if(newPassword != confirmPassword)
+                    {
+                        return Json(new
+                        {
+                            status = false,
+                            message = "Confirm Password not the same"
+                        });
+                    }
+
+                    var response = await _authService.ChangePassword(authData.Emp_No, currentPassword, newPassword);
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message =response.Message
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> AddUserRole(Guid roleId, Guid employeeId, string empNo)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+                    var model = new UserRole()
+                    {
+                        EmployeeId = employeeId,
+                        Emp_No = empNo,
+                        RoleId =  roleId,
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now
+                    };
+                    var response = await _userRoleService.Create(model);
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> DeleteUserRole(Guid userRoleId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var response = await _userRoleService.Delete(userRoleId);
+
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
                     });
 
                 }

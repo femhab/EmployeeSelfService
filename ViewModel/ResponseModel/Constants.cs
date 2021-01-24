@@ -32,11 +32,13 @@
 
         public const string ContractCreated = "You have successfully created a contract for the employee";
         public const string ContractDatePersist = "You cannot update timeline to outside the set contract objectives else create a new item for the new year";
+        public const string PasswordChangeSuccessful = "Password changed successfully";
     }
 
     public class NotificationAction
     {
         public const string RoleCreateTitle = "New Role Added";
+        public const string SignOffTitle = "A new Sign Off";
         public const string NewApprovalCreateTitle = "New Approval Required";
         public const string NewApprovedTitle = "A request was just approved";
         public const string ObjectiveCreateTitle = "New Contract Objective Added";
@@ -67,6 +69,16 @@
         public const string DependentCreateMessage = "You just added a dependent. Wait while it is reviewed for approval";
         public const string RoleDeletedTitle = "A Role Deleted";
         public const string RoleDeleteMessage = "A role is just deleted, if you have this role before, you no longer have this role";
+
+        public const string AppraisalPeriodCreateMessage = "A new appraisal period is set for ";
+        public const string AppraisalPeriodCreateTitle = "A new appraisal period notification";
+        public const string AppraisalPeriodEditTitle = "An appraisal period update/extention";
+        public const string AppraisalPeriodEditMessage = "An appraisal period was updated or extended from:";
+
+        public const string EmployeeSignOffMessage = "You just signed an appraisal Off to your manager";
+        public const string EmployeeSignOffRecieveMessage = "One of your appraisal manager just signed of your appraisal, please check to sign off for approval";
+        public const string AdminSignOffMessage = "You just signed an appraisal off to your employee";
+        public const string AdminSignOffRecieveMessage = "An employee is awaiting your approval on appraisal sign off`";
     }
 
     public class HRDbConfig

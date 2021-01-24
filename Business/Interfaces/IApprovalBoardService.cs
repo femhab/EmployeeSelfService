@@ -19,5 +19,6 @@ namespace Business.Interfaces
         Task<ApprovalBoard> GetById(Guid id);
         Task<BaseResponse> ManagerSignOffAppraisal(Guid appraisalId);
         Task<ApprovalBoard> GetreviewedAppraisal(Guid serviceId);
+        Task<ApprovalBoard> GetBoardLevel(Guid serviceId, Level level);
     }
 }

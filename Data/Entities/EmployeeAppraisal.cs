@@ -26,8 +26,11 @@ namespace Data.Entities
         public decimal TotalScore { get; set; }
         public decimal TotalNetScore { get; set; }
         public string AppraiseeComment { get; set; }
+        public string ManagerComment { get; set; }
         public string AreaOfImprovement { get; set; }
         public string AppraisalTarget { get; set; }
+        public bool IsEmployeeSignOff { get; set; }
+        public bool IsManagerSignOff { get; set; }
     }
 
     public class AppraisalItem: BaseObject

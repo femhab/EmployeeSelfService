@@ -533,7 +533,6 @@ namespace Business.Services
                     if (courtesy != null) { item.CourtesyId = courtesy.Id; }
                 }
                 item.Status = Status.Active;
-                item.AccessType = AccessType.Employee;
                 item.EmailAddress = hrData.Employee_Email;
                 item.PhoneNumber = "";
                 item.ReportToLineManager = hrData.report_to;

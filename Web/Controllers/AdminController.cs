@@ -130,9 +130,26 @@ namespace Web.Controllers
             }
         }
 
-        public IActionResult SetApprovalPeriod()
+        public async Task<ActionResult> SetApprovalPeriod()
         {
-            return View();
+            try
+            {
+                var authData = JwtHelper.GetAuthData(Request);
+                if (authData == null)
+                {
+                    return RedirectToAction("Signout", "Employee");
+                }
+
+                AdminViewModel adminViewModel = new AdminViewModel();
+                var appraisalPeriodList = await _appraisalPeriodService.GetAll();
+
+                adminViewModel.AppraisalPeriod = _mapper.Map<IEnumerable<AppraisalPeriodModel>>(appraisalPeriodList);
+                return View(adminViewModel);
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
         }
 
         //action section
@@ -366,6 +383,42 @@ namespace Web.Controllers
                     var to = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
                     var response = await _appraisalPeriodService.Create(from, to);
+                    return Json(new
+                    {
+                        status = response.Status,
+                        message = response.Message
+                    });
+                }
+                return Json(new
+                {
+                    status = false,
+                    message = "Error with Current Request"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorPage(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> UpdateAppraisalPeriod(Guid periodid, bool status, string startDate, string endDate)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var authData = JwtHelper.GetAuthData(Request);
+                    if (authData == null)
+                    {
+                        return RedirectToAction("Signout", "Employee");
+                    }
+
+                    var from = DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var to = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    var response = await _appraisalPeriodService.UpdateDate(periodid,status, from, to);
                     return Json(new
                     {
                         status = response.Status,

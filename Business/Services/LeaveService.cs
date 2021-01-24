@@ -99,9 +99,10 @@ namespace Business.Services
             }
             var approvalWorkItem = await _unitOfWork.GetRepository<ApprovalWorkItem>().GetFirstOrDefaultAsync(predicate: x => x.Name.ToLower().Contains("leave"));
             var approvalProcessor = await _employeeApprovalConfigService.GetBy(x => x.EmployeeId == employeeId && x.ApprovalWorkItemId == approvalWorkItem.Id);
-            var leaveCheck = await GetAll(x => x.EmployeeId == employeeId && x.CreatedDate.Year == DateTime.Now.Year && x.Status != ApprovalStatus.Rejected);
-            var leaveRecallCheck = await GetAll(x => x.EmployeeId == employeeId && x.CreatedDate.Year == DateTime.Now.Year && x.Status != ApprovalStatus.Approved && x.LeaveStatus == LeaveStatus.Completed);
-            if (leaveCheck.Count() == 0 && approvalProcessor != null)
+            var leaveCheck = await GetAll(x => x.EmployeeId == employeeId);
+            var leaveRecallCheck = await GetAll(x => x.EmployeeId == employeeId && x.CreatedDate.Year == DateTime.Now.Year);
+
+            if (leaveCheck != null && approvalProcessor != null)
             {
                 isLeaveEligible = true;
             }

@@ -74,7 +74,7 @@
                                         <div class="staff-id">Employee ID : @Model.Employee.Emp_No</div>
                                         @if (Model.Employee.EmploymentDate != null)
                                         {
-                                    <div class="small doj text-muted">Date of Join : @Model.Employee.EmploymentDate?.ToString("dd MMMM yyyy")</div>
+                                            <div class="small doj text-muted">Date of Join : @Model.Employee.EmploymentDate?.ToString("dd MMMM yyyy")</div>
                                         }
                                         else
                                         {
@@ -147,7 +147,7 @@
                     @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee)
                     {
                         <li class="nav-item"><a href="#emp_update" data-toggle="tab" class="nav-link">Request Name Change</a></li>
-                        <li class="nav-item"><a href="#emp_transfer" data-toggle="tab" class="nav-link">Request Transfer</a></li>
+                        <li class="nav-item"><a href="#emp_transfer" data-toggle="tab" class="nav-link">Request Password Change</a></li>
                     }
                 </ul>
             </div>
@@ -162,7 +162,10 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Next Of Kin @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#employee_nok_modal"><i class="fa fa-pencil"></i></a>}</h3>
+                            <h3 class="card-title">
+                                Next Of Kin @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#employee_nok_modal"><i class="fa fa-pencil"></i></a>}
+                            </h3>
                             <div class="table-responsive">
                                 <table class="table table-nowrap">
                                     <thead>
@@ -177,27 +180,27 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach(var item in Model.NOKDetails)
+                                        @foreach (var item in Model.NOKDetails)
                                         {
-                                        <tr>
-                                            <td>@item.LastName @item.FirstName</td>
-                                            <td>@item.Relationship.Description</td>
-                                            <td>@item.DOB?.ToString("dd MMMM yyyy")</td>
-                                            <td>@item.PhoneNumber</td>
-                                            <td>@item.Status</td>
-                                            <td>@item.IsEmergencyContact</td>
-                                            <td class="text-right">
-                                                <div class="dropdown dropdown-action">
-                                                    <a aria-expanded="false" data-toggle="dropdown" class="action-icon dropdown-toggle" href="#"><i class="material-icons">more_vert</i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a href="#" class="dropdown-item"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                        <a href="#" class="dropdown-item"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                            <tr>
+                                                <td>@item.LastName @item.FirstName</td>
+                                                <td>@item.Relationship.Description</td>
+                                                <td>@item.DOB?.ToString("dd MMMM yyyy")</td>
+                                                <td>@item.PhoneNumber</td>
+                                                <td>@item.Status</td>
+                                                <td>@item.IsEmergencyContact</td>
+                                                <td class="text-right">
+                                                    <div class="dropdown dropdown-action">
+                                                        <a aria-expanded="false" data-toggle="dropdown" class="action-icon dropdown-toggle" href="#"><i class="material-icons">more_vert</i></a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a href="#" class="dropdown-item"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                            <a href="#" class="dropdown-item"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
                                         }
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -207,7 +210,10 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Family Dependents @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#family_info_modal"><i class="fa fa-pencil"></i></a>}</h3>
+                            <h3 class="card-title">
+                                Family Dependents @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#family_info_modal"><i class="fa fa-pencil"></i></a>}
+                            </h3>
                             <div class="table-responsive">
                                 <table class="table table-nowrap">
                                     <thead>
@@ -223,22 +229,22 @@
                                     <tbody>
                                         @foreach (var item in Model.Dependents)
                                         {
-                                        <tr>
-                                            <td>@item.LastName @item.FirstName</td>
-                                            <td>@item.Relationship.Description</td>
-                                            <td>@item.DOB?.ToString("dd MMMM yyyy")</td>
-                                            <td>@item.PhoneNumber</td>
-                                            <td>@item.Status</td>
-                                            <td class="text-right">
-                                                <div class="dropdown dropdown-action">
-                                                    <a aria-expanded="false" data-toggle="dropdown" class="action-icon dropdown-toggle" href="#"><i class="material-icons">more_vert</i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a href="#" class="dropdown-item"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                        <a href="#" class="dropdown-item"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                            <tr>
+                                                <td>@item.LastName @item.FirstName</td>
+                                                <td>@item.Relationship.Description</td>
+                                                <td>@item.DOB?.ToString("dd MMMM yyyy")</td>
+                                                <td>@item.PhoneNumber</td>
+                                                <td>@item.Status</td>
+                                                <td class="text-right">
+                                                    <div class="dropdown dropdown-action">
+                                                        <a aria-expanded="false" data-toggle="dropdown" class="action-icon dropdown-toggle" href="#"><i class="material-icons">more_vert</i></a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a href="#" class="dropdown-item"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                            <a href="#" class="dropdown-item"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>
@@ -251,7 +257,10 @@
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Education Informations @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee){<a href="#" class="edit-icon" data-toggle="modal" data-target="#education_info"><i class="fa fa-pencil"></i></a>}</h3>
+                            <h3 class="card-title">
+                                Education Informations @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Employee)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#education_info"><i class="fa fa-pencil"></i></a>}
+                            </h3>
                             <div class="experience-box">
                                 <ul class="experience-list">
                                     @foreach (var item in Model.EmployeeEducationDetail.Take(3))
@@ -271,6 +280,136 @@
                                     }
                                 </ul>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 d-flex">
+                    <div class="card profile-box flex-fill">
+                        <div class="card-body">
+                            <h3 class="card-title">Employment History <a href="#" class="edit-icon" data-toggle="modal" data-target="#experience_info"><i class="fa fa-pencil"></i></a></h3>
+                            <div class="experience-box">
+                                <ul class="experience-list">
+                                    <li>
+                                        <div class="experience-user">
+                                            <div class="before-circle"></div>
+                                        </div>
+                                        <div class="experience-content">
+                                            <div class="timeline-content">
+                                                <a href="#/" class="name">Web Designer at Zen Corporation</a>
+                                                <span class="time">Jan 2013 - Present (5 years 2 months)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="experience-user">
+                                            <div class="before-circle"></div>
+                                        </div>
+                                        <div class="experience-content">
+                                            <div class="timeline-content">
+                                                <a href="#/" class="name">Web Designer at Ron-tech</a>
+                                                <span class="time">Jan 2013 - Present (5 years 2 months)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="experience-user">
+                                            <div class="before-circle"></div>
+                                        </div>
+                                        <div class="experience-content">
+                                            <div class="timeline-content">
+                                                <a href="#/" class="name">Web Designer at Dalt Technology</a>
+                                                <span class="time">Jan 2013 - Present (5 years 2 months)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 d-flex">
+                    <div class="card profile-box flex-fill">
+                        <div class="card-body">
+                            <h3 class="card-title">Skill Set <a href="#" class="edit-icon" data-toggle="modal" data-target="#experience_info"><i class="fa fa-pencil"></i></a></h3>
+                            <div class="experience-box">
+                                <ul class="experience-list">
+                                    <li>
+                                        <div class="experience-user">
+                                            <div class="before-circle"></div>
+                                        </div>
+                                        <div class="experience-content">
+                                            <div class="timeline-content">
+                                                <a href="#/" class="name">Web Designer at Zen Corporation</a>
+                                                <span class="time">Jan 2013 - Present (5 years 2 months)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="experience-user">
+                                            <div class="before-circle"></div>
+                                        </div>
+                                        <div class="experience-content">
+                                            <div class="timeline-content">
+                                                <a href="#/" class="name">Web Designer at Ron-tech</a>
+                                                <span class="time">Jan 2013 - Present (5 years 2 months)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="experience-user">
+                                            <div class="before-circle"></div>
+                                        </div>
+                                        <div class="experience-content">
+                                            <div class="timeline-content">
+                                                <a href="#/" class="name">Web Designer at Dalt Technology</a>
+                                                <span class="time">Jan 2013 - Present (5 years 2 months)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title">Address Change <a href="#" class="edit-icon" data-toggle="modal" data-target="#experience_info"><i class="fa fa-pencil"></i></a></h3>
+                            <form>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                                            <input type="text" readonly value="@Model.Employee.Emp_No" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Country <span class="text-danger">*</span></label>
+                                            <input class="form-control" id="" value="" type="email">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">State <span class="text-danger">*</span></label>
+                                            <input class="form-control" id="" value="" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">LGA</label>
+                                            <input class="form-control" id="" value="" type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section" onclick="">
+                                    <div class="btn btn-primary submit-btn">Request Address Change</div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -453,8 +592,10 @@
                 <div class="col-md-6 d-flex" onclick="GetWorkItem(this.id);" id="@Model.ApprovalWorkItem.Where(x => x.Name.ToLower() == "payment advance").FirstOrDefault().Id">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
-                            <h3 class="card-title">Salary Advance Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
-                            {<a href="#" class="edit-icon" data-toggle="modal" data-target="#manageadvance_employee"><i class="fa fa-pencil"></i></a>}</h3>
+                            <h3 class="card-title">
+                                Salary Advance Approval Settings @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#manageadvance_employee"><i class="fa fa-pencil"></i></a>}
+                            </h3>
 
                             <div class="table-responsive m-t-15">
                                 <table class="table table-striped custom-table">
@@ -483,9 +624,45 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6 d-flex">
+                    <div class="card profile-box flex-fill">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                User Roles @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                                {<a href="#" class="edit-icon" data-toggle="modal" data-target="#addrole_info"><i class="fa fa-pencil"></i></a>}
+                            </h3>
+                            <div class="table-responsive">
+                                <table class="table table-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Created Date</th>
+                                            <th>Name</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.UserRole)
+                                        {
+                                            <tr>
+                                                <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
+                                                <td>@item.Role.Description</td>
+                                                <td class="text-right">
+                                                    @if (Model.AccessType == ViewModel.Enumeration.AccessTypeEnum.Admin)
+                                                    {<div><a id="@item.Id" onclick="DeleteUserRole(this.id)" data-toggle="modal" data-target="#delete_userole" style="color:red">Delete</a></div>}
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
         <!-- /Profile Info Tab -->
-
         <!-- Employee Update Tab -->
         <div class="tab-pane fade" id="emp_update">
             <div class="row">
@@ -526,10 +703,9 @@
                         </div>
                     </div>
                 </div>
-            </div>       
+            </div>
         </div>
         <!-- /Employee Update Tab -->
-
         <!-- Transfer Tab -->
         <div class="tab-pane fade" id="emp_transfer">
             <div class="row">
@@ -540,140 +716,38 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="col-form-label">Employee Name<span class="text-danger">*</span></label>
-                                            <input type="text" readonly value="@Model.Employee.LastName @Model.Employee.FirstName" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
                                             <label class="col-form-label">Employee Id <span class="text-danger">*</span></label>
                                             <input type="text" readonly value="@Model.Employee.Emp_No" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="col-form-label">Current Division <span class="text-danger">*</span></label>
-                                            <select class="select" disabled>
-                                                @if (Model.Employee.Division != null)
-                                                {
-                                                    <option value="@Model.Employee.DivisionId" selected>@Model.Employee.Division.Descc</option>
-                                                }
-                                                else
-                                                {
-                                                    <option selected value="">Unverified</option>
-                                                }
-                                            </select>
+                                            <label class="col-form-label">Current Password <span class="text-danger">*</span></label>
+                                            <input type="text" id="currentpassword" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="col-form-label">Proposed Division <span class="text-danger">*</span></label>
-                                            <select class="select" id="transferdivision">
-                                                <option value="">Select</option>
-                                                @foreach (var item in Model.Division)
-                                                {
-                                                    <option value="@item.Id">@item.Descc</option>
-                                                }
-                                            </select>
+                                            <label class="col-form-label">New Password <span class="text-danger">*</span></label>
+                                            <input type="text" id="newpassword" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="col-form-label">Current Department <span class="text-danger">*</span></label>
-                                            <select class="select" disabled>
-                                                @if (Model.Employee.Department != null)
-                                                {
-                                                    <option value="@Model.Employee.DepartmentId" selected>@Model.Employee.Department.Descc</option>
-                                                }
-                                                else
-                                                {
-                                                    <option selected value="">Unverified</option>
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label">Proposed Department <span class="text-danger">*</span></label>
-                                            <select class="select" id="transferdepartment">
-                                                <option value="">Select</option>
-                                                @foreach (var item in Model.Department)
-                                                {
-                                                    <option value="@item.Id">@item.Descc</option>
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label">Current Section <span class="text-danger">*</span></label>
-                                            <select class="select" disabled>
-                                                @if (Model.Employee.Section != null)
-                                                {
-                                                    <option value="@Model.Employee.SectionId" selected>@Model.Employee.Section.Descc</option>
-                                                }
-                                                else
-                                                {
-                                                    <option selected value="">Unverified</option>
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label">Proposed Section<span class="text-danger">*</span></label>
-                                            <select class="select" id="transfersection">
-                                                <option value="">Select</option>
-                                                @if (Model.Section != null)
-                                                {
-                                                    @foreach (var item in Model.Section)
-                                                    {
-                                                        <option value="@item.Id">@item.Descc</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label">Current Unit <span class="text-danger">*</span></label>
-                                            <select class="select" disabled>
-                                                @if (Model.Employee.Unit != null)
-                                                {
-                                                    <option value="@Model.Employee.UnitId" selected>@Model.Employee.Unit.Descc</option>
-                                                }
-                                                else
-                                                {
-                                                    <option selected value="">Unverified</option>
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label">Proposed Unit<span class="text-danger">*</span></label>
-                                            <select class="select" id="transferunit">
-                                                <option value="">Select</option>
-                                                @if (Model.Unit != null)
-                                                {
-                                                    @foreach (var item in Model.Unit)
-                                                    {
-                                                        <option value="@item.Id">@item.Descc</option>
-                                                    }
-                                                }
-                                            </select>
+                                            <label class="col-form-label">Confirm New Password<span class="text-danger">*</span></label>
+                                            <input type="text" id="confirmpassword" class="form-control">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="submit-section" onclick="SubmitTransferRequest()">
-                                    <button class="btn btn-primary submit-btn">Request Transfer</button>
+                                <div class="submit-section" onclick="SubmitPasswordChange()">
+                                    <button class="btn btn-primary submit-btn">Request Password Change</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-           
+
         </div>
         <!-- /Transfer Tab -->
 
@@ -1857,7 +1931,6 @@
     </div>
 </div>
 <!-- /NOK Info Modal -->
-
 <!-- Dep Info Modal -->
 <div id="family_info_modal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -1930,7 +2003,6 @@
     </div>
 </div>
 <!-- /Dep Info Modal -->
-
 <!-- Education Modal -->
 <div id="education_info" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -1950,7 +2022,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group form-focus focused">
-                                            <input type="text"  class="form-control floating" id="eduschool">
+                                            <input type="text" class="form-control floating" id="eduschool">
                                             <label class="focus-label">Institution</label>
                                         </div>
                                     </div>
@@ -1968,7 +2040,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group form-focus focused">
                                             <div class="cal-icon">
-                                                <input type="text"  class="form-control floating datetimepicker" id="edustartdate">
+                                                <input type="text" class="form-control floating datetimepicker" id="edustartdate">
                                             </div>
                                             <label class="focus-label">Starting Date</label>
                                         </div>
@@ -1976,7 +2048,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group form-focus focused">
                                             <div class="cal-icon">
-                                                <input type="text"  class="form-control floating datetimepicker" id="eduenddate">
+                                                <input type="text" class="form-control floating datetimepicker" id="eduenddate">
                                             </div>
                                             <label class="focus-label">Complete Date</label>
                                         </div>
@@ -2131,6 +2203,85 @@
     </div>
 </div>
 <!-- /Experience Modal -->
+<!-- /Add User Role Modal -->
+<div id="addrole_info" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add User Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-scroll">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">User Role Informations <a href="javascript:void(0);" class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus">
+                                            <input type="text" class="form-control floating" value="@Model.Emp_No">
+                                            <label class="focus-label">Employee Id</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" hidden>
+                                        <div class="form-group form-focus">
+                                            <input type="text" class="form-control floating" value="@Model.Id">
+                                            <label class="focus-label">Employee Id</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus">
+                                            <select class="select form-control" id="roleid">
+                                                <option>Select Role</option>
+                                                @foreach (var item in Model.Role)
+                                                {
+                                                    <option value="@item.Id">@item.Description</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add User Role Modal -->
+<!-- Delete User Role Modal -->
+<div class="modal custom-modal fade" id="delete_userole" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Delete User Role</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <input type="text" hidden id="deleteuserroleid" />
+                        <div class="col-6" onclick="TriggerUserRoleDetete()">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Employee Modal -->
+
 
 @section Scripts{
     <script type="text/javascript">
@@ -2138,9 +2289,13 @@
         var countApproval = 0;
         var workItem;
 
-        function GetWorkItem(item) {
-            workItem = item;
-            console.log(workItem);
+        function DeleteUserRole(userRoleId) {
+            $("#deleteuserroleid").val(userRoleId);
+        }
+
+        function TriggerUserRoleDetete() {
+            var userroleid = $("#deleteuserroleid").val();
+            sendUserRoleDeleteRequest(userroleid);
         }
 
         var divisionList = JSON.parse('@Json.Serialize(@Model.Division)');
@@ -2464,14 +2619,13 @@
             AddEducationalInfo(eduschool, edulevelid, eduqualid, educourse, edugradeid, edustartdate, eduenddate);
         }
 
-        function SubmitTransferRequest()
+        function SubmitPasswordChange()
         {
-            var transferdivision = $("#transferdivision").val();
-            var transferdepartment = $("#transferdepartment").val();
-            var transferunit = $("#transferunit").val();
-            var transfersection = $("#transfersection").val();
+            var confirmpassword = $("#confirmpassword").val();
+            var newpassword = $("#newpassword").val();
+            var currentpassword = $("#currentpassword").val();
 
-            RequestTransfer(transferdivision, transferdepartment, transfersection, transferunit);
+            RequestPasswordChange(currentpassword, newpassword, confirmpassword);
         }
 
         function SubmitNameChnageRequest()
@@ -2695,12 +2849,12 @@
             });
         }
 
-        function RequestTransfer(newDivision, newDepartment, newSection, newUnit ) {
+        function RequestPasswordChange(currentPassword, newPassword, confirmPassword ) {
             $.ajax({
-                url: '@Url.Action("RequestTransfer", "Employee")',
+                url: '@Url.Action("RequestPasswordChange", "Employee")',
                 type: 'POST',
                 dataType: 'json',
-                data: {newDivision: newDivision, newDepartment: newDepartment, newSection: newSection, newUnit: newUnit },
+                data: { currentPassword: currentPassword, newPassword: newPassword, confirmPassword: confirmPassword },
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)
@@ -2722,6 +2876,27 @@
                 type: 'POST',
                 dataType: 'json',
                 data: {lastName: lastName, firstName: firstName, email: email },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        location.reload();
+                    }
+                    else {
+                        toastr.error(response?.message)
+                    }
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function sendUserRoleDeleteRequest(userRoleId) {
+            $.ajax({
+                url: '@Url.Action("DeleteUserRole", "Employee")',
+                type: 'POST',
+                dataType: 'json',
+                data: { userRoleId: userRoleId},
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response?.message)

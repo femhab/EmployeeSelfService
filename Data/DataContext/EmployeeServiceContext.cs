@@ -40,9 +40,12 @@ namespace Data.DataContext
         public DbSet<EmployeeLeave> EmployeeLeaves { get; set; }
         public DbSet<EmployeeNOKDetail> EmployeeNOKDetails { get; set; }
         public DbSet<EmployeeTitle> EmployeeTitles { get; set; }
+        public DbSet<EmploymentHistory> EmploymentHistories { get; set; }
         public DbSet<ExitProcess> ExitProcess { get; set; }
         public DbSet<ExitProcessPriorityItem> ExitProcessPriorityItem { get; set; }
         public DbSet<GradeLevel> GradeLevels { get; set; }
+        public DbSet<JobPostion> JobPostions { get; set; }
+        public DbSet<JobChangeReason> JobChangeReasons { get; set; }
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<LeaveRecall> LeaveRecalls { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; }

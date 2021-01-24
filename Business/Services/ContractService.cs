@@ -32,10 +32,13 @@ namespace Business.Services
                         _unitOfWork.GetRepository<ContractObjective>().Insert(model);
                         await _unitOfWork.SaveChangesAsync();
 
+                        var orderno = 0;
                         foreach (var item in items)
                         {
                             if (!string.IsNullOrEmpty(item.SmartObjective))
                             {
+                                item.OrderNo = orderno + 1;
+                                orderno = item.OrderNo;
                                 _unitOfWork.GetRepository<ContractItem>().Insert(item);
                                 await _unitOfWork.SaveChangesAsync();
                             }

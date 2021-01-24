@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ViewModel.ResponseModel;
 
 namespace Business.Services
 {
@@ -119,6 +120,20 @@ namespace Business.Services
             {
                 await _userManager.DeleteAsync(checkuser);
             }
+        }
+
+        public async Task<BaseResponse> ChangePassword(string empNo, string oldPassword, string newPassword)
+        {
+            var employee = await _userManager.FindByNameAsync(empNo);
+            if(employee != null)
+            {
+                var change = await _userManager.ChangePasswordAsync(employee, oldPassword, newPassword);
+                if (change.Succeeded)
+                {
+                    return new BaseResponse() { Status = true, Message = ResponseMessage.PasswordChangeSuccessful };
+                }
+            }
+            return new BaseResponse() { Status = false, Message = ResponseMessage.OperationFailed };
         }
     }
 }

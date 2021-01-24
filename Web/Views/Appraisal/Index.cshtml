@@ -32,9 +32,8 @@
                     <thead>
                         <tr>
                             <th>Appraisal Date</th>
-                            <th>Last Processor/Supervisor</th>
+                            <th>Next Processor/Supervisor</th>
                             <th>Last Processed Date</th>
-                            <th>Next Supervisor</th>
                             <th class="text-right">Action</th>
                         </tr>
                     </thead>
@@ -48,7 +47,7 @@
                                         <a href="profile.html">@item.CreatedDate.ToString("dd MMMM yyyy")</a>
                                     </h2>
                                 </td>
-                                <td>@item.LastRatingManagerName</td>
+                                <td>@item.NextRatingManagerId</td>
                                 @if (item.UpdatedDate != null)
                                 {
                                     <td>@item.UpdatedDate?.ToString("dd MMMM yyyy")</td>
@@ -58,14 +57,8 @@
                                     <td>@item.CreatedDate.ToString("dd MMMM yyyy")</td>
                                 }
 
-                                <td> @item.NextRatingManagerName </td>
                                 <td class="text-right">
-                                    <div class="dropdown dropdown-action">
-                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" id="@item.Id" onclick="OnAppraisalSelect(this.id)" data-toggle="modal" data-target="#view_appraisal"><i class="fa fa-pencil m-r-5"></i> View and Sign Off</a>
-                                        </div>
-                                    </div>
+                                    <div><a href="@Url.Action("PerformanceReview", "Appraisal", new { appraisalId=item.Id })">view/signoff</a></div>
                                 </td>
                             </tr>
                         }
@@ -120,7 +113,7 @@
                         {
                             <div class="col-lg-12">
                                 <div class="card">
-                                    <div class="card-header" style="background-color:#daa520">
+                                    <div class="card-header" style="background-color:#01b8e2">
                                         <h4 class="card-title mb-0">@category.Description</h4>
                                     </div>
                                     <div class="card-body">
@@ -183,7 +176,7 @@
             {
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-header" style="background-color:#daa520">
+                        <div class="card-header" style="background-color:#01b8e2">
                             <h4 class="card-title mb-0" id="categorydescription">@item.Description</h4>
                         </div>
                         <div class="card-body">
@@ -338,7 +331,30 @@
             return str;
         }
 
-        function getAppraisalById(appraisalId, isAppraisalView) {
+        function getAppraisalById(appraisalId) {
+            $.ajax({
+                url: '@Url.Action("PerformanceReview", "Appraisal")',
+                type: 'POST',
+                dataType: 'json',
+                data: { appraisalId: appraisalId},
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response?.message)
+                        $('#view_appraisal').modal('hide');
+                        location.reload();
+                    }
+                    else {
+                        toastr.error("record not found");
+                    }
+
+                    return;
+                }, error: function () {
+                    alerty("danger", "Opps", "request Failed");
+                }
+            });
+        }
+
+        function getAppraisalByIds(appraisalId, isAppraisalView) {
             $.ajax({
                 url: '@Url.Action("getAppraisalById", "Appraisal")',
                 type: 'POST',
@@ -350,7 +366,7 @@
                             appraisalView = `
                                 <div class="col-lg-12">
                                     <div class="card">
-                                        <div class="card-header" style="background-color:#daa520">
+                                        <div class="card-header" style="background-color:#01b8e2">
                                             <h4 class="card-title mb-0" id="categorydescription">${appraisalList[i].description}</h4>
                                         </div>
                                         <div class="card-body">
@@ -414,34 +430,6 @@
             });
         }
 
-        function SignOff() {
-            var appraisalid = $("#appraisalid").val();
-            var appraiseeecomment = $("#appraisalempcomment").val();
-            var appraisalempimprove = $("#appraisalempimprove").val();
-            submitSignOff(appraisalid, appraiseeecomment, appraisalempimprove);
-        }
-
-        function submitSignOff(appraisalId, appraiseeecomment, appraisalempimprove) {
-            $.ajax({
-                url: '@Url.Action("SignOffAppraisal", "Appraisal")',
-                type: 'POST',
-                dataType: 'json',
-                data: { appraisalId: appraisalId, appraiseeComment: appraiseeecomment, appraiseeImprove: appraisalempimprove },
-                success: function (response) {
-                    if (response.status) {
-                        toastr.success(response?.message)
-                        $('#view_appraisal').modal('hide');
-                        location.reload();
-                    }
-                    else {
-                        toastr.error("record not found");
-                    }
-
-                    return;
-                }, error: function () {
-                    alerty("danger", "Opps", "request Failed");
-                }
-            });
-        }
+        
     </script>
 }

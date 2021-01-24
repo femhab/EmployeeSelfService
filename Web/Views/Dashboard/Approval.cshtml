@@ -83,47 +83,44 @@
                                 <td>@item.ApprovalProcessor</td>
                                 <td><span class="badge bg-inverse-success">@item.Status</span></td>
                                 <td class="text-right">
-                                    <div class="dropdown dropdown-action">
+                                    <div>
+                                        @if (item.ApprovalWorkItem.Name.ToLower().Contains("leave"))
+                                        {
+                                            <a class="dropdown-item" id="@item.Id" onclick="OnLeaveSelect(this.id)" data-toggle="modal" data-target="#leave_review"><i class="fa fa-list m-r-5"></i>Leave Detail</a>
+                                        }
+                                        @if (item.ApprovalWorkItem.Name.ToLower().Contains("recall"))
+                                        {
+                                            <a class="dropdown-item" id="@item.Id" onclick="OnLeaveRecallSelect(this.id)" data-toggle="modal" data-target="#leaverecall_review"><i class="fa fa-list m-r-5"></i>Leave Recall Detail</a>
+                                        }
+                                        @if (item.ApprovalWorkItem.Name.ToLower().Contains("loan"))
+                                        {
+                                            <a class="dropdown-item" id="@item.Id" onclick="OnLoanSelect(this.id)" data-toggle="modal" data-target="#loan_review"><i class="fa fa-list m-r-5"></i>Loan Detail</a>
+                                        }
+                                        @if (item.ApprovalWorkItem.Name.ToLower().Contains("appraisal"))
+                                        {
+                                            <a class="dropdown-item" href="@Url.Action("AccessAppraisal", "Appraisal", new { boardId=item.Id })"><i class="fa fa-list m-r-5"></i>Appraisal Detail</a>
+                                            @*<a class="dropdown-item" id="@item.Id" onclick="OnAppraisalSelect(this.id)" data-toggle="modal" data-target="#review_appraisal"><i class="fa fa-list m-r-5"></i>Appraisal Detail</a>*@
+                                        }
+                                        @if (item.ApprovalWorkItem.Name.ToLower().Contains("transfer"))
+                                        {
+                                            <a class="dropdown-item" id="@item.Id" onclick="OnTransferSelect(this.id)" data-toggle="modal" data-target="#transfer_review"><i class="fa fa-list m-r-5"></i>Transfer Detail</a>
+                                        }
+                                        @if (item.ApprovalWorkItem.Name.ToLower().Contains("payment advance"))
+                                        {
+                                            <a class="dropdown-item" id="@item.Id" onclick="OnAdvanceSelect(this.id)" data-toggle="modal" data-target="#advance_review"><i class="fa fa-list m-r-5"></i>Payment Advance Detail</a>
+                                        }
+                                        @if (item.ApprovalWorkItem.Name.ToLower().Contains("training"))
+                                        {
+                                            <a class="dropdown-item" id="@item.Id" onclick="OnTrainingSelect(this.id)" data-toggle="modal" data-target="#training_review"><i class="fa fa-list m-r-5"></i>Training Detail</a>
+                                        }
+                                    </div>
+                                    @*<div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("leave"))
-                                            {
-                                                <a class="dropdown-item" id="@item.Id" onclick="OnLeaveSelect(this.id)" data-toggle="modal" data-target="#leave_review"><i class="fa fa-list m-r-5"></i>Leave Detail</a>
-                                            }
-                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("recall"))
-                                            {
-                                                <a class="dropdown-item" id="@item.Id" onclick="OnLeaveRecallSelect(this.id)" data-toggle="modal" data-target="#leaverecall_review"><i class="fa fa-list m-r-5"></i>Leave Recall Detail</a>
-                                            }
-                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("loan"))
-                                            {
-                                                <a class="dropdown-item" id="@item.Id" onclick="OnLoanSelect(this.id)" data-toggle="modal" data-target="#loan_review"><i class="fa fa-list m-r-5"></i>Loan Detail</a>
-                                            }
-                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("appraisal"))
-                                            {
-                                                @if (item.SignOff)
-                                                {
-                                                    <a class="dropdown-item" id="@item.Id" onclick="OnAppraisalSelect(this.id)" data-toggle="modal" data-target="#review_appraisal"><i class="fa fa-list m-r-5"></i>Appraisal Detail</a>
-                                                }
-                                                else
-                                                {
-                                                    <a class="dropdown-item"><i class="fa fa-list m-r-5"></i>Awaiting Signoff</a>
-                                                }
-                                            }
-                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("transfer"))
-                                            {
-                                                <a class="dropdown-item" id="@item.Id" onclick="OnTransferSelect(this.id)" data-toggle="modal" data-target="#transfer_review"><i class="fa fa-list m-r-5"></i>Transfer Detail</a>
-                                            }
-                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("payment advance"))
-                                            {
-                                                <a class="dropdown-item" id="@item.Id" onclick="OnAdvanceSelect(this.id)" data-toggle="modal" data-target="#advance_review"><i class="fa fa-list m-r-5"></i>Payment Advance Detail</a>
-                                            }
-                                            @if (item.ApprovalWorkItem.Name.ToLower().Contains("training"))
-                                            {
-                                                <a class="dropdown-item" id="@item.Id" onclick="OnTrainingSelect(this.id)" data-toggle="modal" data-target="#training_review"><i class="fa fa-list m-r-5"></i>Training Detail</a>
-                                            }
+                                            
 
                                         </div>
-                                    </div>
+                                    </div>*@
                                 </td>
                             </tr>
                         }
@@ -738,7 +735,7 @@
                             appraisalView = `
                                 <div class="col-lg-12">
                                     <div class="card">
-                                        <div class="card-header" style="background-color:#daa520">
+                                        <div class="card-header" style="background-color:#01b8e2">
                                             <h4 class="card-title mb-0" id="categorydescription">${response?.data?.categories[i].description}</h4>
                                         </div>
                                         <div class="card-body">
